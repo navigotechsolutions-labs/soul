@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  soul-api:
+    build: .
+    container_name: soul-engine-api
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+    restart: unless-stopped
+    command: ["python", "serve.py", "--host", "0.0.0.0", "--port", "8000"]
+
+  soul-web-dashboard:
+    build: .
+    container_name: soul-engine-dashboard
+    ports:
+      - "8501:8501"
+    environment:
+      - PORT=8501
+    restart: unless-stopped
+    command: ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]

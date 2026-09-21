@@ -181,9 +181,84 @@ python -m soul.cli "My mother passed away last night." --json
 
 ---
 
+---
+
+## 🌐 Production REST API & OpenAI-Compatible Gateway
+
+`Soul` includes a production FastAPI microservice (`soul.server` / [`serve.py`](serve.py)) with sub-millisecond response times, CORS support, and an **OpenAI-compatible drop-in proxy**.
+
+### 1. Launching the API Server
+
+```bash
+# Start with python
+python serve.py --port 8000
+
+# Or run with Docker
+docker compose up --build
+```
+- **Interactive Swagger Documentation**: `http://localhost:8000/docs`
+- **ReDoc API Reference**: `http://localhost:8000/redoc`
+- **Health Check**: `GET http://localhost:8000/health`
+
+---
+
+### 2. Use as an OpenAI Drop-In Replacement
+
+Any application, LangChain pipeline, or client using the standard `openai` SDK can seamlessly connect to Soul by redirecting `base_url`:
+
+#### Python (OpenAI SDK)
+```python
+from openai import OpenAI
+
+# Point to your Soul API server
+client = OpenAI(base_url="http://localhost:8000/v1", api_key="not-needed")
+
+response = client.chat.completions.create(
+    model="soul-attuned",
+    messages=[
+        {"role": "user", "content": "I lost my job with zero notice today and can't feed my family. Help!"}
+    ]
+)
+
+# Output is automatically audited and emotionally harmonized!
+print(response.choices[0].message.content)
+```
+
+#### JavaScript / TypeScript (Fetch)
+```javascript
+const res = await fetch("http://localhost:8000/v1/chat/completions", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    model: "soul-attuned",
+    messages: [{ role: "user", content: "I am feeling completely burned out." }]
+  })
+});
+const data = await res.json();
+console.log(data.choices[0].message.content);
+```
+
+#### cURL
+```bash
+# 1. System 1 Cognitive Appraisal (<1ms)
+curl -X POST http://localhost:8000/v1/appraise \
+  -H "Content-Type: application/json" \
+  -d '{"text": "The landlord slipped an eviction notice under my door."}'
+
+# 2. Anti-Bluntness Harmonization
+curl -X POST http://localhost:8000/v1/harmonize \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_message": "Mama tummy hurty waaa boo-boo!",
+    "draft_response": "Here are practical steps to move forward with this task."
+  }'
+```
+
+---
+
 ## 🧪 Test Suite
 
-Run the full automated test suite (34 test specifications):
+Run the full automated test suite (41 test specifications):
 
 ```bash
 pytest tests/ -v

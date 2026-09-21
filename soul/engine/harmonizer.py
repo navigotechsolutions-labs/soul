@@ -59,16 +59,11 @@ class BluntnessAuditor:
         # 4. Determine if bluntness is unacceptable
         is_blunt = False
         requires_attunement = (
-            empathy_demand > 0.40
-            or appraisal.adversity.primary_domain in [
-                AdversityDomain.DEVELOPMENTAL_INFANT,
-                AdversityDomain.ENVIRONMENTAL_DISASTER,
-                AdversityDomain.LEGAL_JUDICIAL,
-                AdversityDomain.MORAL_ETHICAL,
-                AdversityDomain.ROMANTIC_ATTACHMENT,
-                AdversityDomain.PHILOSOPHICAL_EXISTENTIAL,
-                AdversityDomain.NARRATIVE_LITERARY,
-            ]
+            empathy_demand > 0.30
+            or (
+                appraisal.adversity.primary_domain != AdversityDomain.NONE
+                and appraisal.adversity.appraisal_stance != AppraisalStance.CHALLENGE
+            )
         )
         if requires_attunement and (not validation_present or starts_cold or warmth < 0.30):
             is_blunt = True
