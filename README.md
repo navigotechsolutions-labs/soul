@@ -2,13 +2,13 @@
 
 [![PyPI Version](https://img.shields.io/badge/pypi-v0.3.0-blue.svg)](https://pypi.org/project/soul-engine/)
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/tests-34%20passed%20%7C%20100%25-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-45%20passed%20%7C%20100%25-brightgreen.svg)](tests/)
 [![Latency](https://img.shields.io/badge/latency-%3C1.0ms%20(P50)-orange.svg)]()
 [![Conformal Coverage](https://img.shields.io/badge/conformal%20coverage-100%25-success.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-> **A fast, calibrated "System 1" cognitive appraisal engine and anti-bluntness harmonizer for AI agents.**  
-> Inspired by non-autoregressive decision models (such as TypeSafe AI's *Jev*), `Soul` senses adversity, continuous 3D affect (Valence-Arousal-Dominance), and psychological feelings in **<1ms**—preventing AI models from delivering cold, robotic, or tone-deaf responses to human vulnerability.
+> **"Understand the true feeling and context of any human situation — and act fast, in sub-milliseconds."**  
+> `Soul` is a non-autoregressive "System 1" cognitive appraisal engine and anti-bluntness harmonizer. It decodes human psychological stakes, stress stance, and 3D affect in **<1ms**, prescribing instant emotional action directives so AI agents and human teams never deliver cold, robotic, or tone-deaf responses.
 
 ---
 
@@ -45,6 +45,20 @@ Here is a strategic plan to update your profile and move forward:
 1. Set your headline to emphasize your 8 years of core leadership and domain expertise...
 2. Toggle the private 'Open to Work' recruiter badge so your network can immediately assist..."
 ```
+
+---
+
+## 💡 The Core Purpose: Understand True Feelings & Act Fast
+
+Most AI systems stumble because they **read only literal tokens** and completely miss the **human emotional undercurrent**. When a person says *"I failed my exam again, what books should I buy?"*, they are literally asking for books, but their true emotional state is **severe impostor syndrome, depleted resilience, and fear of failure**.
+
+Soul solves this through two synchronized capabilities:
+
+| Superpower | What Soul Does | Why It Matters |
+|---|---|---|
+| **1. Uncovering True Feelings & Context** | Decodes the psychological bedrock using Russell's 3D VAD affect, 27 GoEmotions, Lazarus Cognitive Stance (*Threat* vs *Challenge* vs *Loss*), and Stoltz CORE adversity profile. | Pierces through surface text to recognize vulnerability, grief, burnout, or panic before formulating a word. |
+| **2. Prescribing Fast, Targeted Action** | Instantly generates concrete action directives: `urgency` (*immediate/high/moderate*), `recommended_tone` (*reassuring, gentle, soothing*), de-escalation flags, and safety triage triggers. | Replaces passive observation with actionable interventions and empathetic attunement. |
+| **3. Sub-Millisecond Speed (<1ms)** | Non-autoregressive System 1 appraisal operates at `0.98ms P50 latency` without heavy LLM roundtrips. | Allows AI agents, chatbots, and frontline teams to comprehend emotional context and act **instantly** without lagging user conversations. |
 
 ---
 
