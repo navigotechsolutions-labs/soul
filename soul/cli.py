@@ -145,14 +145,80 @@ def demonstrate_fix(user_text: str):
     console.print()
 
 
+def handle_key_command(args: list[str]):
+    """Handles 'soul key generate' and 'soul key info' commands."""
+    from soul.engine.api_key_manager import APIKeyManager
+    mgr = APIKeyManager()
+
+    if len(args) < 2 or args[1] in ("--help", "-h"):
+        console.print("[bold yellow]Usage:[/bold yellow]")
+        console.print("  soul key generate --name <client_name> [--email <email>]")
+        console.print("  soul key info <api_key>")
+        return
+
+    subcmd = args[1]
+    if subcmd == "generate":
+        client_name = "Developer"
+        email = ""
+        for i, arg in enumerate(args):
+            if arg == "--name" and i + 1 < len(args):
+                client_name = args[i + 1]
+            elif arg == "--email" and i + 1 < len(args):
+                email = args[i + 1]
+
+        res = mgr.generate_key(client_name=client_name, email=email)
+        console.print()
+        console.print(Panel(
+            f"[bold green]API Key Generated Successfully![/bold green]\n\n"
+            f"[bold cyan]API Key:[/bold cyan] [bold white on blue] {res['api_key']} [/bold white on blue]\n"
+            f"[bold cyan]Key Prefix:[/bold cyan] {res['key_prefix']}\n"
+            f"[bold cyan]Client Name:[/bold cyan] {res['client_name']}\n"
+            f"[bold cyan]Tier:[/bold cyan] {res['tier']} ({res['rate_limit']})\n\n"
+            f"[dim]Store this key securely. Pass it as header: Authorization: Bearer {res['api_key']}[/dim]",
+            title="[bold green]🔑 Soul Self-Service API Key[/bold green]",
+            border_style="green"
+        ))
+        console.print()
+    elif subcmd == "info":
+        if len(args) < 3:
+            console.print("[red]Error: Please specify the API key to inspect.[/red]")
+            return
+        key = args[2]
+        info = mgr.get_key_info(key)
+        if not info:
+            console.print("[bold red]❌ Key not found or revoked.[/bold red]")
+            return
+        console.print()
+        console.print(Panel(
+            f"[bold]Client Name:[/bold] {info['client_name']}\n"
+            f"[bold]Key Prefix:[/bold] {info['key_prefix']}\n"
+            f"[bold]Tier:[/bold] {info['tier']}\n"
+            f"[bold]Total Requests Used:[/bold] {info['request_count']}\n"
+            f"[bold]Active Status:[/bold] {'[green]Active[/green]' if info['is_active'] else '[red]Revoked[/red]'}",
+            title="[bold cyan]API Key Info[/bold cyan]",
+            border_style="cyan"
+        ))
+        console.print()
+    else:
+        console.print(f"[red]Unknown key command: {subcmd}[/red]")
+
+
 def main():
     """Main CLI entry point."""
-    if len(sys.argv) < 2:
-        console.print("[bold yellow]Usage:[/bold yellow] soul \"<sentence to appraise>\" [--json | --demonstrate-fix]")
+    if len(sys.argv) < 2 or sys.argv[1] in ("--help", "-h"):
+        console.print("[bold yellow]Usage:[/bold yellow]")
+        console.print("  soul \"<sentence to appraise>\" [--json | --demonstrate-fix]")
+        console.print("  soul key generate --name \"My Project\" [--email dev@example.com]")
+        console.print("  soul key info soul_live_<token>")
         console.print("\nExamples:")
-        console.print("  soul \"I lost my job yesterday and can't afford rent. Debt collectors are threatening eviction.\"")
-        console.print("  soul \"I failed my certification exam for the third time and feel like giving up, what should I study?\" --demonstrate-fix")
-        sys.exit(1)
+        console.print("  soul \"I lost my job yesterday and can't afford rent.\"")
+        console.print("  soul \"I failed my exam and feel like giving up.\" --demonstrate-fix")
+        console.print("  soul key generate --name \"My AI Agent\"")
+        sys.exit(0)
+
+    if sys.argv[1] == "key":
+        handle_key_command(sys.argv[1:])
+        return
 
     text = sys.argv[1]
     is_json = "--json" in sys.argv

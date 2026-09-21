@@ -53,6 +53,8 @@ htmlcov/
 .env
 .env.local
 *.log
+*.db
+*.sqlite*
 
 # Streamlit
 .streamlit/

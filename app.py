@@ -95,8 +95,9 @@ if user_input:
         )
 
     st.markdown("### Scientific Appraisal Breakdown")
-    tab_compare, tab_core, tab_vad, tab_ge, tab_agent, tab_json = st.tabs([
+    tab_compare, tab_keys, tab_core, tab_vad, tab_ge, tab_agent, tab_json = st.tabs([
         "⚡ Blunt AI vs Attuned AI",
+        "🔑 Self-Service API Keys",
         "⚡ Stoltz CORE & Scherer CPM",
         "🌊 Continuous Affect (VAD)",
         "🎭 Google 27 GoEmotions",
@@ -121,6 +122,107 @@ if user_input:
             st.success(f"✅ Soul Attuned AI ({badge})")
             st.text_area("Emotionally Validated Output:", value=attuned_resp.content, height=220, disabled=True)
             st.caption(f"Warmth Score: **{attuned_resp.warmth_score:.2f}** | Emotional Context: **{adv.primary_domain.value.upper()}**")
+
+    with tab_keys:
+        st.subheader("🔑 Generate Your Personal Soul API Key")
+        st.markdown(
+            "Anyone can generate an API key and integrate Soul into their bots, agents, or apps for free. "
+            "Keys are cryptographically hashed using SHA-256 and stored locally in SQLite."
+        )
+
+        from soul.engine.api_key_manager import APIKeyManager
+        key_mgr = APIKeyManager()
+
+        col_kg1, col_kg2 = st.columns(2)
+        with col_kg1:
+            client_name_input = st.text_input("Project / App / Developer Name:", value="My AI Application", key="api_client_name")
+            email_input = st.text_input("Contact Email (Optional):", value="", placeholder="dev@example.com", key="api_client_email")
+            if st.button("🚀 Generate My Free API Key", type="primary"):
+                new_key_data = key_mgr.generate_key(client_name=client_name_input, email=email_input)
+                st.session_state["generated_key"] = new_key_data
+
+        with col_kg2:
+            if "generated_key" in st.session_state:
+                k_data = st.session_state["generated_key"]
+                st.success("🎉 Key generated successfully! Keep this secret.")
+                st.code(k_data["api_key"], language="bash")
+                st.markdown(f"- **Tier:** `{k_data['tier']}` ({k_data['rate_limit']})\n- **Prefix:** `{k_data['key_prefix']}`\n- **Client:** `{k_data['client_name']}`")
+            else:
+                st.info("Enter your project name on the left and click Generate to receive your secret token.")
+
+        st.markdown("---")
+        st.subheader("Integration Code Snippets")
+
+        active_token = st.session_state.get("generated_key", {}).get("api_key", "soul_live_your_key_here")
+
+        snip_py, snip_openai, snip_curl, snip_ts = st.tabs(["Python (requests)", "OpenAI SDK Drop-in", "cURL", "TypeScript / Node"])
+
+        with snip_py:
+            st.code(f"""import requests
+
+API_KEY = "{active_token}"
+BASE_URL = "http://localhost:8000/v1"
+
+# 1. System 1 Cognitive Appraisal
+response = requests.post(
+    f"{{BASE_URL}}/appraise",
+    headers={{"Authorization": f"Bearer {{API_KEY}}"}},
+    json={{"text": "I lost my job yesterday and can't afford rent."}}
+)
+print("Appraisal:", response.json())
+
+# 2. Anti-Bluntness Harmonization
+response = requests.post(
+    f"{{BASE_URL}}/harmonize",
+    headers={{"Authorization": f"Bearer {{API_KEY}}"}},
+    json={{
+        "user_message": "I lost my job yesterday and can't afford rent.",
+        "draft_response": "Update your resume and search LinkedIn job listings immediately."
+    }}
+)
+print("Harmonized:", response.json()["harmonized_content"])
+""", language="python")
+
+        with snip_openai:
+            st.code(f"""from openai import OpenAI
+
+# Drop-in replacement: point OpenAI client to Soul Engine!
+client = OpenAI(
+    base_url="http://localhost:8000/v1",
+    api_key="{active_token}"  # Your personal Soul API key
+)
+
+completion = client.chat.completions.create(
+    model="soul-attuned",
+    messages=[
+        {{"role": "user", "content": "I failed my exam and feel like an absolute fraud."}}
+    ]
+)
+print(completion.choices[0].message.content)
+""", language="python")
+
+        with snip_curl:
+            st.code(f"""curl -X POST "http://localhost:8000/v1/appraise" \\
+  -H "Authorization: Bearer {active_token}" \\
+  -H "Content-Type: application/json" \\
+  -d '{{"text": "I failed my exam and feel like an absolute fraud."}}'
+""", language="bash")
+
+        with snip_ts:
+            st.code(f"""const response = await fetch("http://localhost:8000/v1/appraise", {{
+  method: "POST",
+  headers: {{
+    "Authorization": "Bearer {active_token}",
+    "Content-Type": "application/json"
+  }},
+  body: JSON.stringify({{
+    text: "I failed my exam and feel like an absolute fraud."
+  }})
+}});
+
+const appraisal = await response.json();
+console.log(appraisal);
+""", language="typescript")
 
     with tab_core:
         c1, c2 = st.columns(2)

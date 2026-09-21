@@ -202,7 +202,45 @@ docker compose up --build
 
 ---
 
-### 2. Use as an OpenAI Drop-In Replacement
+### 2. Self-Service API Keys & Usage Tracking
+
+Anyone can instantly generate a personal API key to integrate Soul into their bots, agents, or apps for free:
+
+#### Method A: Via REST API
+```bash
+curl -X POST "http://localhost:8000/v1/auth/keys/generate" \
+  -H "Content-Type: application/json" \
+  -d '{"client_name": "My Agent App", "email": "developer@example.com"}'
+```
+Response:
+```json
+{
+  "api_key": "soul_live_e20c65fee42d4b94dc818b1f8963bc9db9107f66",
+  "key_prefix": "soul_live_e20c...",
+  "client_name": "My Agent App",
+  "tier": "free",
+  "rate_limit": "120 requests/minute",
+  "message": "Store this key safely."
+}
+```
+
+#### Method B: Via CLI
+```bash
+python -m soul.cli key generate --name "My Project" --email dev@example.com
+```
+
+#### Method C: Via Streamlit Web Dashboard
+Launch `streamlit run app.py` and open the **🔑 Self-Service API Keys** tab.
+
+#### Inspecting Key Usage & Status:
+```bash
+curl -X GET "http://localhost:8000/v1/auth/keys/info" \
+  -H "Authorization: Bearer soul_live_e20c65fee42d4b94dc818b1f8963bc9db9107f66"
+```
+
+---
+
+### 3. Use as an OpenAI Drop-In Replacement
 
 Any application, LangChain pipeline, or client using the standard `openai` SDK can seamlessly connect to Soul by redirecting `base_url`:
 
@@ -210,8 +248,11 @@ Any application, LangChain pipeline, or client using the standard `openai` SDK c
 ```python
 from openai import OpenAI
 
-# Point to your Soul API server
-client = OpenAI(base_url="http://localhost:8000/v1", api_key="not-needed")
+# Point to your Soul API server using your personal API key
+client = OpenAI(
+    base_url="http://localhost:8000/v1",
+    api_key="soul_live_e20c65fee42d4b94dc818b1f8963bc9db9107f66"
+)
 
 response = client.chat.completions.create(
     model="soul-attuned",
@@ -228,7 +269,10 @@ print(response.choices[0].message.content)
 ```javascript
 const res = await fetch("http://localhost:8000/v1/chat/completions", {
   method: "POST",
-  headers: { "Content-Type": "application/json" },
+  headers: {
+    "Authorization": "Bearer soul_live_e20c65fee42d4b94dc818b1f8963bc9db9107f66",
+    "Content-Type": "application/json"
+  },
   body: JSON.stringify({
     model: "soul-attuned",
     messages: [{ role: "user", content: "I am feeling completely burned out." }]
@@ -242,11 +286,13 @@ console.log(data.choices[0].message.content);
 ```bash
 # 1. System 1 Cognitive Appraisal (<1ms)
 curl -X POST http://localhost:8000/v1/appraise \
+  -H "Authorization: Bearer soul_live_e20c..." \
   -H "Content-Type: application/json" \
   -d '{"text": "The landlord slipped an eviction notice under my door."}'
 
 # 2. Anti-Bluntness Harmonization
 curl -X POST http://localhost:8000/v1/harmonize \
+  -H "Authorization: Bearer soul_live_e20c..." \
   -H "Content-Type: application/json" \
   -d '{
     "user_message": "Mama tummy hurty waaa boo-boo!",
@@ -258,7 +304,7 @@ curl -X POST http://localhost:8000/v1/harmonize \
 
 ## 🧪 Test Suite
 
-Run the full automated test suite (41 test specifications):
+Run the full automated test suite (45 test specifications):
 
 ```bash
 pytest tests/ -v

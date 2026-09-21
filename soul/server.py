@@ -17,12 +17,15 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+import os
 import soul
 from soul import appraise, respond
 from soul.agent.attuned_agent import AttunedAgent
+from soul.engine.api_key_manager import APIKeyManager
 from soul.engine.appraiser import SoulAppraiser
 from soul.engine.harmonizer import BluntnessAuditor, ResponseHarmonizer
 from soul.schemas.appraisal import SubjectAppraisalResult
+from fastapi import Depends, Header
 
 # Initialize FastAPI App
 app = FastAPI(
@@ -47,6 +50,35 @@ _appraiser = SoulAppraiser()
 _auditor = BluntnessAuditor()
 _harmonizer = ResponseHarmonizer(auditor=_auditor)
 _agent = AttunedAgent(appraiser=_appraiser)
+_key_manager = APIKeyManager()
+
+
+def get_current_client(
+    authorization: Optional[str] = Header(None),
+    x_api_key: Optional[str] = Header(None),
+) -> Optional[dict]:
+    """Extracts and validates API key if provided; enforces authentication if SOUL_REQUIRE_AUTH=1."""
+    token = None
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization[7:].strip()
+    elif x_api_key:
+        token = x_api_key.strip()
+
+    require_auth = os.getenv("SOUL_REQUIRE_AUTH", "0") in ("1", "true", "True")
+
+    if token:
+        if _key_manager.validate_key(token):
+            _key_manager.record_usage(token)
+            return _key_manager.get_key_info(token)
+        elif require_auth:
+            raise HTTPException(status_code=401, detail="Invalid or revoked Soul API key.")
+    elif require_auth:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication required. Generate a key via POST /v1/auth/keys/generate or provide Authorization: Bearer <key>"
+        )
+
+    return None
 
 
 # --- Request & Response Schemas ---
@@ -102,6 +134,21 @@ class OpenAIChatRequest(BaseModel):
     stream: Optional[bool] = False
 
 
+class GenerateKeyRequest(BaseModel):
+    client_name: str = Field(..., min_length=1, description="Your project name, organization, or developer name")
+    email: Optional[str] = Field("", description="Optional contact email for developer notifications")
+
+
+class GenerateKeyResponse(BaseModel):
+    api_key: str = Field(..., description="Your secret API key. Store this securely.")
+    key_prefix: str = Field(..., description="Public key identifier")
+    client_name: str = Field(..., description="Registered project or developer name")
+    tier: str = Field(..., description="Assigned tier (e.g. free)")
+    created_at: float = Field(..., description="Unix timestamp of key generation")
+    rate_limit: str = Field(..., description="Allowed requests per minute")
+    message: str = Field(..., description="Instructions on how to use this key")
+
+
 # --- Endpoints ---
 
 @app.get("/", tags=["Info"])
@@ -112,6 +159,8 @@ def root():
         "status": "online",
         "system_one_latency_target": "<1.0ms",
         "endpoints": {
+            "generate_api_key": "POST /v1/auth/keys/generate",
+            "verify_api_key": "GET /v1/auth/keys/info",
             "appraise": "POST /v1/appraise",
             "harmonize": "POST /v1/harmonize",
             "respond": "POST /v1/respond",
@@ -119,6 +168,27 @@ def root():
             "models": "GET /v1/models",
             "docs": "/docs",
         },
+    }
+
+
+@app.post("/v1/auth/keys/generate", response_model=GenerateKeyResponse, tags=["Self-Service API Keys"])
+def generate_api_key(req: GenerateKeyRequest):
+    """Generates a personal API key so anyone can integrate Soul into their app or pipeline."""
+    key_info = _key_manager.generate_key(client_name=req.client_name, email=req.email or "")
+    return GenerateKeyResponse(**key_info)
+
+
+@app.get("/v1/auth/keys/info", tags=["Self-Service API Keys"])
+def get_key_info(client: Optional[dict] = Depends(get_current_client)):
+    """Retrieves usage statistics and tier info for your personal API key."""
+    if not client:
+        raise HTTPException(
+            status_code=401,
+            detail="No valid API key provided. Pass Authorization: Bearer <key> in headers."
+        )
+    return {
+        "status": "active",
+        "client": client,
     }
 
 
