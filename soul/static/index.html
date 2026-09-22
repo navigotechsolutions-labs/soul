@@ -312,6 +312,36 @@
         <!-- RIGHT: LIVE HUMAN INSPECTOR (5 COLS) -->
         <div class="lg:col-span-5 space-y-4">
           
+          <!-- LIVING PSYCHOLOGICAL AURA ORB -->
+          <div class="p-5 rounded-2xl bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 shadow-sm relative overflow-hidden flex flex-col items-center">
+            <div class="w-full flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Psychological Aura Orb</span>
+              </div>
+              <span id="ide-orb-status-badge" class="orb-state-badge text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-semibold">Attuned & Serene</span>
+            </div>
+
+            <div class="aura-orb-container my-2 relative">
+              <div class="aura-halo-ring w-44 h-44 border border-emerald-500/20"></div>
+              <canvas id="ide-aura-orb" width="180" height="180" class="aura-canvas"></canvas>
+            </div>
+
+            <div class="flex items-center justify-between w-full pt-2 border-t border-slate-100 dark:border-dark-800 text-[11px] font-mono text-slate-500">
+              <span id="ide-orb-val-metric">V: +0.65 (Calm)</span>
+              <span id="ide-orb-aro-metric">A: 0.20 (Steady)</span>
+              <span id="ide-orb-freq-metric">60 BPM Pulse</span>
+            </div>
+
+            <!-- 1-Click Interactive Mood Demonstrator -->
+            <div class="flex flex-wrap gap-1.5 justify-center w-full mt-3 pt-2 border-t border-slate-100 dark:border-dark-800">
+              <button onclick="previewAuraEmotion('serenity')" class="px-2 py-1 rounded-lg text-[10px] font-medium bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 transition">🌿 Serene</button>
+              <button onclick="previewAuraEmotion('anxiety')" class="px-2 py-1 rounded-lg text-[10px] font-medium bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 transition">⚡ High Panic</button>
+              <button onclick="previewAuraEmotion('grief')" class="px-2 py-1 rounded-lg text-[10px] font-medium bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 transition">💔 Deep Grief</button>
+              <button onclick="previewAuraEmotion('attuned')" class="px-2 py-1 rounded-lg text-[10px] font-medium bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 transition">✨ Attuned</button>
+            </div>
+          </div>
+
           <!-- OVERALL HUMAN PRESENCE SCORE -->
           <div class="p-5 rounded-2xl bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 shadow-sm space-y-3">
             <div class="flex items-center justify-between">
@@ -380,8 +410,18 @@
     <section id="tab-playground" class="hidden space-y-6">
       
       <!-- HERO BANNER -->
-      <div class="text-center max-w-4xl mx-auto space-y-4 pt-3 pb-3">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 shadow-inner">
+      <div class="text-center max-w-4xl mx-auto space-y-4 pt-3 pb-3 flex flex-col items-center">
+        
+        <!-- CENTRAL AURA ORB HERO VISUAL -->
+        <div class="aura-orb-container my-1 relative cursor-pointer" onclick="pulseHeroAura()" title="Click to pulse emotional resonance">
+          <div class="aura-halo-ring w-52 h-52 border border-emerald-500/25"></div>
+          <canvas id="hero-aura-orb" width="210" height="210" class="aura-canvas"></canvas>
+          <div class="absolute -bottom-3 px-3 py-0.5 rounded-full text-[11px] font-mono font-bold bg-white/90 dark:bg-dark-900/90 border border-slate-200 dark:border-dark-700 shadow-sm text-emerald-600 dark:text-emerald-400 backdrop-blur-sm">
+            <span id="hero-orb-affect-label">Harmonic Baseline • System 1</span>
+          </div>
+        </div>
+
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 shadow-inner mt-2">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
           <span>System 1 Non-Autoregressive Cognitive Perception (&lt;1.0ms)</span>
         </div>

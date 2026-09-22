@@ -251,6 +251,20 @@ function displayResults(appraisal, harmonized, networkLatency) {
   document.getElementById("bar-dom").style.width = `${domPct}%`;
   document.getElementById("bar-dom-text").innerText = vad.dominance.toFixed(2);
 
+  // Sync Living Aura Orbs with appraisal affect
+  if (heroAuraOrbInstance) {
+    heroAuraOrbInstance.setEmotion(vad.valence, vad.arousal, vad.dominance);
+    heroAuraOrbInstance.pulse(0.9);
+  }
+  if (ideAuraOrbInstance) {
+    ideAuraOrbInstance.setEmotion(vad.valence, vad.arousal, vad.dominance);
+    ideAuraOrbInstance.pulse(0.9);
+  }
+  const heroLabel = document.getElementById("hero-orb-affect-label");
+  if (heroLabel) {
+    heroLabel.innerText = `${appraisal.adversity.appraisal_stance.toUpperCase()} STANCE • ${appraisal.sentiment.polarity.replace('_', ' ').toUpperCase()}`;
+  }
+
   // Dynamic 2D Radar Matrix Positioning
   const radarDot = document.getElementById("radar-dot");
   if (radarDot) {
@@ -274,6 +288,7 @@ function displayResults(appraisal, harmonized, networkLatency) {
   document.getElementById("bar-core-r").innerText = core.reach.toFixed(2);
   document.getElementById("bar-core-e-fill").style.width = `${core.endurance * 100}%`;
   document.getElementById("bar-core-e").innerText = core.endurance.toFixed(2);
+
 
   container.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
@@ -723,6 +738,37 @@ function renderIdeScorecard(data) {
   
   if (scoreVal) scoreVal.innerText = `${data.overall_human_score}`;
   if (scoreBar) scoreBar.style.width = `${data.overall_human_score}%`;
+
+  // Dynamically attune Aura Orb to human presence score
+  if (ideAuraOrbInstance) {
+    if (data.overall_human_score >= 80) {
+      // High human resonance: calm, radiant emerald
+      ideAuraOrbInstance.setEmotion(0.75, 0.2, 0.7);
+      ideAuraOrbInstance.pulse(0.4);
+    } else if (data.overall_human_score >= 50) {
+      // Moderate friction / mechanical: warm amber
+      ideAuraOrbInstance.setEmotion(0.1, 0.5, 0.5);
+      ideAuraOrbInstance.pulse(0.5);
+    } else {
+      // High AI slop / cold disconnect: turbulent rose/crimson
+      ideAuraOrbInstance.setEmotion(-0.65, 0.8, 0.25);
+      ideAuraOrbInstance.pulse(0.8);
+    }
+
+    const badge = document.getElementById("ide-orb-status-badge");
+    if (badge) {
+      if (data.overall_human_score >= 80) {
+        badge.innerText = "Authentic Attunement";
+        badge.className = "orb-state-badge text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-semibold";
+      } else if (data.overall_human_score >= 50) {
+        badge.innerText = "Sterile / Formulaic";
+        badge.className = "orb-state-badge text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 font-semibold";
+      } else {
+        badge.innerText = "Severe Slop Disconnect";
+        badge.className = "orb-state-badge text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/20 font-semibold";
+      }
+    }
+  }
   
   if (scoreBadge) {
     scoreBadge.innerText = data.status;
@@ -933,4 +979,303 @@ function copyHexCode(hex, name) {
   showToast(`Copied ${name} (${hex}) to clipboard!`);
 }
 
+// ==============================================================================
+// SOUL AURA ORB: Real-time Multi-Harmonic Emotional Shader & Visualizer
+// ==============================================================================
+class SoulAuraOrb {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) return;
+    this.ctx = this.canvas.getContext("2d");
+    this.width = this.canvas.width;
+    this.height = this.canvas.height;
+    this.centerX = this.width / 2;
+    this.centerY = this.height / 2;
+    this.radius = this.width * 0.36;
 
+    // Current State & Target State for smooth interpolation
+    this.valence = 0.5;   // [-1.0, 1.0]
+    this.arousal = 0.25;  // [0.0, 1.0]
+    this.dominance = 0.6; // [0.0, 1.0]
+
+    this.targetValence = 0.5;
+    this.targetArousal = 0.25;
+    this.targetDominance = 0.6;
+
+    this.time = 0;
+    this.pulseEnergy = 0;
+    this.mouseX = this.centerX;
+    this.mouseY = this.centerY;
+    this.isHovered = false;
+
+    this.setupListeners();
+    this.animate();
+  }
+
+  setupListeners() {
+    this.canvas.addEventListener("mousemove", (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      this.mouseX = (e.clientX - rect.left) * (this.width / rect.width);
+      this.mouseY = (e.clientY - rect.top) * (this.height / rect.height);
+      this.isHovered = true;
+    });
+    this.canvas.addEventListener("mouseleave", () => {
+      this.isHovered = false;
+    });
+    this.canvas.addEventListener("click", () => {
+      this.pulse(1.0);
+    });
+  }
+
+  setEmotion(valence, arousal, dominance = 0.5) {
+    this.targetValence = Math.max(-1, Math.min(1, valence));
+    this.targetArousal = Math.max(0, Math.min(1, arousal));
+    this.targetDominance = Math.max(0, Math.min(1, dominance));
+  }
+
+  pulse(amount = 0.6) {
+    this.pulseEnergy = Math.min(1.5, this.pulseEnergy + amount);
+  }
+
+  getColorStops() {
+    // Interpolate between emotional palettes:
+    // Low valence (-1) + High Arousal (1) = Panic Crimson & Amber
+    // Low valence (-1) + Low Arousal (0) = Somber Void & Deep Violet
+    // High valence (1) + High Arousal (1) = Luminous Cyan & Electric Mint
+    // High valence (1) + Low Arousal (0) = Serene Emerald & Jade
+    const v = this.valence; // -1 to 1
+    const a = this.arousal; // 0 to 1
+
+    let c1, c2, c3;
+
+    if (v < -0.2) {
+      if (a > 0.4) {
+        // Acute panic / crisis
+        c1 = [244, 63, 94];   // Rose #F43F5E
+        c2 = [245, 158, 11];  // Amber #F59E0B
+        c3 = [225, 29, 72];   // Crimson #E11D48
+      } else {
+        // Deep depression / grief / void
+        c1 = [124, 58, 237];  // Violet #7C3AED
+        c2 = [217, 70, 239];  // Fuchsia
+        c3 = [30, 27, 75];    // Dark indigo
+      }
+    } else if (v > 0.2) {
+      if (a > 0.4) {
+        // Vibrant enthusiasm / joy
+        c1 = [6, 182, 212];   // Cyan #06B6D4
+        c2 = [16, 185, 129];  // Emerald #10B981
+        c3 = [52, 211, 153];  // Mint #34D399
+      } else {
+        // Serene calm / safe attunement
+        c1 = [16, 185, 129];  // Emerald
+        c2 = [20, 184, 166];  // Teal #14B8A6
+        c3 = [6, 182, 212];   // Cyan
+      }
+    } else {
+      // Neutral baseline
+      c1 = [16, 185, 129];
+      c2 = [59, 130, 246];  // Blue
+      c3 = [99, 102, 241];  // Indigo
+    }
+
+    return {
+      inner: `rgb(${c1[0]}, ${c1[1]}, ${c1[2]})`,
+      mid: `rgba(${c2[0]}, ${c2[1]}, ${c2[2]}, 0.85)`,
+      outer: `rgba(${c3[0]}, ${c3[1]}, ${c3[2]}, 0.15)`,
+      glow: `rgba(${c1[0]}, ${c1[1]}, ${c1[2]}, ${0.4 + this.arousal * 0.4})`
+    };
+  }
+
+  animate() {
+    requestAnimationFrame(() => this.animate());
+
+    // Smooth physics interpolation
+    this.valence += (this.targetValence - this.valence) * 0.08;
+    this.arousal += (this.targetArousal - this.arousal) * 0.08;
+    this.dominance += (this.targetDominance - this.dominance) * 0.08;
+
+    // Pulse decay
+    this.pulseEnergy *= 0.93;
+    const speed = 0.015 + this.arousal * 0.045 + this.pulseEnergy * 0.04;
+    this.time += speed;
+
+    this.draw();
+  }
+
+  draw() {
+    const ctx = this.ctx;
+    ctx.clearRect(0, 0, this.width, this.height);
+
+    const colors = this.getColorStops();
+    const currentRadius = this.radius * (0.92 + this.dominance * 0.16 + this.pulseEnergy * 0.2);
+
+    // Mouse tilt offset
+    let targetOffsetX = 0;
+    let targetOffsetY = 0;
+    if (this.isHovered) {
+      targetOffsetX = (this.mouseX - this.centerX) * 0.15;
+      targetOffsetY = (this.mouseY - this.centerY) * 0.15;
+    }
+    const cx = this.centerX + targetOffsetX;
+    const cy = this.centerY + targetOffsetY;
+
+    // 1. Exterior Atmospheric Glow
+    const glowGrad = ctx.createRadialGradient(cx, cy, currentRadius * 0.5, cx, cy, currentRadius * 1.5);
+    glowGrad.addColorStop(0, colors.glow);
+    glowGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = glowGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, currentRadius * 1.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 2. Multi-Harmonic Organic Deformed Blob
+    ctx.save();
+    ctx.beginPath();
+    const numPoints = 64;
+    const turbulence = (0.04 + this.arousal * 0.12 + this.pulseEnergy * 0.15);
+
+    for (let i = 0; i <= numPoints; i++) {
+      const angle = (i / numPoints) * Math.PI * 2;
+      // Synthesize 3 harmonic waves
+      const wave1 = Math.sin(angle * 3 + this.time * 2.2);
+      const wave2 = Math.cos(angle * 5 - this.time * 1.8);
+      const wave3 = Math.sin(angle * 2 + this.time * 3.4);
+      const deformation = 1.0 + (wave1 * 0.5 + wave2 * 0.3 + wave3 * 0.2) * turbulence;
+
+      const r = currentRadius * deformation;
+      const x = cx + Math.cos(angle) * r;
+      const y = cy + Math.sin(angle) * r;
+
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    }
+    ctx.closePath();
+
+    // Core Radial Gradient
+    const coreGrad = ctx.createRadialGradient(
+      cx - currentRadius * 0.3,
+      cy - currentRadius * 0.35,
+      currentRadius * 0.1,
+      cx,
+      cy,
+      currentRadius * 1.1
+    );
+    coreGrad.addColorStop(0, "#FFFFFF");
+    coreGrad.addColorStop(0.2, colors.inner);
+    coreGrad.addColorStop(0.65, colors.mid);
+    coreGrad.addColorStop(1, colors.outer);
+
+    ctx.fillStyle = coreGrad;
+    ctx.shadowColor = colors.inner;
+    ctx.shadowBlur = 24 + this.arousal * 20;
+    ctx.fill();
+    ctx.restore();
+
+    // 3. Specular Caustic Glint
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(
+      cx - currentRadius * 0.28,
+      cy - currentRadius * 0.32,
+      currentRadius * 0.26,
+      currentRadius * 0.14,
+      Math.PI / 4,
+      0,
+      Math.PI * 2
+    );
+    ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
+    ctx.filter = "blur(4px)";
+    ctx.fill();
+    ctx.restore();
+
+    // 4. Harmonic Pulse Wave Ring (when pulsed)
+    if (this.pulseEnergy > 0.05) {
+      ctx.save();
+      ctx.beginPath();
+      const ringRadius = currentRadius * (1.1 + (1.5 - this.pulseEnergy) * 0.4);
+      ctx.arc(cx, cy, ringRadius, 0, Math.PI * 2);
+      ctx.strokeStyle = colors.inner;
+      ctx.lineWidth = 2 * this.pulseEnergy;
+      ctx.globalAlpha = Math.max(0, this.pulseEnergy * 0.6);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+}
+
+// Global Orb Instances
+let ideAuraOrbInstance = null;
+let heroAuraOrbInstance = null;
+
+function initAuraOrbs() {
+  if (document.getElementById("ide-aura-orb")) {
+    ideAuraOrbInstance = new SoulAuraOrb("ide-aura-orb");
+  }
+  if (document.getElementById("hero-aura-orb")) {
+    heroAuraOrbInstance = new SoulAuraOrb("hero-aura-orb");
+  }
+}
+
+function pulseHeroAura() {
+  if (heroAuraOrbInstance) {
+    heroAuraOrbInstance.pulse(1.2);
+    showToast("Harmonic resonance pulse emitted ✨");
+  }
+}
+
+function previewAuraEmotion(emotion) {
+  let v = 0.5, a = 0.2, d = 0.5, label = "Serene Baseline", bpm = "60 BPM Pulse";
+  
+  if (emotion === "serenity") {
+    v = 0.75; a = 0.15; d = 0.65;
+    label = "Deep Serenity";
+    bpm = "54 BPM Pulse";
+  } else if (emotion === "anxiety") {
+    v = -0.7; a = 0.92; d = 0.2;
+    label = "Acute Panic Shock";
+    bpm = "142 BPM Pulse";
+  } else if (emotion === "grief") {
+    v = -0.9; a = 0.25; d = 0.15;
+    label = "Profound Bereavement";
+    bpm = "48 BPM Pulse";
+  } else if (emotion === "attuned") {
+    v = 0.85; a = 0.45; d = 0.8;
+    label = "Soul Attuned & Protected";
+    bpm = "68 BPM Pulse";
+  }
+
+  if (ideAuraOrbInstance) {
+    ideAuraOrbInstance.setEmotion(v, a, d);
+    ideAuraOrbInstance.pulse(0.8);
+  }
+  if (heroAuraOrbInstance) {
+    heroAuraOrbInstance.setEmotion(v, a, d);
+    heroAuraOrbInstance.pulse(0.8);
+  }
+
+  // Update IDE Orb HUD metrics
+  const badge = document.getElementById("ide-orb-status-badge");
+  if (badge) badge.innerText = label;
+  const valEl = document.getElementById("ide-orb-val-metric");
+  if (valEl) valEl.innerText = `V: ${(v >= 0 ? "+" : "") + v.toFixed(2)}`;
+  const aroEl = document.getElementById("ide-orb-aro-metric");
+  if (aroEl) aroEl.innerText = `A: ${a.toFixed(2)}`;
+  const freqEl = document.getElementById("ide-orb-freq-metric");
+  if (freqEl) freqEl.innerText = bpm;
+
+  const heroLabel = document.getElementById("hero-orb-affect-label");
+  if (heroLabel) heroLabel.innerText = `${label} • System 1`;
+
+  showToast(`Aura Orb attuned to: ${label}`);
+}
+
+// Hook Orb into page lifecycle
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    initAuraOrbs();
+  }, 100);
+});
