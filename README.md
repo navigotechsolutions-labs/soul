@@ -64,6 +64,8 @@ Soul solves this through two synchronized capabilities:
 
 ## 🚀 Quickstart
 
+> 📖 **Looking for the complete manual?** Check out the full [**User Guide (`USER_GUIDE.md`)**](USER_GUIDE.md) for detailed Python, OpenAI, REST API, Web UI, and Docker tutorials.
+
 ### Installation
 
 Install from source or local distribution:
