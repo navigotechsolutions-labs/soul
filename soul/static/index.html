@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Soul Engine — System 1 Affective Perception & Anti-Bluntness AI</title>
   
+  <!-- Official Vector Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="alternate icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/static/favicon.svg" />
+
   <!-- Immediate Theme Initialization (Prevents Screen Flash) -->
   <script>
     (function() {
@@ -100,29 +105,36 @@
       <!-- NAVIGATION TABS -->
       <nav class="hidden lg:flex items-center space-x-1">
         <button onclick="switchTab('playground')" id="nav-playground" class="nav-tab active px-3.5 py-2 rounded-xl text-sm font-medium transition text-slate-900 dark:text-white bg-slate-100 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 shadow-sm flex items-center gap-2">
-          <span>⚡ Live Playground</span>
+          <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <span>Live Playground</span>
         </button>
         <button onclick="switchTab('keys')" id="nav-keys" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-medium transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-dark-800/60 flex items-center gap-2">
-          <span>🔑 Soul API Keys</span>
+          <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+          <span>Soul API Keys</span>
         </button>
         <button onclick="switchTab('snippets')" id="nav-snippets" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-medium transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-dark-800/60 flex items-center gap-2">
-          <span>💻 Code & SDKs</span>
+          <svg class="w-4 h-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          <span>Code & SDKs</span>
         </button>
         <button onclick="switchTab('brand')" id="nav-brand" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-medium transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-dark-800/60 flex items-center gap-2">
-          <span>🧬 Brand & Colors</span>
+          <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4 4 4 0 014-4h1a4 4 0 014 4 4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+          <span>Brand & Colors</span>
         </button>
         <a href="/docs" target="_blank" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-dark-800/60 flex items-center gap-1.5 transition">
-          <span>📖 Swagger</span>
-          <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          <span>Swagger</span>
+          <svg class="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
         </a>
       </nav>
 
       <!-- RIGHT SIDE: THEME TOGGLE & AUTH -->
       <div class="flex items-center space-x-3">
         
-        <!-- DAYLIGHT / NIGHT THEME TOGGLE BUTTON -->
+        <!-- DAYLIGHT / NIGHT THEME TOGGLE BUTTON (SVG Vector) -->
         <button onclick="toggleTheme()" id="theme-toggle-btn" class="p-2.5 rounded-xl border border-slate-200 dark:border-dark-700 bg-slate-100 dark:bg-dark-800 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 shadow-sm transition hover:scale-105 active:scale-95" title="Switch Theme">
-          <span id="theme-icon" class="text-base select-none">🌙</span>
+          <span id="theme-icon" class="flex items-center justify-center">
+            <svg class="w-4 h-4 text-slate-700 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          </span>
         </button>
 
         <!-- AUTH USER / LOGIN BUTTON -->
@@ -168,16 +180,20 @@
         <!-- LIVE METRIC BADGES -->
         <div class="flex flex-wrap items-center justify-center gap-3 pt-2 text-xs font-mono text-slate-600 dark:text-slate-400">
           <div class="flex items-center gap-1.5 bg-white dark:bg-dark-850 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-dark-700 shadow-sm">
-            <span class="text-emerald-600 dark:text-emerald-400 font-bold">⚡ 0.98ms</span> Target Latency
+            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="text-emerald-600 dark:text-emerald-400 font-bold">0.98ms</span> Target Latency
           </div>
           <div class="flex items-center gap-1.5 bg-white dark:bg-dark-850 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-dark-700 shadow-sm">
-            <span class="text-cyan-600 dark:text-cyan-400 font-bold">🎯 6</span> Lazarus Dimensions
+            <svg class="w-3.5 h-3.5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke-width="2"/></svg>
+            <span class="text-cyan-600 dark:text-cyan-400 font-bold">6</span> Lazarus Dimensions
           </div>
           <div class="flex items-center gap-1.5 bg-white dark:bg-dark-850 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-dark-700 shadow-sm">
-            <span class="text-purple-600 dark:text-purple-400 font-bold">🧠 27</span> GoEmotions Spectrum
+            <svg class="w-3.5 h-3.5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            <span class="text-purple-600 dark:text-purple-400 font-bold">27</span> GoEmotions Spectrum
           </div>
           <div class="flex items-center gap-1.5 bg-white dark:bg-dark-850 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-dark-700 shadow-sm">
-            <span class="text-emerald-600 dark:text-emerald-400 font-bold">🛡️ 100%</span> Anti-Bluntness Shield
+            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <span class="text-emerald-600 dark:text-emerald-400 font-bold">100%</span> Anti-Bluntness Shield
           </div>
         </div>
       </div>
@@ -194,22 +210,27 @@
             <span class="text-[11px] text-slate-500">Click any preset to load instantly:</span>
           </div>
 
-          <!-- Quick Preset Buttons -->
+          <!-- Quick Preset Buttons with Vector Icons -->
           <div class="flex flex-wrap gap-2 pt-1">
             <button onclick="loadPreset('layoff')" class="preset-pill px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-dark-800 dark:hover:bg-dark-700 text-slate-700 hover:text-emerald-700 dark:text-slate-300 dark:hover:text-emerald-300 border border-slate-200 dark:border-dark-700 text-xs font-medium flex items-center gap-1.5">
-              <span>💼 Sudden Layoff</span>
+              <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              <span>Sudden Layoff</span>
             </button>
             <button onclick="loadPreset('exam_fail')" class="preset-pill px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-dark-800 dark:hover:bg-dark-700 text-slate-700 hover:text-emerald-700 dark:text-slate-300 dark:hover:text-emerald-300 border border-slate-200 dark:border-dark-700 text-xs font-medium flex items-center gap-1.5">
-              <span>🔥 Burnout & Impostor</span>
+              <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/></svg>
+              <span>Burnout & Impostor</span>
             </button>
             <button onclick="loadPreset('bereavement')" class="preset-pill px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-dark-800 dark:hover:bg-dark-700 text-slate-700 hover:text-emerald-700 dark:text-slate-300 dark:hover:text-emerald-300 border border-slate-200 dark:border-dark-700 text-xs font-medium flex items-center gap-1.5">
-              <span>💔 Grief & Bereavement</span>
+              <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+              <span>Grief & Bereavement</span>
             </button>
             <button onclick="loadPreset('pharmacy_distress')" class="preset-pill px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-dark-800 dark:hover:bg-dark-700 text-slate-700 hover:text-emerald-700 dark:text-slate-300 dark:hover:text-emerald-300 border border-slate-200 dark:border-dark-700 text-xs font-medium flex items-center gap-1.5">
-              <span>🚨 Financial / Medical Distress</span>
+              <svg class="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              <span>Financial / Medical Distress</span>
             </button>
             <button onclick="loadPreset('relationship_hurt')" class="preset-pill px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-dark-800 dark:hover:bg-dark-700 text-slate-700 hover:text-emerald-700 dark:text-slate-300 dark:hover:text-emerald-300 border border-slate-200 dark:border-dark-700 text-xs font-medium flex items-center gap-1.5">
-              <span>⚡ Interpersonal Conflict</span>
+              <svg class="w-3.5 h-3.5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+              <span>Interpersonal Conflict</span>
             </button>
           </div>
         </div>
@@ -225,7 +246,8 @@
             <span>Russell 3D VAD Space • Lazarus Appraisal • Stoltz CORE Quotient</span>
           </div>
           <button onclick="runAppraisal()" id="btn-appraise" class="w-full sm:w-auto px-7 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white dark:text-dark-950 font-bold text-sm shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2.5 transition transform active:scale-95">
-            <span>⚡ Run System 1 Appraisal (&lt;1ms)</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span>Run System 1 Appraisal (&lt;1ms)</span>
           </button>
         </div>
       </div>
@@ -275,7 +297,10 @@
             </div>
             <div id="cold-output" class="p-4 rounded-xl bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 text-sm text-slate-700 dark:text-slate-300 font-sans leading-relaxed whitespace-pre-line min-h-[140px]">
             </div>
-            <p class="text-xs text-slate-500">❌ Typical mistake: Skips human validation entirely and issues sterile directives to an anxious user.</p>
+            <div class="flex items-center gap-2 text-xs text-slate-500">
+              <svg class="w-3.5 h-3.5 text-rose-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              <span>Baseline observation: Skips human emotional validation and dives into sterile instructions.</span>
+            </div>
           </div>
 
           <!-- Soul Attuned AI -->
@@ -290,7 +315,10 @@
             </div>
             <div id="attuned-output" class="p-4 rounded-xl bg-emerald-50/40 dark:bg-dark-900 border border-emerald-200 dark:border-dark-700 text-sm text-slate-900 dark:text-slate-100 font-sans leading-relaxed whitespace-pre-line min-h-[140px] shadow-inner">
             </div>
-            <p class="text-xs text-emerald-700 dark:text-emerald-400 font-medium">✅ Validates emotional shock first to down-regulate acute anxiety, then delivers clear, grounded next steps.</p>
+            <div class="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400 font-medium">
+              <svg class="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span>Empathetic attunement: Stabilizes acute distress before delivering structured next steps.</span>
+            </div>
           </div>
         </div>
 
@@ -409,19 +437,26 @@
           <p class="text-sm text-slate-600 dark:text-slate-400">Generate personal Soul API keys (<code class="text-emerald-600 dark:text-emerald-400">soul_live_...</code>) for your apps, bots, servers, or CLI tools.</p>
         </div>
         <button onclick="openCreateKeyModal()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white dark:text-dark-950 font-bold text-sm shadow-md shadow-emerald-500/20 flex items-center gap-2 transition">
-          <span>+ Create New Key</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          <span>Create New Key</span>
         </button>
       </div>
 
       <!-- NEWLY CREATED KEY BANNER (shown only upon generation) -->
       <div id="key-revealed-banner" class="hidden p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/30 space-y-3">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">🎉 Secret Soul API Key Created Successfully</span>
+          <div class="flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
+            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Secret Soul API Key Created Successfully</span>
+          </div>
           <button onclick="dismissKeyBanner()" class="text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white">Dismiss</button>
         </div>
         <div class="flex items-center gap-2">
           <input type="text" id="revealed-key-value" readonly class="flex-1 bg-white dark:bg-dark-900 border border-emerald-300 dark:border-dark-700 rounded-xl px-4 py-2.5 text-sm font-mono text-emerald-700 dark:text-emerald-300 select-all" />
-          <button onclick="copyRevealedKey()" id="btn-copy-revealed" class="px-4 py-2.5 rounded-xl bg-emerald-500 text-white dark:text-dark-950 text-xs font-bold hover:bg-emerald-400 transition">Copy</button>
+          <button onclick="copyRevealedKey()" id="btn-copy-revealed" class="px-4 py-2.5 rounded-xl bg-emerald-500 text-white dark:text-dark-950 text-xs font-bold hover:bg-emerald-400 transition flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            <span>Copy</span>
+          </button>
         </div>
         <p class="text-xs text-slate-600 dark:text-slate-400">Keep this key secret. For your security, you will not be able to view the raw secret key again.</p>
       </div>
@@ -734,7 +769,9 @@ print(response.choices[0].message.content)</code></pre>
   <!-- ==================== AUTH MODAL (LOGIN / SIGNUP / GOOGLE) ==================== -->
   <div id="auth-modal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white dark:bg-dark-850 border border-slate-200 dark:border-dark-700 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl relative">
-      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg">✕</button>
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
 
       <div class="text-center space-y-1.5">
         <h3 id="modal-title" class="text-xl font-extrabold text-slate-900 dark:text-white">Welcome to Soul Engine</h3>
@@ -793,7 +830,9 @@ print(response.choices[0].message.content)</code></pre>
   <!-- CREATE KEY MODAL -->
   <div id="create-key-modal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white dark:bg-dark-850 border border-slate-200 dark:border-dark-700 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl relative">
-      <button onclick="closeCreateKeyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white">✕</button>
+      <button onclick="closeCreateKeyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
       <h3 class="text-lg font-bold text-slate-900 dark:text-white">Create Personal Soul API Key</h3>
       <div class="space-y-2">
         <label class="text-xs text-slate-600 dark:text-slate-400">Key Name / Project Identifier</label>

@@ -249,6 +249,15 @@ def dashboard():
     }
 
 
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    """Serves the brand vector favicon."""
+    fav = STATIC_DIR / "favicon.svg"
+    if fav.exists():
+        return FileResponse(str(fav), media_type="image/svg+xml")
+    return FileResponse(str(STATIC_DIR / "index.html"))
+
+
 # --- User Authentication & OAuth Endpoints ---
 
 @app.post("/v1/auth/signup", tags=["User Authentication"])

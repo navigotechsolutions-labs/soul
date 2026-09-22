@@ -47,10 +47,14 @@ function updateThemeIcon(theme) {
   const icon = document.getElementById("theme-icon");
   const btn = document.getElementById("theme-toggle-btn");
   if (icon) {
-    icon.innerText = theme === "dark" ? "☀️" : "🌙";
+    if (theme === "dark") {
+      icon.innerHTML = `<svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>`;
+    } else {
+      icon.innerHTML = `<svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>`;
+    }
   }
   if (btn) {
-    btn.title = theme === "dark" ? "Switch to Daylight Mode" : "Switch to Night Mode";
+    btn.title = theme === "dark" ? "Switch to Daylight Mode" : "Switch to Obsidian Night Mode";
   }
 }
 
@@ -126,7 +130,7 @@ async function runAppraisal() {
     alert("Appraisal request failed. Ensure the Soul API server is running.");
   } finally {
     btn.disabled = false;
-    btn.innerHTML = "<span>⚡ Run Appraisal in &lt;1ms</span>";
+    btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg><span>Run System 1 Appraisal (&lt;1ms)</span>`;
   }
 }
 
