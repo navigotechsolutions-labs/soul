@@ -20,9 +20,39 @@ const PRESETS = {
 
 // --- Initialization ---
 document.addEventListener("DOMContentLoaded", () => {
+  initTheme();
   loadPreset("layoff");
   checkCurrentUser();
 });
+
+// --- Theme Toggle (Daylight / Night) ---
+function initTheme() {
+  const isDark = document.documentElement.classList.contains("dark");
+  updateThemeIcon(isDark ? "dark" : "light");
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.classList.contains("dark");
+  const newTheme = isDark ? "light" : "dark";
+  if (newTheme === "dark") {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+  localStorage.setItem("soul_theme", newTheme);
+  updateThemeIcon(newTheme);
+}
+
+function updateThemeIcon(theme) {
+  const icon = document.getElementById("theme-icon");
+  const btn = document.getElementById("theme-toggle-btn");
+  if (icon) {
+    icon.innerText = theme === "dark" ? "☀️" : "🌙";
+  }
+  if (btn) {
+    btn.title = theme === "dark" ? "Switch to Daylight Mode" : "Switch to Night Mode";
+  }
+}
 
 // --- Tab Navigation ---
 function switchTab(tabName) {
