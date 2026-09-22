@@ -11,26 +11,34 @@ Provides ultra-fast sub-millisecond endpoints for:
 
 import time
 import uuid
+import os
+from pathlib import Path
 from typing import Any, Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
-import os
 import soul
 from soul import appraise, respond
 from soul.agent.attuned_agent import AttunedAgent
+from soul.auth import (
+    UserManager,
+    create_access_token,
+    decode_access_token,
+    verify_google_token,
+)
 from soul.engine.api_key_manager import APIKeyManager
 from soul.engine.appraiser import SoulAppraiser
 from soul.engine.harmonizer import BluntnessAuditor, ResponseHarmonizer
 from soul.schemas.appraisal import SubjectAppraisalResult
-from fastapi import Depends, Header
 
 # Initialize FastAPI App
 app = FastAPI(
     title="Soul Engine API",
-    description="Fast System 1 Cognitive Appraisal & Anti-Bluntness Harmonization API for AI Agents",
+    description="Fast System 1 Cognitive Appraisal, Anti-Bluntness SaaS & OpenAI Proxy Gateway",
     version=soul.__version__,
     docs_url="/docs",
     redoc_url="/redoc",
@@ -45,19 +53,43 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Static files directory for SaaS Frontend
+STATIC_DIR = Path(__file__).parent / "static"
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
 # Singletons
 _appraiser = SoulAppraiser()
 _auditor = BluntnessAuditor()
 _harmonizer = ResponseHarmonizer(auditor=_auditor)
 _agent = AttunedAgent(appraiser=_appraiser)
 _key_manager = APIKeyManager()
+_user_manager = UserManager()
+
+
+def get_current_user(authorization: Optional[str] = Header(None)) -> dict[str, Any]:
+    """Extracts and validates JWT Bearer access token for logged-in users."""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication token required. Please sign in or pass Authorization: Bearer <jwt_token>"
+        )
+    token = authorization[7:].strip()
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Session expired or invalid token. Please sign in again.")
+    
+    user = _user_manager.get_user_by_id(payload["sub"])
+    if not user or not user.get("is_active"):
+        raise HTTPException(status_code=401, detail="User account not found or suspended.")
+    return user
 
 
 def get_current_client(
     authorization: Optional[str] = Header(None),
     x_api_key: Optional[str] = Header(None),
 ) -> Optional[dict]:
-    """Extracts and validates API key if provided; enforces authentication if SOUL_REQUIRE_AUTH=1."""
+    """Extracts and validates API key or Bearer token; enforces authentication if SOUL_REQUIRE_AUTH=1."""
     token = None
     if authorization and authorization.startswith("Bearer "):
         token = authorization[7:].strip()
@@ -67,6 +99,12 @@ def get_current_client(
     require_auth = os.getenv("SOUL_REQUIRE_AUTH", "0") in ("1", "true", "True")
 
     if token:
+        # Check user database first (User-created API keys)
+        user_key_info = _user_manager.validate_api_key(token)
+        if user_key_info:
+            return user_key_info
+
+        # Check self-service anonymous key manager
         if _key_manager.validate_key(token):
             _key_manager.record_usage(token)
             return _key_manager.get_key_info(token)
@@ -75,7 +113,7 @@ def get_current_client(
     elif require_auth:
         raise HTTPException(
             status_code=401,
-            detail="Authentication required. Generate a key via POST /v1/auth/keys/generate or provide Authorization: Bearer <key>"
+            detail="Authentication required. Generate a key or provide Authorization: Bearer <key>"
         )
 
     return None
@@ -149,27 +187,168 @@ class GenerateKeyResponse(BaseModel):
     message: str = Field(..., description="Instructions on how to use this key")
 
 
+class UserSignupRequest(BaseModel):
+    email: str = Field(..., min_length=3, description="User email address")
+    password: str = Field(..., min_length=6, description="Password (min 6 characters)")
+    full_name: Optional[str] = Field(None, description="Full name or developer alias")
+
+
+class UserLoginRequest(BaseModel):
+    email: str = Field(..., min_length=3)
+    password: str = Field(..., min_length=1)
+
+
+class GoogleLoginRequest(BaseModel):
+    token: str = Field(..., min_length=1, description="Google OAuth ID token or access token")
+
+
+class CreateUserKeyRequest(BaseModel):
+    name: Optional[str] = Field("Production Key", min_length=1, description="Friendly name for the API key")
+
+
 # --- Endpoints ---
 
 @app.get("/", tags=["Info"])
-def root():
+def root(accept: Optional[str] = Header(None)):
+    """Serves the interactive SaaS Web Portal for browsers, or API metadata for JSON clients."""
+    index_file = STATIC_DIR / "index.html"
+    if index_file.exists() and accept and "text/html" in accept and "application/json" not in accept:
+        return FileResponse(str(index_file))
+
     return {
         "service": "Soul Engine API",
         "version": soul.__version__,
         "status": "online",
         "system_one_latency_target": "<1.0ms",
         "endpoints": {
-            "generate_api_key": "POST /v1/auth/keys/generate",
-            "verify_api_key": "GET /v1/auth/keys/info",
+            "web_portal": "/dashboard",
+            "signup": "POST /v1/auth/signup",
+            "login": "POST /v1/auth/login",
+            "google_login": "POST /v1/auth/google",
+            "me": "GET /v1/auth/me",
+            "list_keys": "GET /v1/keys",
+            "create_key": "POST /v1/keys",
             "appraise": "POST /v1/appraise",
             "harmonize": "POST /v1/harmonize",
             "respond": "POST /v1/respond",
             "openai_proxy": "POST /v1/chat/completions",
-            "models": "GET /v1/models",
             "docs": "/docs",
         },
     }
 
+
+@app.get("/dashboard", tags=["Web Portal"])
+def dashboard():
+    """Serves the interactive SaaS Web Portal."""
+    index_file = STATIC_DIR / "index.html"
+    if index_file.exists():
+        return FileResponse(str(index_file))
+    return {
+        "service": "Soul Engine API",
+        "message": "Web portal file not found. Use REST endpoints directly."
+    }
+
+
+# --- User Authentication & OAuth Endpoints ---
+
+@app.post("/v1/auth/signup", tags=["User Authentication"])
+def signup(req: UserSignupRequest):
+    """Registers a new user account with email and password, returning a JWT session token."""
+    try:
+        user = _user_manager.create_user_with_email(
+            email=req.email,
+            password=req.password,
+            full_name=req.full_name,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    token = create_access_token({"sub": user["id"], "email": user["email"], "tier": user["tier"]})
+    return {
+        "user": user,
+        "access_token": token,
+        "token_type": "bearer",
+    }
+
+
+@app.post("/v1/auth/login", tags=["User Authentication"])
+def login(req: UserLoginRequest):
+    """Authenticates with email and password, returning a JWT session token."""
+    user = _user_manager.authenticate_user(email=req.email, password=req.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid email or password.")
+
+    token = create_access_token({"sub": user["id"], "email": user["email"], "tier": user["tier"]})
+    # Remove password hash from response
+    user_clean = {k: v for k, v in user.items() if k != "password_hash"}
+    return {
+        "user": user_clean,
+        "access_token": token,
+        "token_type": "bearer",
+    }
+
+
+@app.post("/v1/auth/google", tags=["User Authentication"])
+def google_auth(req: GoogleLoginRequest):
+    """Authenticates via Google OAuth token, auto-provisioning the user if needed."""
+    profile = verify_google_token(req.token)
+    if not profile:
+        # For testing / demo purposes if an invalid or demo token is passed:
+        if req.token in ("demo_google_token", "test_google_token"):
+            profile = {
+                "email": "demo.google.user@navigotechsolutions.com",
+                "name": "Navigo Google User",
+                "picture": "",
+                "sub": "demo-google-sub-12345",
+            }
+        else:
+            raise HTTPException(status_code=401, detail="Invalid or expired Google OAuth token.")
+
+    user = _user_manager.find_or_create_google_user(
+        email=profile["email"],
+        full_name=profile.get("name", ""),
+        avatar_url=profile.get("picture", ""),
+        google_sub=profile.get("sub", ""),
+    )
+
+    token = create_access_token({"sub": user["id"], "email": user["email"], "tier": user["tier"]})
+    return {
+        "user": user,
+        "access_token": token,
+        "token_type": "bearer",
+    }
+
+
+@app.get("/v1/auth/me", tags=["User Authentication"])
+def get_me(user: dict = Depends(get_current_user)):
+    """Returns the current authenticated user profile."""
+    return user
+
+
+# --- User API Key Lifecycle Endpoints ---
+
+@app.get("/v1/keys", tags=["User API Keys"])
+def list_user_keys(user: dict = Depends(get_current_user)):
+    """Lists all active and revoked API keys belonging to the logged-in user."""
+    return _user_manager.list_api_keys_for_user(user["id"])
+
+
+@app.post("/v1/keys", tags=["User API Keys"])
+def create_user_key(req: CreateUserKeyRequest, user: dict = Depends(get_current_user)):
+    """Generates a new secret API key linked to the user's account."""
+    return _user_manager.create_api_key_for_user(user_id=user["id"], key_name=req.name or "API Key")
+
+
+@app.delete("/v1/keys/{key_id}", tags=["User API Keys"])
+def revoke_user_key(key_id: str, user: dict = Depends(get_current_user)):
+    """Permanently revokes an API key belonging to the user."""
+    success = _user_manager.revoke_api_key_for_user(user_id=user["id"], key_id=key_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="API key not found or does not belong to your account.")
+    return {"status": "revoked", "key_id": key_id}
+
+
+# --- Self-Service Quick Key Endpoints ---
 
 @app.post("/v1/auth/keys/generate", response_model=GenerateKeyResponse, tags=["Self-Service API Keys"])
 def generate_api_key(req: GenerateKeyRequest):
@@ -226,7 +405,7 @@ def list_models():
 
 
 @app.post("/v1/appraise", response_model=SubjectAppraisalResult, tags=["Appraisal"])
-def appraise_endpoint(req: AppraiseRequest):
+def appraise_endpoint(req: AppraiseRequest, client: Optional[dict] = Depends(get_current_client)):
     """Executes sub-millisecond System 1 cognitive appraisal on text."""
     try:
         return _appraiser.appraise(req.text, subject_id=req.subject_id)
@@ -235,7 +414,7 @@ def appraise_endpoint(req: AppraiseRequest):
 
 
 @app.post("/v1/harmonize", response_model=HarmonizeResponse, tags=["Harmonization"])
-def harmonize_endpoint(req: HarmonizeRequest):
+def harmonize_endpoint(req: HarmonizeRequest, client: Optional[dict] = Depends(get_current_client)):
     """Audits a candidate response and harmonizes it if bluntness is detected."""
     t0 = time.perf_counter()
 
@@ -265,7 +444,7 @@ def harmonize_endpoint(req: HarmonizeRequest):
 
 
 @app.post("/v1/respond", response_model=RespondResponse, tags=["Agent"])
-def respond_endpoint(req: RespondRequest):
+def respond_endpoint(req: RespondRequest, client: Optional[dict] = Depends(get_current_client)):
     """Generates an emotionally attuned, anti-blunt response from scratch."""
     t0 = time.perf_counter()
     agent_resp = _agent.respond(
@@ -286,7 +465,7 @@ def respond_endpoint(req: RespondRequest):
 
 
 @app.post("/v1/chat/completions", tags=["OpenAI Compatible"])
-def openai_chat_completions(req: OpenAIChatRequest):
+def openai_chat_completions(req: OpenAIChatRequest, client: Optional[dict] = Depends(get_current_client)):
     """OpenAI-compatible drop-in proxy endpoint.
     
     Any client using standard OpenAI SDK can point base_url to this server

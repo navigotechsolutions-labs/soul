@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soul Engine — System 1 Cognitive Appraisal & Anti-Bluntness SaaS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              500: '#10b981',
+              600: '#059669',
+            },
+            dark: {
+              900: '#0a0d12',
+              850: '#0f141c',
+              800: '#151b26',
+              700: '#1e2638',
+              600: '#2d3748',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-dark-900 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="border-b border-dark-700/60 bg-dark-900/80 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- LOGO -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('playground')">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+          <span class="text-xl">🧠</span>
+        </div>
+        <div>
+          <span class="text-lg font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">Soul Engine</span>
+          <span class="text-xs font-mono ml-1 px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">v0.3.0</span>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <nav class="hidden md:flex items-center space-x-1">
+        <button onclick="switchTab('playground')" id="nav-playground" class="nav-tab active px-3.5 py-2 rounded-lg text-sm font-medium transition text-white bg-dark-800 border border-dark-700">⚡ Live Playground</button>
+        <button onclick="switchTab('keys')" id="nav-keys" class="nav-tab px-3.5 py-2 rounded-lg text-sm font-medium transition text-slate-400 hover:text-white hover:bg-dark-800/60">🔑 API Keys & Usage</button>
+        <button onclick="switchTab('snippets')" id="nav-snippets" class="nav-tab px-3.5 py-2 rounded-lg text-sm font-medium transition text-slate-400 hover:text-white hover:bg-dark-800/60">💻 Code & OpenAI SDK</button>
+        <a href="/docs" target="_blank" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-dark-800/60 flex items-center gap-1.5">
+          <span>📖 Swagger Docs</span>
+          <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+      </nav>
+
+      <!-- AUTH USER / LOGIN BUTTON -->
+      <div class="flex items-center space-x-3" id="auth-header-container">
+        <div id="unauthenticated-block" class="flex items-center space-x-2">
+          <button onclick="openAuthModal('login')" class="text-sm font-semibold px-4 py-2 rounded-lg text-slate-300 hover:text-white transition">Sign In</button>
+          <button onclick="openAuthModal('signup')" class="text-sm font-semibold px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-dark-900 shadow-md shadow-emerald-500/20 transition">Create Account</button>
+        </div>
+        <div id="authenticated-block" class="hidden flex items-center space-x-3">
+          <div class="flex items-center space-x-2.5 bg-dark-800 px-3 py-1.5 rounded-lg border border-dark-700">
+            <div id="user-avatar" class="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs border border-emerald-500/30">U</div>
+            <span id="user-name" class="text-sm font-medium text-slate-200">User</span>
+          </div>
+          <button onclick="logout()" class="text-xs font-semibold px-2.5 py-1.5 rounded-md text-red-400 hover:bg-red-500/10 border border-red-500/20 transition">Logout</button>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+    <!-- ==================== TAB 1: PLAYGROUND ==================== -->
+    <section id="tab-playground" class="space-y-6">
+      
+      <!-- HERO BANNER -->
+      <div class="text-center max-w-3xl mx-auto space-y-3 pt-2 pb-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+          Sub-Millisecond System 1 Cognitive Appraisal (<1ms)
+        </div>
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
+          Understand True Feelings.<br/>
+          <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">Eliminate Blunt AI Responses.</span>
+        </h1>
+        <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+          Senses human psychological stakes, continuous Russell 3D affect, and Lazarus cognitive stress in <strong>0.98ms</strong>. Automatically prevents tone-deaf and cold AI replies.
+        </p>
+      </div>
+
+      <!-- INPUT BOX & PRESETS -->
+      <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 sm:p-6 shadow-xl space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <label class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <span>Subject Input or Sensitive Situation:</span>
+          </label>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs text-slate-500">Presets:</span>
+            <select id="preset-selector" onchange="loadPreset(this.value)" class="bg-dark-800 text-slate-300 text-xs rounded-lg px-3 py-1.5 border border-dark-700 focus:outline-none focus:border-emerald-500">
+              <option value="layoff">Workplace Layoff & Shock</option>
+              <option value="exam_fail">Burnout & Impostor Syndrome</option>
+              <option value="bereavement">Grief & Bereavement</option>
+              <option value="pharmacy_distress">Urgent Customer In Distress</option>
+              <option value="relationship_hurt">Interpersonal Vulnerability</option>
+            </select>
+          </div>
+        </div>
+
+        <textarea id="playground-input" rows="3" class="w-full bg-dark-800 text-slate-100 rounded-xl p-4 border border-dark-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 font-sans text-sm sm:text-base placeholder-slate-500" placeholder="Type or paste any sensitive statement here..."></textarea>
+
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+          <div class="text-xs text-slate-500 font-mono flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>Non-autoregressive • Russell 3D VAD • 27 GoEmotions</span>
+          </div>
+          <button onclick="runAppraisal()" id="btn-appraise" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-dark-900 font-bold text-sm shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 transition">
+            <span>⚡ Run Appraisal in &lt;1ms</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- RESULTS SECTION -->
+      <div id="results-container" class="space-y-6 hidden">
+        
+        <!-- KPI CARDS -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Latency</span>
+            <div id="kpi-latency" class="text-2xl font-mono font-bold text-emerald-400">0.98 ms</div>
+            <span class="text-[11px] text-emerald-500/80">System 1 Reflex</span>
+          </div>
+          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Adversity Score</span>
+            <div id="kpi-adversity" class="text-2xl font-mono font-bold text-rose-400">0.72</div>
+            <span id="kpi-stance" class="text-[11px] text-slate-400">THREAT STANCE</span>
+          </div>
+          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Primary Domain</span>
+            <div id="kpi-domain" class="text-lg font-bold text-amber-300 truncate">WORKPLACE</div>
+            <span class="text-[11px] text-slate-400">Context classification</span>
+          </div>
+          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Valence (Affect)</span>
+            <div id="kpi-valence" class="text-2xl font-mono font-bold text-rose-400">-0.75</div>
+            <span id="kpi-polarity" class="text-[11px] text-slate-400">VERY NEGATIVE</span>
+          </div>
+          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1 col-span-2 sm:col-span-1">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Empathy Demand</span>
+            <div id="kpi-empathy" class="text-2xl font-mono font-bold text-purple-400">0.83 / 1.0</div>
+            <span class="text-[11px] text-purple-400/80">High Intervention</span>
+          </div>
+        </div>
+
+        <!-- SIDE BY SIDE COMPARISON -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- Cold Standard AI -->
+          <div class="bg-dark-850 rounded-2xl border border-red-500/30 p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-red-400 tracking-wider uppercase flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                Standard AI (Blunt & Cold)
+              </span>
+              <span class="text-xs px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">Warmth: 0.05</span>
+            </div>
+            <div id="cold-output" class="p-4 rounded-xl bg-dark-900 border border-dark-700 text-sm text-slate-300 font-sans leading-relaxed whitespace-pre-line min-h-[140px]">
+            </div>
+            <p class="text-[11px] text-slate-500">Notice how default LLMs skip emotional validation and dive straight into sterile steps.</p>
+          </div>
+
+          <!-- Soul Attuned AI -->
+          <div class="bg-dark-850 rounded-2xl border border-emerald-500/40 p-5 space-y-3 relative overflow-hidden">
+            <div class="absolute -right-8 -top-8 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                Soul Attuned AI (Harmonized)
+              </span>
+              <span id="badge-harmonized" class="text-xs px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">HARMONIZED WITH EMPATHY</span>
+            </div>
+            <div id="attuned-output" class="p-4 rounded-xl bg-dark-900 border border-dark-700 text-sm text-slate-100 font-sans leading-relaxed whitespace-pre-line min-h-[140px]">
+            </div>
+            <p class="text-[11px] text-emerald-400/80">Validated with empathetic framing first, stabilizing anxiety before delivering task solutions.</p>
+          </div>
+        </div>
+
+        <!-- DEEP DIMENSION GAUGES -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Affect & Feeling States (Russell 3D VAD)</h3>
+            <div class="space-y-3 text-xs">
+              <div>
+                <div class="flex justify-between text-slate-400 mb-1">
+                  <span>Valence (Displeasure to Pleasure)</span>
+                  <span id="bar-val-text" class="font-mono text-slate-200">-0.75</span>
+                </div>
+                <div class="w-full bg-dark-800 h-2.5 rounded-full overflow-hidden">
+                  <div id="bar-val" class="bg-rose-500 h-full rounded-full" style="width: 25%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-slate-400 mb-1">
+                  <span>Arousal (Calm to Agitated)</span>
+                  <span id="bar-aro-text" class="font-mono text-slate-200">0.85</span>
+                </div>
+                <div class="w-full bg-dark-800 h-2.5 rounded-full overflow-hidden">
+                  <div id="bar-aro" class="bg-amber-400 h-full rounded-full" style="width: 85%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-slate-400 mb-1">
+                  <span>Dominance (Helpless to In Control)</span>
+                  <span id="bar-dom-text" class="font-mono text-slate-200">0.20</span>
+                </div>
+                <div class="w-full bg-dark-800 h-2.5 rounded-full overflow-hidden">
+                  <div id="bar-dom" class="bg-cyan-400 h-full rounded-full" style="width: 20%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Stoltz CORE Adversity Quotient</h3>
+            <div class="space-y-3 text-xs">
+              <div>
+                <div class="flex justify-between text-slate-400 mb-1">
+                  <span>Control (Perceived Agency)</span>
+                  <span id="bar-core-c" class="font-mono text-slate-200">0.36</span>
+                </div>
+                <div class="w-full bg-dark-800 h-2.5 rounded-full overflow-hidden">
+                  <div id="bar-core-c-fill" class="bg-blue-400 h-full rounded-full" style="width: 36%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-slate-400 mb-1">
+                  <span>Reach (Catastrophizing vs Compartmentalized)</span>
+                  <span id="bar-core-r" class="font-mono text-slate-200">0.48</span>
+                </div>
+                <div class="w-full bg-dark-800 h-2.5 rounded-full overflow-hidden">
+                  <div id="bar-core-r-fill" class="bg-indigo-400 h-full rounded-full" style="width: 48%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-slate-400 mb-1">
+                  <span>Endurance (Perceived Permanence)</span>
+                  <span id="bar-core-e" class="font-mono text-slate-200">0.52</span>
+                </div>
+                <div class="w-full bg-dark-800 h-2.5 rounded-full overflow-hidden">
+                  <div id="bar-core-e-fill" class="bg-purple-400 h-full rounded-full" style="width: 52%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ==================== TAB 2: API KEYS & USAGE ==================== -->
+    <section id="tab-keys" class="space-y-6 hidden">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-dark-700 pb-5">
+        <div>
+          <h2 class="text-2xl font-bold">API Key & Quota Management</h2>
+          <p class="text-sm text-slate-400">Generate personal API keys for your applications, bots, or OpenAI client proxies.</p>
+        </div>
+        <button onclick="openCreateKeyModal()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-dark-900 font-bold text-sm shadow-md shadow-emerald-500/20 flex items-center gap-2 transition">
+          <span>+ Create New Key</span>
+        </button>
+      </div>
+
+      <!-- NEWLY CREATED KEY BANNER (shown only upon generation) -->
+      <div id="key-revealed-banner" class="hidden p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">🎉 Secret Key Created Successfully</span>
+          <button onclick="dismissKeyBanner()" class="text-xs text-slate-400 hover:text-white">Dismiss</button>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="text" id="revealed-key-value" readonly class="flex-1 bg-dark-900 border border-dark-700 rounded-lg px-3 py-2 text-sm font-mono text-emerald-300 select-all" />
+          <button onclick="copyRevealedKey()" id="btn-copy-revealed" class="px-3 py-2 rounded-lg bg-emerald-500 text-dark-900 text-xs font-bold hover:bg-emerald-400 transition">Copy</button>
+        </div>
+        <p class="text-xs text-slate-400">Keep this key secret. For your security, you will not be able to view the raw secret key again.</p>
+      </div>
+
+      <!-- ACTIVE KEYS TABLE -->
+      <div class="bg-dark-850 rounded-2xl border border-dark-700 overflow-hidden shadow-xl">
+        <div class="p-4 border-b border-dark-700 flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Your Active Keys</span>
+          <span id="keys-count-badge" class="text-xs px-2 py-0.5 rounded bg-dark-800 text-slate-400 border border-dark-700">0 Keys</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-dark-700 text-xs text-slate-400 uppercase tracking-wider bg-dark-900/50">
+                <th class="p-4 font-semibold">Name</th>
+                <th class="p-4 font-semibold">Prefix</th>
+                <th class="p-4 font-semibold">Tier</th>
+                <th class="p-4 font-semibold">Requests Used</th>
+                <th class="p-4 font-semibold">Rate Limit</th>
+                <th class="p-4 font-semibold text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="api-keys-table-body" class="divide-y divide-dark-700/60 font-mono text-xs">
+              <tr>
+                <td colspan="6" class="p-8 text-center text-slate-500 font-sans text-sm">Loading keys...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: CODE SNIPPETS ==================== -->
+    <section id="tab-snippets" class="space-y-6 hidden">
+      <div class="border-b border-dark-700 pb-4">
+        <h2 class="text-2xl font-bold">Integration Code & SDK Drop-In</h2>
+        <p class="text-sm text-slate-400">Seamless drop-in for OpenAI SDK, Python requests, TypeScript, and cURL.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- OpenAI Drop-in -->
+        <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">OpenAI Python SDK (Drop-In)</span>
+            <span class="text-xs text-slate-500 font-mono">1-Line Replacement</span>
+          </div>
+          <p class="text-xs text-slate-400">Point standard OpenAI client directly to Soul Engine proxy:</p>
+          <pre class="bg-dark-900 p-4 rounded-xl border border-dark-700 text-xs font-mono text-slate-200 overflow-x-auto"><code>from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://soul.navigotechsolutions.com/v1",
+    api_key="soul_live_your_key_here"
+)
+
+response = client.chat.completions.create(
+    model="soul-attuned",
+    messages=[
+        {"role": "user", "content": "I feel hopeless today."}
+    ]
+)
+print(response.choices[0].message.content)</code></pre>
+        </div>
+
+        <!-- Python Requests -->
+        <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Python (Direct REST API)</span>
+            <span class="text-xs text-slate-500 font-mono">&lt;1ms Latency</span>
+          </div>
+          <p class="text-xs text-slate-400">Fast cognitive appraisal call:</p>
+          <pre class="bg-dark-900 p-4 rounded-xl border border-dark-700 text-xs font-mono text-slate-200 overflow-x-auto"><code>import requests
+
+res = requests.post(
+    "https://soul.navigotechsolutions.com/v1/appraise",
+    headers={"Authorization": "Bearer soul_live_..."},
+    json={"text": "I was just laid off with zero notice."}
+)
+appraisal = res.json()
+print("Domain:", appraisal["adversity"]["primary_domain"])
+print("Recommended Tone:", appraisal["agent_guidance"]["recommended_tone"])</code></pre>
+        </div>
+
+        <!-- cURL -->
+        <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Terminal cURL</span>
+            <span class="text-xs text-slate-500 font-mono">HTTP POST</span>
+          </div>
+          <pre class="bg-dark-900 p-4 rounded-xl border border-dark-700 text-xs font-mono text-slate-200 overflow-x-auto"><code>curl -X POST "https://soul.navigotechsolutions.com/v1/appraise" \
+  -H "Authorization: Bearer soul_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{"text": "The landlord slipped an eviction notice."}'</code></pre>
+        </div>
+
+        <!-- Node / TypeScript -->
+        <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">TypeScript / Node.js</span>
+            <span class="text-xs text-slate-500 font-mono">fetch()</span>
+          </div>
+          <pre class="bg-dark-900 p-4 rounded-xl border border-dark-700 text-xs font-mono text-slate-200 overflow-x-auto"><code>const res = await fetch("https://soul.navigotechsolutions.com/v1/appraise", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer soul_live_...",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ text: "I feel hopeless today." })
+});
+const data = await res.json();
+console.log(data);</code></pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== AUTH MODAL (LOGIN / SIGNUP / GOOGLE) ==================== -->
+  <div id="auth-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-dark-850 border border-dark-700 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl relative">
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+
+      <div class="text-center space-y-1">
+        <h3 id="modal-title" class="text-xl font-bold">Welcome to Soul Engine</h3>
+        <p class="text-xs text-slate-400">Sign in to manage API keys, track usage, and deploy emotional attunement.</p>
+      </div>
+
+      <!-- GOOGLE OAUTH BUTTON -->
+      <div>
+        <button onclick="handleGoogleSignIn()" class="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-semibold text-sm flex items-center justify-center gap-3 transition shadow">
+          <svg class="w-4 h-4" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+      </div>
+
+      <div class="flex items-center gap-3 text-xs text-slate-500 uppercase">
+        <div class="h-px bg-dark-700 flex-1"></div>
+        <span>Or with Email</span>
+        <div class="h-px bg-dark-700 flex-1"></div>
+      </div>
+
+      <!-- TABS FOR LOGIN / SIGNUP -->
+      <div class="flex border-b border-dark-700 text-sm font-medium">
+        <button onclick="setAuthMode('login')" id="tab-btn-login" class="flex-1 pb-2 border-b-2 border-emerald-500 text-white font-bold">Sign In</button>
+        <button onclick="setAuthMode('signup')" id="tab-btn-signup" class="flex-1 pb-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200">Register</button>
+      </div>
+
+      <!-- FORM -->
+      <form id="auth-form" onsubmit="submitAuthForm(event)" class="space-y-3">
+        <div id="field-fullname" class="space-y-1 hidden">
+          <label class="text-xs text-slate-400">Full Name</label>
+          <input type="text" id="input-fullname" class="w-full bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="John Doe" />
+        </div>
+        <div class="space-y-1">
+          <label class="text-xs text-slate-400">Email Address</label>
+          <input type="email" id="input-email" required class="w-full bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="dev@example.com" />
+        </div>
+        <div class="space-y-1">
+          <label class="text-xs text-slate-400">Password</label>
+          <input type="password" id="input-password" required minlength="6" class="w-full bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="••••••••" />
+        </div>
+
+        <div id="auth-error-msg" class="text-xs text-red-400 hidden"></div>
+
+        <button type="submit" id="btn-auth-submit" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-dark-900 font-bold text-sm shadow transition mt-2">
+          Sign In
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CREATE KEY MODAL -->
+  <div id="create-key-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-dark-850 border border-dark-700 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl relative">
+      <button onclick="closeCreateKeyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
+      <h3 class="text-lg font-bold">Create Personal API Key</h3>
+      <div class="space-y-2">
+        <label class="text-xs text-slate-400">Key Name</label>
+        <input type="text" id="new-key-name" class="w-full bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="e.g. Mobile App, Discord Bot" />
+      </div>
+      <button onclick="submitCreateKey()" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-dark-900 font-bold text-sm shadow transition">
+        Generate Key
+      </button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-dark-700/60 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div>
+        <strong>Soul Engine v0.3.0</strong> — Grounded in Lazarus Stress & Stoltz CORE Adversity Quotient.
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/navigotechsolutions-labs/soul" target="_blank" class="hover:text-emerald-400 transition">GitHub</a>
+        <span>•</span>
+        <a href="/docs" target="_blank" class="hover:text-emerald-400 transition">API Documentation</a>
+        <span>•</span>
+        <span>Navigo Tech Solutions</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
