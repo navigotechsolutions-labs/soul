@@ -7,23 +7,24 @@ from soul import appraise
 from soul.adapters.agent_middleware import AgentEmpathyMiddleware
 
 st.set_page_config(
-    page_title="Soul v0.2.0 - Research-Backed System 1 Appraisal",
-    page_icon="🧠",
+    page_title="Soul v0.3.0 - Human-POV Sensation & System 1 Appraisal",
+    page_icon="🫀",
     layout="wide",
 )
 
-st.title("🧠 Soul v0.2.0: Jev-Style System 1 Appraisal Engine")
+st.title("🫀 Soul v0.3.0: Human Sensation, Anti-Slop & System 1 Appraisal Engine")
 st.markdown(
     """
-    **Soul** is a sub-millisecond, calibrated cognitive and emotional appraisal engine grounded in 
-    **Lazarus Transactional Stress Theory**, **Stoltz's CORE Adversity Model**, **Scherer's Component Process Model (CPM)**, 
-    and **Google's 27 GoEmotions** with **Conformal Uncertainty Bounds** (Angelopoulos & Bates, 2021).
+    **Soul** bridges the gap between synthetic AI logic and human sensory perception. It evaluates 
+    **human felt experience**, eradicates **AI slop clichés (emojis-as-icons, em-dash addiction, AI buzzwords, generic purple/neon palettes)**, 
+    and provides sub-millisecond cognitive stress & 3D affect appraisal grounded in empirical psychology.
     """
 )
 
 # Sidebar with presets
 st.sidebar.header("Sample Scenarios")
 presets = {
+    "Synthetic AI Slop & Clichés": "In today's fast-paced digital landscape—efficiency is crucial. 🚀 Delve into our multifaceted ecosystem to harness your synergy and unleash your potential!",
     "Financial Eviction Threat": "I lost my job yesterday and can't afford rent. The debt collector is threatening eviction and I feel terrified.",
     "Acute Bereavement & Grief": "My grandfather passed away this morning and my heart is completely shattered. The grief is unbearable.",
     "Resilient Challenge Mindset": "This project has severe roadblocks, but I will fight through it, plan every step, and overcome this challenge.",
@@ -95,7 +96,8 @@ if user_input:
         )
 
     st.markdown("### Scientific Appraisal Breakdown")
-    tab_compare, tab_keys, tab_core, tab_vad, tab_ge, tab_agent, tab_json = st.tabs([
+    tab_feel, tab_compare, tab_keys, tab_core, tab_vad, tab_ge, tab_agent, tab_json = st.tabs([
+        "🫀 Human Experience & Anti-Slop Audit",
         "⚡ Blunt AI vs Attuned AI",
         "🔑 Self-Service API Keys",
         "⚡ Stoltz CORE & Scherer CPM",
@@ -104,6 +106,51 @@ if user_input:
         "🤖 AI Agent System 1 Directives",
         "📋 Calibrated JSON Schema"
     ])
+
+    with tab_feel:
+        st.subheader("🫀 Human Experience & Anti-AI-Slop Scorecard")
+        st.markdown(
+            "Audits text, UI copy, and agent responses from the **Human POV**: catching emoji-as-icon abuse, "
+            "em-dash addiction, ChatGPT buzzwords (*'delve'*, *'testament'*), generic AI purple palettes, and cognitive friction."
+        )
+
+        from soul import audit_human_feel
+        feel_report = audit_human_feel(user_input)
+
+        col_f1, col_f2, col_f3, col_f4 = st.columns(4)
+        status_color = "normal" if feel_report.status == "AUTHENTIC_HUMAN_CRAFT" else "inverse"
+        col_f1.metric("Overall Human Score", f"{feel_report.overall_human_score} / 100", feel_report.status, delta_color=status_color)
+        
+        slop = feel_report.slop_audit
+        emoji_str = f"{slop.emoji_icon_count} detected ({', '.join(slop.emojis_found)})" if slop.emoji_icon_count else "0 (Clean)"
+        col_f2.metric("Emoji-as-Icon Usage", emoji_str, "Substituted for real icons", delta_color="inverse" if slop.emoji_icon_count else "normal")
+        
+        col_f3.metric("Em-Dash Count", f"{slop.em_dash_count}", "Syntactic stitching crutch", delta_color="inverse" if slop.em_dash_count >= 2 else "normal")
+        col_f4.metric("Cognitive Friction", f"{feel_report.cognitive_friction_score:.2f}", feel_report.sensory_breathing_room.split('(')[0].strip())
+
+        if slop.ai_cliches_found:
+            st.warning(f"⚠️ **AI Cliché Hallmarks Detected:** `{', '.join(slop.ai_cliches_found)}`")
+
+        col_crit, col_presc = st.columns(2)
+        with col_crit:
+            st.markdown("#### 🚨 Human POV Criticisms")
+            if feel_report.key_criticisms:
+                for c in feel_report.key_criticisms:
+                    st.error(f"• {c}")
+            else:
+                st.success("No synthetic AI tropes or emotional disconnects detected.")
+
+        with col_presc:
+            st.markdown("#### ✨ Actionable Human Prescriptions")
+            if feel_report.actionable_prescriptions:
+                for p in feel_report.actionable_prescriptions:
+                    st.info(f"✓ {p}")
+            else:
+                st.write("Content meets authentic human standards.")
+
+        if feel_report.humanized_alternative and feel_report.humanized_alternative != user_input:
+            st.markdown("#### 🪄 Harmonized Human Version (Slop Eradicated)")
+            st.code(feel_report.humanized_alternative, language="text")
 
     with tab_compare:
         st.subheader("Anti-Bluntness Context Harmonizer Demonstration")

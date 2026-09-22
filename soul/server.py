@@ -15,7 +15,7 @@ import os
 from pathlib import Path
 from typing import Any, Optional
 
-from fastapi import FastAPI, HTTPException, Depends, Header
+from fastapi import FastAPI, HTTPException, Depends, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -53,10 +53,39 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Static files directory for SaaS Frontend
+# Static files directory for SaaS Frontend & Soul IDE
 STATIC_DIR = Path(__file__).parent / "static"
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+    @app.get("/", include_in_schema=False)
+    def root(request: Request):
+        """Serves Soul IDE for browser navigations or API directory JSON for API clients."""
+        accept = request.headers.get("accept", "")
+        if "text/html" in accept:
+            return FileResponse(str(STATIC_DIR / "index.html"))
+        return {
+            "service": "Soul Engine API",
+            "version": soul.__version__,
+            "status": "online",
+            "endpoints": [
+                "/v1/appraise",
+                "/v1/harmonize",
+                "/v1/respond",
+                "/v1/chat/completions",
+                "/v1/audit/human-pov",
+                "/ide",
+            ],
+            "ide_url": "/ide",
+        }
+
+    @app.get("/ide", include_in_schema=False)
+    @app.get("/dashboard", include_in_schema=False)
+    def serve_ide():
+        """Serves the standalone Soul IDE developer application."""
+        return FileResponse(str(STATIC_DIR / "index.html"))
+
+
 
 # Singletons
 _appraiser = SoulAppraiser()
@@ -565,3 +594,40 @@ def universal_chat_completions(req: OpenAIChatRequest, client: Optional[dict] = 
             "latency_ms": round(elapsed_ms, 2),
         },
     }
+
+
+class HumanFeelAuditRequest(BaseModel):
+    content: str = Field(..., min_length=1, description="AI-generated output, UI copy, or website text to audit")
+    user_context: Optional[str] = Field(None, description="Optional user prompt providing emotional context")
+    include_aesthetics: Optional[bool] = Field(True, description="Whether to check CSS/colors for AI tropes")
+
+
+class SanitizeSlopRequest(BaseModel):
+    text: str = Field(..., min_length=1, description="Text containing AI tropes to sanitize and humanize")
+
+
+@app.post("/v1/audit/human-pov", tags=["Human Experience"])
+def audit_human_pov_endpoint(req: HumanFeelAuditRequest, client: Optional[dict] = Depends(get_current_client)):
+    """Audits AI responses, UI copy, or code for AI slop, emojis-as-icons, em-dashes, and palettes."""
+    from soul import audit_human_feel
+    try:
+        report = audit_human_feel(
+            content=req.content,
+            user_context=req.user_context,
+            include_aesthetics=req.include_aesthetics if req.include_aesthetics is not None else True
+        )
+        return report.model_dump()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Human audit error: {str(e)}")
+
+
+@app.post("/v1/sanitize/anti-slop", tags=["Human Experience"])
+def sanitize_slop_endpoint(req: SanitizeSlopRequest, client: Optional[dict] = Depends(get_current_client)):
+    """Eradicates AI buzzwords, replaces em-dashes, and strips emoji crutches for human cadence."""
+    from soul import sanitize_slop
+    try:
+        sanitized = sanitize_slop(req.text)
+        return {"original": req.text, "sanitized": sanitized}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Sanitization error: {str(e)}")
+

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Soul Engine — System 1 Affective Perception & Anti-Bluntness AI</title>
+  <title>Soul IDE — The Human-POV Integrated Development Environment & Anti-Slop AI</title>
   
   <!-- Official Vector Favicon -->
   <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
@@ -95,16 +95,21 @@
         </div>
         <div>
           <div class="flex items-center gap-1.5">
-            <span class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-slate-900 via-slate-700 to-slate-500 dark:from-white dark:via-slate-100 dark:to-slate-400 bg-clip-text text-transparent">Soul Engine</span>
-            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">v0.3.0</span>
+            <span class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-slate-900 via-slate-700 to-slate-500 dark:from-white dark:via-slate-100 dark:to-slate-400 bg-clip-text text-transparent">Soul IDE</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">STUDIO v0.3.0</span>
           </div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium tracking-wide">by <span class="text-slate-800 dark:text-slate-200 font-semibold">Navigo Tech Solutions</span></p>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium tracking-wide">Human-POV AI Integrated Development Environment</p>
         </div>
       </div>
 
       <!-- NAVIGATION TABS -->
       <nav class="hidden lg:flex items-center space-x-1">
-        <button onclick="switchTab('playground')" id="nav-playground" class="nav-tab active px-3.5 py-2 rounded-xl text-sm font-medium transition text-slate-900 dark:text-white bg-slate-100 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 shadow-sm flex items-center gap-2">
+        <button onclick="switchTab('ide')" id="nav-ide" class="nav-tab active px-3.5 py-2 rounded-xl text-sm font-semibold transition text-slate-900 dark:text-white bg-slate-100 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 shadow-sm flex items-center gap-2">
+          <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <span>Soul Studio (IDE)</span>
+          <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/30">NEW</span>
+        </button>
+        <button onclick="switchTab('playground')" id="nav-playground" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-medium transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-dark-800/60 flex items-center gap-2">
           <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           <span>Live Playground</span>
         </button>
@@ -115,10 +120,6 @@
         <button onclick="switchTab('snippets')" id="nav-snippets" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-medium transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-dark-800/60 flex items-center gap-2">
           <svg class="w-4 h-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
           <span>Code & SDKs</span>
-        </button>
-        <button onclick="switchTab('brand')" id="nav-brand" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-medium transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-dark-800/60 flex items-center gap-2">
-          <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4 4 4 0 014-4h1a4 4 0 014 4 4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
-          <span>Brand & Colors</span>
         </button>
         <a href="/docs" target="_blank" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-dark-800/60 flex items-center gap-1.5 transition">
           <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
@@ -155,13 +156,228 @@
       </div>
 
     </div>
+
+    <!-- RESPONSIVE MOBILE TAB BAR -->
+    <div class="lg:hidden border-t border-slate-200/80 dark:border-dark-700/70 bg-slate-50/90 dark:bg-dark-950/90 px-4 py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+      <button onclick="switchTab('ide')" id="mobile-nav-ide" class="mobile-nav-pill active flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 whitespace-nowrap">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span>IDE Studio</span>
+      </button>
+      <button onclick="switchTab('playground')" id="mobile-nav-playground" class="mobile-nav-pill flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap">
+        <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <span>Playground</span>
+      </button>
+      <button onclick="switchTab('keys')" id="mobile-nav-keys" class="mobile-nav-pill flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap">
+        <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+        <span>API Keys</span>
+      </button>
+      <button onclick="switchTab('snippets')" id="mobile-nav-snippets" class="mobile-nav-pill flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap">
+        <svg class="w-3.5 h-3.5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+        <span>SDKs</span>
+      </button>
+    </div>
   </header>
 
   <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
   <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
 
+    <!-- ==================== TAB 0: SOUL STUDIO / IDE WORKBENCH ==================== -->
+    <section id="tab-ide" class="space-y-6">
+      
+      <!-- HERO HEADER -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-200 dark:border-dark-700">
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">Soul IDE Workbench</h1>
+            <span class="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Human-POV Studio</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            Real-time Anti-AI-Slop Linter, Jev Affect Radar, and Sensory Presence Workbench.
+          </p>
+        </div>
+
+        <!-- QUICK PRESET & ACTIONS -->
+        <div class="flex flex-wrap items-center gap-2">
+          <select onchange="loadIdePreset(this.value)" id="ide-preset-select" class="text-xs bg-slate-100 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 text-slate-700 dark:text-slate-300 rounded-xl px-3 py-2 font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <option value="slop_copy">Preset: AI Slop Copy (Delve, Emojis, Em-dashes)</option>
+            <option value="cold_support">Preset: Cold Blunt Bot Support Checklist</option>
+            <option value="ai_purple_css">Preset: Generic AI Purple & Neon CSS</option>
+            <option value="high_distress">Preset: High Psychological Distress Shock</option>
+          </select>
+          <button onclick="sanitizeInIde()" class="px-3 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white shadow-sm flex items-center gap-1.5 transition active:scale-95">
+            <span>🪄 Eradicate Slop</span>
+          </button>
+          <button onclick="runIdeAudit()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-200 dark:bg-dark-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-dark-600 transition flex items-center gap-1.5 active:scale-95">
+            <span>🫀 Audit Now</span>
+          </button>
+          <button onclick="exportIdeAuditJson()" title="Download JSON diagnostic report" class="px-2.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-dark-800 dark:hover:bg-dark-750 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-dark-700 transition flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span class="hidden sm:inline">JSON</span>
+          </button>
+          <button onclick="resetIdeEditor()" title="Clear editor content" class="px-2.5 py-2 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN SPLIT WORKSPACE -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- LEFT: THE EDITOR PANE (7 COLS) -->
+        <div class="lg:col-span-7 space-y-3">
+          <div class="bg-white dark:bg-dark-900 rounded-2xl border border-slate-200 dark:border-dark-700 shadow-sm overflow-hidden">
+            
+            <!-- Editor Titlebar -->
+            <div class="px-4 py-2.5 bg-slate-50 dark:bg-dark-850 border-b border-slate-200 dark:border-dark-700 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+                <span class="font-mono text-slate-700 dark:text-slate-300 font-semibold ml-2">prompt_or_copy.txt</span>
+                <span id="ide-audit-status" class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-bold">Live Synchronized</span>
+              </div>
+              <div id="ide-editor-stats" class="font-mono text-slate-500 dark:text-slate-400 text-[11px]">
+                0 lines | 0 words | 0 chars
+              </div>
+            </div>
+
+            <!-- Editor Input Area with Gutter -->
+            <div class="ide-editor-container bg-slate-50/50 dark:bg-dark-900/60">
+              <div id="ide-gutter" class="ide-line-numbers select-none">
+                01<br>02<br>03<br>04<br>05<br>06<br>07<br>08<br>09<br>10<br>11<br>12<br>13<br>14
+              </div>
+              <textarea id="ide-editor" rows="14" class="w-full bg-transparent border-0 focus:ring-0 text-sm font-mono text-slate-800 dark:text-slate-200 leading-relaxed resize-y placeholder:text-slate-400 focus:outline-none p-3 pl-3.5" placeholder="Type or paste any AI response, marketing copy, system prompt, or CSS to audit live..."></textarea>
+            </div>
+
+            <!-- Editor Bottom Toolbar -->
+            <div class="px-4 py-2.5 bg-slate-50/80 dark:bg-dark-850/80 border-t border-slate-200 dark:border-dark-700 flex items-center justify-between text-xs text-slate-500">
+              <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 pulse-heartbeat"></span>
+                <span>Latency: &lt;1.0ms System 1</span>
+                <span class="hidden sm:inline text-slate-400">| <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-dark-700 text-[10px] font-mono">⌘/Ctrl + Enter</kbd> audit | <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-dark-700 text-[10px] font-mono">⌘ + ⇧ + H</kbd> sanitize</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="copyEditorContent()" class="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-mono transition flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                  <span>Copy</span>
+                </button>
+                <button onclick="sanitizeInIde()" class="text-emerald-500 hover:text-emerald-400 font-bold font-mono transition hover:scale-105 active:scale-95 ml-2">1-Click Humanize</button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- HARMONIZED ALTERNATIVE CARD (Revealed when slop eradicated) -->
+          <div id="ide-alternative-box" class="hidden p-4 rounded-2xl bg-emerald-500/5 dark:bg-emerald-950/20 border border-emerald-500/20 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-emerald-500 flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                🪄 Harmonized Human Alternative (Slop Eradicated)
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="copyCleanAlternative()" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-dark-700 text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-300 dark:hover:bg-dark-600 transition flex items-center gap-1">
+                  <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                  <span>Copy Clean</span>
+                </button>
+                <button onclick="replaceEditorWithClean()" class="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-500 text-white font-bold hover:bg-emerald-400 transition shadow-sm active:scale-95">
+                  Replace in Editor
+                </button>
+              </div>
+            </div>
+            <p id="ide-alternative-text" class="text-xs font-mono text-slate-700 dark:text-slate-300 leading-relaxed bg-white/50 dark:bg-dark-900/60 p-3 rounded-xl border border-emerald-500/15"></p>
+          </div>
+
+          <!-- SENSORY PALETTE SUGGESTION BOX (Revealed when AI Purple / Neon is detected) -->
+          <div id="ide-palette-box" class="hidden p-4 rounded-2xl bg-purple-500/5 dark:bg-purple-950/20 border border-purple-500/20 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+              <span class="text-xs font-bold text-purple-600 dark:text-purple-400">🎨 Aesthetic Sensory Calibration</span>
+            </div>
+            <p id="ide-palette-desc" class="text-xs text-slate-700 dark:text-slate-300 font-mono"></p>
+            <div class="flex items-center gap-2 pt-1">
+              <div class="flex items-center gap-1 text-[11px] font-mono text-slate-500">
+                <span class="w-4 h-4 rounded bg-[#0F0F10] border border-white/20 inline-block"></span> #0F0F10 Obsidian
+              </div>
+              <div class="flex items-center gap-1 text-[11px] font-mono text-slate-500">
+                <span class="w-4 h-4 rounded bg-[#F4F1EA] border border-black/20 inline-block"></span> #F4F1EA Bone
+              </div>
+              <div class="flex items-center gap-1 text-[11px] font-mono text-slate-500">
+                <span class="w-4 h-4 rounded bg-[#E06D53] inline-block"></span> #E06D53 Terracotta
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: LIVE HUMAN INSPECTOR (5 COLS) -->
+        <div class="lg:col-span-5 space-y-4">
+          
+          <!-- OVERALL HUMAN PRESENCE SCORE -->
+          <div class="p-5 rounded-2xl bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Human Presence Index</span>
+                <div class="flex items-baseline gap-2 pt-0.5">
+                  <span id="ide-score-val" class="text-3xl font-extrabold text-slate-900 dark:text-white">--</span>
+                  <span class="text-xs font-mono text-slate-400">/ 100</span>
+                </div>
+              </div>
+              <span id="ide-score-badge" class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-dark-800 text-slate-500">Awaiting Audit</span>
+            </div>
+            <div class="w-full bg-slate-100 dark:bg-dark-800 h-2.5 rounded-full overflow-hidden">
+              <div id="ide-score-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- 4 PILLARS DIAGNOSTIC GRID -->
+          <div class="grid grid-cols-2 gap-3">
+            
+            <div class="p-3.5 rounded-xl bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 shadow-sm space-y-1">
+              <div class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">🚫 Emoji-as-Icon Usage</div>
+              <div id="ide-emoji-val" class="text-xs text-slate-800 dark:text-slate-200 font-medium">0 (Clean)</div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 shadow-sm space-y-1">
+              <div class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">⚠️ Em-Dash Saturation</div>
+              <div id="ide-dash-val" class="text-xs text-slate-800 dark:text-slate-200 font-medium">0 (Natural)</div>
+            </div>
+
+            <div class="col-span-2 p-3.5 rounded-xl bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 shadow-sm space-y-1">
+              <div class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">🗑️ AI Buzzword Lexicon</div>
+              <div id="ide-cliches-val" class="flex flex-wrap gap-1 text-xs text-slate-500">None detected</div>
+            </div>
+
+            <div class="col-span-2 p-3.5 rounded-xl bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 shadow-sm space-y-1">
+              <div class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">🫁 Cognitive Breathing Room</div>
+              <div id="ide-breathing-val" class="text-xs text-slate-800 dark:text-slate-200 font-medium">OPEN & BREATHEABLE</div>
+            </div>
+
+          </div>
+
+          <!-- CRITICISMS & PRESCRIPTIONS -->
+          <div class="p-4 rounded-2xl bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 shadow-sm space-y-3">
+            <div>
+              <span class="text-xs font-bold text-rose-500">🚨 Disconnect Criticisms</span>
+              <ul id="ide-crit-list" class="mt-1.5 space-y-1.5">
+                <li class="text-xs text-slate-500">No active criticisms.</li>
+              </ul>
+            </div>
+            <div class="border-t border-slate-100 dark:border-dark-800 pt-2.5">
+              <span class="text-xs font-bold text-emerald-500">✨ Actionable Prescriptions</span>
+              <ul id="ide-presc-list" class="mt-1.5 space-y-1.5">
+                <li class="text-xs text-slate-500">Write or paste text to generate prescriptions.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
     <!-- ==================== TAB 1: SYSTEM 1 PLAYGROUND ==================== -->
-    <section id="tab-playground" class="space-y-6">
+    <section id="tab-playground" class="hidden space-y-6">
       
       <!-- HERO BANNER -->
       <div class="text-center max-w-4xl mx-auto space-y-4 pt-3 pb-3">
@@ -311,7 +527,13 @@
                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                 Soul Attuned AI (Harmonized)
               </span>
-              <span id="badge-harmonized" class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30 font-bold">HARMONIZED WITH EMPATHY</span>
+              <div class="flex items-center gap-2">
+                <button onclick="copyAttunedOutput()" class="text-xs px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 transition flex items-center gap-1 font-semibold active:scale-95">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                  <span>Copy</span>
+                </button>
+                <span id="badge-harmonized" class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30 font-bold">HARMONIZED WITH EMPATHY</span>
+              </div>
             </div>
             <div id="attuned-output" class="p-4 rounded-xl bg-emerald-50/40 dark:bg-dark-900 border border-emerald-200 dark:border-dark-700 text-sm text-slate-900 dark:text-slate-100 font-sans leading-relaxed whitespace-pre-line min-h-[140px] shadow-inner">
             </div>
@@ -329,23 +551,23 @@
           <div class="bg-white dark:bg-dark-850 rounded-2xl border border-slate-200 dark:border-dark-700 p-5 space-y-3 shadow-sm dark:shadow">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Affect Coordinates (Russell VAD)</span>
-              <span class="text-[10px] text-slate-500 font-mono">2D Mapping</span>
+              <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">Click to Simulate</span>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Valence (Pleasure) vs Arousal (Energy):</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Valence (Pleasure) vs Arousal (Energy) — click grid to test coordinates:</p>
             
-            <div class="relative w-full h-48 bg-slate-100 dark:bg-dark-900 rounded-xl border border-slate-200 dark:border-dark-750 radar-grid flex items-center justify-center overflow-hidden">
+            <div id="radar-matrix-container" onclick="handleRadarClick(event)" class="relative w-full h-48 bg-slate-100 dark:bg-dark-900 rounded-xl border border-slate-200 dark:border-dark-750 radar-grid radar-interactive flex items-center justify-center overflow-hidden select-none" title="Click anywhere to simulate Russell Affect coordinates">
               <!-- Center Axes -->
-              <div class="absolute w-full h-px bg-slate-300 dark:bg-dark-700"></div>
-              <div class="absolute h-full w-px bg-slate-300 dark:bg-dark-700"></div>
+              <div class="absolute w-full h-px bg-slate-300 dark:bg-dark-700 pointer-events-none"></div>
+              <div class="absolute h-full w-px bg-slate-300 dark:bg-dark-700 pointer-events-none"></div>
               
               <!-- Quadrant Labels -->
-              <span class="absolute top-2 left-2 text-[10px] font-mono text-slate-500">Distress / Anxiety</span>
-              <span class="absolute top-2 right-2 text-[10px] font-mono text-slate-500">Excitement / Joy</span>
-              <span class="absolute bottom-2 left-2 text-[10px] font-mono text-slate-500">Depression / Sadness</span>
-              <span class="absolute bottom-2 right-2 text-[10px] font-mono text-slate-500">Serenity / Calm</span>
+              <span class="absolute top-2 left-2 text-[10px] font-mono text-slate-500 pointer-events-none">Distress / Anxiety</span>
+              <span class="absolute top-2 right-2 text-[10px] font-mono text-slate-500 pointer-events-none">Excitement / Joy</span>
+              <span class="absolute bottom-2 left-2 text-[10px] font-mono text-slate-500 pointer-events-none">Depression / Sadness</span>
+              <span class="absolute bottom-2 right-2 text-[10px] font-mono text-slate-500 pointer-events-none">Serenity / Calm</span>
               
               <!-- Target Point Target (Pulsing Dot) -->
-              <div id="radar-dot" class="radar-target-dot absolute w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow-lg shadow-emerald-500/50" style="left: calc(50% - 8px); top: calc(50% - 8px);"></div>
+              <div id="radar-dot" class="radar-target-dot absolute w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow-lg shadow-emerald-500/50 pointer-events-none transition-all duration-300" style="left: calc(50% - 8px); top: calc(50% - 8px);"></div>
             </div>
 
             <div class="flex justify-between text-xs font-mono text-slate-600 dark:text-slate-400 pt-1">
@@ -497,6 +719,30 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Soul IDE & Anti-Slop CLI Launcher -->
+        <div class="bg-white dark:bg-dark-850 rounded-2xl border border-slate-200 dark:border-dark-700 p-5 space-y-3 shadow-sm dark:shadow col-span-1 md:col-span-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Soul IDE & Anti-Slop CI/CD CLI</span>
+            <span class="text-xs text-slate-500 font-mono">Terminal / Pre-Commit</span>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-400">Launch the local desktop IDE workbench or audit AI copy in CI/CD:</p>
+          <div class="code-box-wrapper">
+            <button onclick="copyCodeSnippet(this)" class="code-copy-btn px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 text-[11px] font-mono flex items-center gap-1 backdrop-blur-sm transition active:scale-95">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+              <span>Copy</span>
+            </button>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl border border-slate-800 dark:border-dark-700 text-xs font-mono overflow-x-auto shadow-inner"><code># 1. Launch standalone Soul IDE in your browser
+pip install soul-engine
+soul ide
+
+# 2. Audit copy or UI code for AI slop (emojis-as-icons, em-dashes, ChatGPT buzzwords)
+soul audit "In today's fast-paced world—efficiency is crucial. 🚀 Delve into our tool!"
+
+# 3. Add to pre-commit or CI/CD to prevent shipping synthetic AI slop
+soul audit --file ./landing_copy.txt --fail-on-slop</code></pre>
+          </div>
+        </div>
+
         <!-- Python Requests (Native Soul Engine) -->
         <div class="bg-white dark:bg-dark-850 rounded-2xl border border-slate-200 dark:border-dark-700 p-5 space-y-3 shadow-sm dark:shadow">
           <div class="flex items-center justify-between">
@@ -504,7 +750,12 @@
             <span class="text-xs text-slate-500 font-mono">&lt;1ms Latency</span>
           </div>
           <p class="text-xs text-slate-600 dark:text-slate-400">System 1 cognitive appraisal using your Soul API Key:</p>
-          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl border border-slate-800 dark:border-dark-700 text-xs font-mono overflow-x-auto shadow-inner"><code>import requests
+          <div class="code-box-wrapper">
+            <button onclick="copyCodeSnippet(this)" class="code-copy-btn px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 text-[11px] font-mono flex items-center gap-1 backdrop-blur-sm transition active:scale-95">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+              <span>Copy</span>
+            </button>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl border border-slate-800 dark:border-dark-700 text-xs font-mono overflow-x-auto shadow-inner"><code>import requests
 
 res = requests.post(
     "https://soul.navigotechsolutions.com/v1/appraise",
@@ -514,6 +765,7 @@ res = requests.post(
 appraisal = res.json()
 print("Domain:", appraisal["adversity"]["primary_domain"])
 print("Recommended Tone:", appraisal["agent_guidance"]["recommended_tone"])</code></pre>
+          </div>
         </div>
 
         <!-- Terminal cURL -->
@@ -523,10 +775,16 @@ print("Recommended Tone:", appraisal["agent_guidance"]["recommended_tone"])</cod
             <span class="text-xs text-slate-500 font-mono">CLI / Shell</span>
           </div>
           <p class="text-xs text-slate-600 dark:text-slate-400">Authenticate with <code>Authorization: Bearer</code> or <code>X-Soul-Key</code>:</p>
-          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl border border-slate-800 dark:border-dark-700 text-xs font-mono overflow-x-auto shadow-inner"><code>curl -X POST "https://soul.navigotechsolutions.com/v1/appraise" \
+          <div class="code-box-wrapper">
+            <button onclick="copyCodeSnippet(this)" class="code-copy-btn px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 text-[11px] font-mono flex items-center gap-1 backdrop-blur-sm transition active:scale-95">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+              <span>Copy</span>
+            </button>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl border border-slate-800 dark:border-dark-700 text-xs font-mono overflow-x-auto shadow-inner"><code>curl -X POST "https://soul.navigotechsolutions.com/v1/appraise" \
   -H "Authorization: Bearer soul_live_your_key_here" \
   -H "Content-Type: application/json" \
   -d '{"text": "The landlord slipped an eviction notice."}'</code></pre>
+          </div>
         </div>
 
         <!-- Node / TypeScript -->
@@ -536,7 +794,12 @@ print("Recommended Tone:", appraisal["agent_guidance"]["recommended_tone"])</cod
             <span class="text-xs text-slate-500 font-mono">fetch()</span>
           </div>
           <p class="text-xs text-slate-600 dark:text-slate-400">Native asynchronous fetch with Soul Engine:</p>
-          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl border border-slate-800 dark:border-dark-700 text-xs font-mono overflow-x-auto shadow-inner"><code>const res = await fetch("https://soul.navigotechsolutions.com/v1/appraise", {
+          <div class="code-box-wrapper">
+            <button onclick="copyCodeSnippet(this)" class="code-copy-btn px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 text-[11px] font-mono flex items-center gap-1 backdrop-blur-sm transition active:scale-95">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+              <span>Copy</span>
+            </button>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl border border-slate-800 dark:border-dark-700 text-xs font-mono overflow-x-auto shadow-inner"><code>const res = await fetch("https://soul.navigotechsolutions.com/v1/appraise", {
   method: "POST",
   headers: {
     "Authorization": "Bearer soul_live_your_key_here",
@@ -546,6 +809,7 @@ print("Recommended Tone:", appraisal["agent_guidance"]["recommended_tone"])</cod
 });
 const data = await res.json();
 console.log(data);</code></pre>
+          </div>
         </div>
 
         <!-- Universal Client SDK (Chat Protocol) -->
@@ -555,7 +819,12 @@ console.log(data);</code></pre>
             <span class="text-xs text-slate-500 font-mono">Soul API Key</span>
           </div>
           <p class="text-xs text-slate-600 dark:text-slate-400">Connect any standard chat library to Soul Engine:</p>
-          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl border border-slate-800 dark:border-dark-700 text-xs font-mono overflow-x-auto shadow-inner"><code># Works with any standard AI client or terminal tool!
+          <div class="code-box-wrapper">
+            <button onclick="copyCodeSnippet(this)" class="code-copy-btn px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 text-[11px] font-mono flex items-center gap-1 backdrop-blur-sm transition active:scale-95">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+              <span>Copy</span>
+            </button>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl border border-slate-800 dark:border-dark-700 text-xs font-mono overflow-x-auto shadow-inner"><code># Works with any standard AI client or terminal tool!
 from openai import OpenAI
 
 client = OpenAI(
@@ -568,200 +837,9 @@ response = client.chat.completions.create(
     messages=[{"role": "user", "content": "I feel completely overwhelmed."}]
 )
 print(response.choices[0].message.content)</code></pre>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==================== TAB 4: BRAND IDENTITY, COLORS & MEANING ==================== -->
-    <section id="tab-brand" class="space-y-8 hidden">
-      <div class="border-b border-slate-200 dark:border-dark-700 pb-5 max-w-3xl">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 mb-2">
-          <span>Brand Architecture & Strategic Harmony</span>
-        </div>
-        <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">The Soul Engine Identity & Color System</h2>
-        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
-          Engineered by <strong>Navigo Tech Solutions</strong>. Designed at the intersection of biological affective neuroscience and artificial intelligence.
-        </p>
-      </div>
-
-      <!-- LOGO DECONSTRUCTION CARD -->
-      <div class="bg-white dark:bg-dark-850 rounded-2xl border border-slate-200 dark:border-dark-700 p-6 sm:p-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-center shadow-md dark:shadow-xl transition-colors">
-        <div class="flex flex-col items-center justify-center p-6 bg-slate-100 dark:bg-dark-900 rounded-2xl border border-slate-200 dark:border-dark-700 relative">
-          <!-- Large Vector Glyph -->
-          <svg class="w-32 h-32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="brandFullGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#10B981"/>
-                <stop offset="50%" stop-color="#14B8A6"/>
-                <stop offset="100%" stop-color="#06B6D4"/>
-              </linearGradient>
-              <linearGradient id="coreFullGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#34D399"/>
-                <stop offset="100%" stop-color="#10B981"/>
-              </linearGradient>
-            </defs>
-            <rect width="48" height="48" rx="14" class="fill-slate-200 dark:fill-[#0E1422] stroke-slate-300 dark:stroke-white/10" stroke-width="1.5"/>
-            <path d="M24 8V40" stroke="url(#brandFullGrad)" stroke-width="3" stroke-linecap="round"/>
-            <path d="M12 16C12 28.5 20 32 24 32C28 32 36 28.5 36 16" stroke="url(#brandFullGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="24" cy="24" r="5" fill="url(#coreFullGrad)"/>
-            <circle cx="24" cy="24" r="2.2" fill="#FFFFFF"/>
-          </svg>
-          <span class="mt-4 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider">The Resonant Psi (Ψ) Core</span>
-        </div>
-
-        <div class="md:col-span-2 space-y-4 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
-          <h3 class="text-xl font-bold text-slate-900 dark:text-white">Symbolism & Metaphor</h3>
-          <p>
-            The Soul Engine mark synthesizes the ancient Greek letter <strong>Ψ (Psi)</strong> — the classical symbol of the <em>psyche</em>, the human mind, and the soul — with modern wave mechanics:
-          </p>
-          <ul class="space-y-2.5 text-xs sm:text-sm">
-            <li class="flex items-start gap-2.5">
-              <span class="text-emerald-600 dark:text-emerald-400 font-bold">1. The Harmonic Psi Wings (Ψ):</span>
-              <span class="text-slate-600 dark:text-slate-400">Represent emotional resonance. Unlike sterile static algorithms, affective human communication operates in oscillatory waves (Valence, Arousal, Dominance).</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <span class="text-cyan-600 dark:text-cyan-400 font-bold">2. The Vertical Alignment Axis:</span>
-              <span class="text-slate-600 dark:text-slate-400">The grounding needle of clarity, objectivity, and actionable solutions.</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <span class="text-slate-900 dark:text-white font-bold">3. The Radiant Neural Apex:</span>
-              <span class="text-slate-600 dark:text-slate-400">The &lt;1.0ms System 1 perceptual focal point. The instant spark of intuitive understanding before deliberate response generation occurs.</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- ==================== BRAND COLOR HARMONY PALETTE ==================== -->
-      <div class="space-y-4">
-        <div>
-          <h3 class="text-xl font-bold text-slate-900 dark:text-white">Curated Brand Color Architecture</h3>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Every hue in Soul Engine is scientifically calibrated to an affective psychological principle.</p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          
-          <!-- Swatch 1: Resonant Emerald -->
-          <div class="swatch-card bg-white dark:bg-dark-850 p-4 rounded-2xl border border-slate-200 dark:border-dark-700 space-y-3 shadow-sm">
-            <div class="h-20 w-full rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 flex items-end p-3 shadow-sm">
-              <span class="text-xs font-mono font-bold text-white bg-black/40 px-2 py-0.5 rounded backdrop-blur-sm">#10B981 / #059669</span>
-            </div>
-            <div>
-              <h4 class="font-bold text-sm text-slate-900 dark:text-white">Resonant Emerald</h4>
-              <p class="text-[11px] text-slate-500 font-mono">Primary Empathy & Recovery</p>
-            </div>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Symbolizes biological restoration and emotional safety. Down-regulates acute user panic and provides a reassuring psychological harbor.
-            </p>
-          </div>
-
-          <!-- Swatch 2: Cognitive Cyan -->
-          <div class="swatch-card bg-white dark:bg-dark-850 p-4 rounded-2xl border border-slate-200 dark:border-dark-700 space-y-3 shadow-sm">
-            <div class="h-20 w-full rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 flex items-end p-3 shadow-sm">
-              <span class="text-xs font-mono font-bold text-white bg-black/40 px-2 py-0.5 rounded backdrop-blur-sm">#06B6D4 / #0891B2</span>
-            </div>
-            <div>
-              <h4 class="font-bold text-sm text-slate-900 dark:text-white">Cognitive Cyan</h4>
-              <p class="text-[11px] text-slate-500 font-mono">Neural Precision & Clarity</p>
-            </div>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Reflects lucid, objective problem-solving. Bridges emotional empathy with actionable execution and grounded intelligence.
-            </p>
-          </div>
-
-          <!-- Swatch 3: Daylight Porcelain -->
-          <div class="swatch-card bg-white dark:bg-dark-850 p-4 rounded-2xl border border-slate-200 dark:border-dark-700 space-y-3 shadow-sm">
-            <div class="h-20 w-full rounded-xl bg-slate-100 border border-slate-200 flex items-end p-3 shadow-sm">
-              <span class="text-xs font-mono font-bold text-slate-800 bg-white/80 px-2 py-0.5 rounded border border-slate-200">#F8FAFC</span>
-            </div>
-            <div>
-              <h4 class="font-bold text-sm text-slate-900 dark:text-white">Daylight Porcelain</h4>
-              <p class="text-[11px] text-slate-500 font-mono">Daylight Canvas & Focus</p>
-            </div>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              The high-contrast, editorial diurnal canvas. Clean, warm white that minimizes cognitive eye strain during intense analytical sessions.
-            </p>
-          </div>
-
-          <!-- Swatch 4: Obsidian Void -->
-          <div class="swatch-card bg-white dark:bg-dark-850 p-4 rounded-2xl border border-slate-200 dark:border-dark-700 space-y-3 shadow-sm">
-            <div class="h-20 w-full rounded-xl bg-[#090D14] border border-dark-700 flex items-end p-3 shadow-sm">
-              <span class="text-xs font-mono font-bold text-slate-200 bg-black/60 px-2 py-0.5 rounded border border-dark-600">#090D14</span>
-            </div>
-            <div>
-              <h4 class="font-bold text-sm text-slate-900 dark:text-white">Obsidian Void</h4>
-              <p class="text-[11px] text-slate-500 font-mono">Night Canvas & Reflex</p>
-            </div>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Deep, immersive nocturnal canvas representing the subconscious substrate and non-autoregressive neural computation.
-            </p>
-          </div>
-
-          <!-- Swatch 5: Vitality Amber -->
-          <div class="swatch-card bg-white dark:bg-dark-850 p-4 rounded-2xl border border-slate-200 dark:border-dark-700 space-y-3 shadow-sm">
-            <div class="h-20 w-full rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 flex items-end p-3 shadow-sm">
-              <span class="text-xs font-mono font-bold text-white bg-black/40 px-2 py-0.5 rounded backdrop-blur-sm">#F59E0B / #D97706</span>
-            </div>
-            <div>
-              <h4 class="font-bold text-sm text-slate-900 dark:text-white">Vitality Amber</h4>
-              <p class="text-[11px] text-slate-500 font-mono">Emotional Arousal & Urgency</p>
-            </div>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Identifies acute stakes, human passion, or escalating stress requiring proactive de-escalation and energetic support.
-            </p>
-          </div>
-
-          <!-- Swatch 6: Crisis Crimson -->
-          <div class="swatch-card bg-white dark:bg-dark-850 p-4 rounded-2xl border border-slate-200 dark:border-dark-700 space-y-3 shadow-sm">
-            <div class="h-20 w-full rounded-xl bg-gradient-to-r from-rose-500 to-red-600 flex items-end p-3 shadow-sm">
-              <span class="text-xs font-mono font-bold text-white bg-black/40 px-2 py-0.5 rounded backdrop-blur-sm">#F43F5E / #E11D48</span>
-            </div>
-            <div>
-              <h4 class="font-bold text-sm text-slate-900 dark:text-white">Crisis Crimson</h4>
-              <p class="text-[11px] text-slate-500 font-mono">Adversity & Threat Stance</p>
-            </div>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Triggered during high adversity (grief, trauma, sudden loss), immediately commanding maximum warmth intervention from the harmonizer.
-            </p>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- THE 4 COGNITIVE PILLARS -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-bold text-slate-900 dark:text-white">The Four Architectural Pillars</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="bg-white dark:bg-dark-850 p-5 rounded-xl border border-slate-200 dark:border-dark-700 space-y-2 shadow-sm">
-            <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider">Pillar I</span>
-            <h4 class="font-bold text-slate-900 dark:text-white text-base">System 1 Reflex</h4>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Biological humans appraise danger, grief, and stakes in milliseconds through involuntary limbic pathways. Soul replicates this with non-autoregressive sub-millisecond evaluation.
-            </p>
-          </div>
-          <div class="bg-white dark:bg-dark-850 p-5 rounded-xl border border-slate-200 dark:border-dark-700 space-y-2 shadow-sm">
-            <span class="text-xs font-mono text-cyan-600 dark:text-cyan-400 font-bold uppercase tracking-wider">Pillar II</span>
-            <h4 class="font-bold text-slate-900 dark:text-white text-base">Lazarus Appraisal</h4>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Grounds understanding in psychological science: Primary Appraisal (Threat vs Challenge) and Secondary Appraisal (Coping Potential & Agency).
-            </p>
-          </div>
-          <div class="bg-white dark:bg-dark-850 p-5 rounded-xl border border-slate-200 dark:border-dark-700 space-y-2 shadow-sm">
-            <span class="text-xs font-mono text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-wider">Pillar III</span>
-            <h4 class="font-bold text-slate-900 dark:text-white text-base">Russell 3D Space</h4>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Moves beyond discrete sentiment labels into continuous Valence, Arousal, and Dominance coordinate vectors, capturing nuanced vulnerability.
-            </p>
-          </div>
-          <div class="bg-white dark:bg-dark-850 p-5 rounded-xl border border-slate-200 dark:border-dark-700 space-y-2 shadow-sm">
-            <span class="text-xs font-mono text-purple-600 dark:text-purple-400 font-bold uppercase tracking-wider">Pillar IV</span>
-            <h4 class="font-bold text-slate-900 dark:text-white text-base">Anti-Bluntness Shield</h4>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Audits outbound draft responses. If an AI reply lacks warmth during acute human distress, it automatically harmonizes the tone before delivery.
-            </p>
           </div>
         </div>
       </div>
-
     </section>
 
   </main>
@@ -823,6 +901,13 @@ print(response.choices[0].message.content)</code></pre>
         <button type="submit" id="btn-auth-submit" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white dark:text-dark-950 font-bold text-sm shadow transition mt-2">
           Sign In
         </button>
+
+        <!-- QUICK DEMO GUEST SIGN IN -->
+        <div class="pt-2 border-t border-slate-200/80 dark:border-dark-700/80 text-center">
+          <button type="button" onclick="loginDemoAccount()" class="text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-semibold flex items-center justify-center gap-1.5 mx-auto">
+            <span>⚡ Instant Demo Access (No Password Needed)</span>
+          </button>
+        </div>
       </form>
     </div>
   </div>
@@ -843,6 +928,9 @@ print(response.choices[0].message.content)</code></pre>
       </button>
     </div>
   </div>
+
+  <!-- FLOATING TOAST NOTIFICATIONS CONTAINER -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <!-- ==================== FOOTER ==================== -->
   <footer class="border-t border-slate-200 dark:border-dark-700/70 py-8 text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-dark-950 transition-colors">

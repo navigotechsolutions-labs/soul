@@ -157,3 +157,161 @@ html.dark body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--brand-emerald);
 }
+
+/* IDE Editor Gutter & Line Numbers */
+.ide-editor-container {
+  position: relative;
+  display: flex;
+}
+
+.ide-line-numbers {
+  user-select: none;
+  text-align: right;
+  padding: 0.75rem 0.5rem 0.75rem 0.75rem;
+  color: #64748b;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8125rem;
+  line-height: 1.625;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+html:not(.dark) .ide-line-numbers {
+  color: #94a3b8;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Pulse Heartbeat Node */
+.pulse-heartbeat {
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: heartbeat 2s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+@keyframes heartbeat {
+  to {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+}
+
+/* Slop Tag Pill Hover */
+.slop-tag {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.slop-tag:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.15);
+}
+
+/* High-Trust Editorial Elevation */
+.editorial-card {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.editorial-card:hover {
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+}
+
+html.dark .editorial-card:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
+}
+
+/* Toast Notifications */
+#toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+  max-width: 90vw;
+  width: 22rem;
+}
+
+.toast-item {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.875rem;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transform: translateY(1rem);
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-item.toast-show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast-item.toast-hide {
+  transform: translateY(0.5rem) scale(0.95);
+  opacity: 0;
+}
+
+.toast-success {
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+html:not(.dark) .toast-success {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.toast-error {
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid rgba(244, 63, 94, 0.35);
+}
+
+html:not(.dark) .toast-error {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid rgba(244, 63, 94, 0.4);
+}
+
+/* Code Snippet Box with Copy Button */
+.code-box-wrapper {
+  position: relative;
+  group: true;
+}
+
+.code-copy-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  opacity: 0.75;
+  transition: all 0.2s ease;
+}
+
+.code-box-wrapper:hover .code-copy-btn {
+  opacity: 1;
+}
+
+/* Interactive Russell Radar Cursor */
+.radar-interactive {
+  cursor: crosshair;
+}
+
+/* Mobile Nav Drawer */
+.mobile-nav-pill {
+  transition: all 0.2s ease;
+}
+.mobile-nav-pill.active {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  font-weight: 700;
+}
+
+

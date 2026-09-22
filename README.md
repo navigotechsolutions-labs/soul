@@ -1,17 +1,18 @@
-# Soul Engine (`soul-engine`)
+# Soul Engine & Soul IDE (`soul-engine`)
 
 [![PyPI Version](https://img.shields.io/badge/pypi-v0.3.0-blue.svg)](https://pypi.org/project/soul-engine/)
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/tests-51%20passed%20%7C%20100%25-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-59%20passed%20%7C%20100%25-brightgreen.svg)](tests/)
 [![Latency](https://img.shields.io/badge/latency-%3C1.0ms%20(P50)-orange.svg)]()
-[![Live Dashboard](https://img.shields.io/badge/live-soul.navigotechsolutions.com-emerald.svg)](https://soul.navigotechsolutions.com/dashboard)
-[![Conformal Coverage](https://img.shields.io/badge/conformal%20coverage-100%25-success.svg)]()
+[![Soul IDE](https://img.shields.io/badge/Soul%20IDE-standalone%20workbench-purple.svg)]()
+[![Anti-Slop Linter](https://img.shields.io/badge/Anti--Slop%20Linter-live%20audit-success.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 > **"Understand the true feeling and context of any human situation — and act fast, in sub-milliseconds."**  
-> `Soul` is a non-autoregressive "System 1" cognitive appraisal engine and anti-bluntness harmonizer. It decodes human psychological stakes, stress stance, and 3D affect in **<1ms**, prescribing instant emotional action directives so AI agents and human teams never deliver cold, robotic, or tone-deaf responses.
+> `Soul` is a non-autoregressive "System 1" cognitive appraisal engine, anti-bluntness harmonizer, and standalone Human-POV developer environment (**Soul IDE**). It decodes human psychological stakes, eradicates synthetic AI slop (emoji-as-icons, em-dash saturation, ChatGPT buzzwords), and calibrates digital interfaces for authentic human sensation.
 
 ---
+
 
 ## 🌟 Why Soul? The Core AI Failure Mode
 
@@ -129,7 +130,34 @@ pip install dist/soul_engine-0.3.0-py3-none-any.whl
 
 ---
 
+### 💻 Launch the Standalone Soul IDE
+
+Start the local desktop development environment and anti-slop workbench in your browser:
+
+```bash
+soul ide
+```
+*Opens `http://localhost:8000/ide` featuring a split-pane editor, real-time AI slop linter, and 1-click humanization.*
+
+---
+
+### 🛡️ Anti-AI-Slop Linter (Terminal & CI/CD)
+
+```bash
+# 1. Audit text, UI copy, or landing page text
+soul audit "In today's fast-paced world—efficiency is crucial. 🚀 Delve into our tool!"
+
+# 2. Instant 1-click humanization
+soul sanitize "In today's fast-paced world—efficiency is crucial. 🚀 Delve into our tool!"
+
+# 3. Add to pre-commit or CI/CD to prevent shipping synthetic AI slop
+soul audit --file ./copy.txt --fail-on-slop
+```
+
+---
+
 ### Basic Python Usage
+
 
 ```python
 import soul

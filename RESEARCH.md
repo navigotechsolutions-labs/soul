@@ -2,7 +2,7 @@
 
 `Soul` is a non-autoregressive, calibrated "System 1" cognitive and emotional appraisal engine. It combines computational linguistics, cognitive psychology, psychometrics, and calibrated machine learning to allow software agents to appraise human adversity, continuous affect, and nuanced emotional states in sub-millisecond speeds.
 
-This document details the academic literature, theoretical frameworks, and mathematical formulations implemented in `Soul v0.2.0`.
+This document details the academic literature, theoretical frameworks, and mathematical formulations implemented in `Soul v0.3.0`.
 
 ---
 

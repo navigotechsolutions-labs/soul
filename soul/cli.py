@@ -145,6 +145,146 @@ def demonstrate_fix(user_text: str):
     console.print()
 
 
+def handle_audit_command(args: list[str]):
+    """Handles 'soul audit' command to evaluate text or files from Human POV."""
+    from soul import audit_human_feel
+
+    if len(args) < 2 or args[1] in ("--help", "-h"):
+        console.print("[bold yellow]Usage:[/bold yellow]")
+        console.print("  soul audit \"<text or UI copy to audit>\" [--context \"<user prompt>\"] [--fail-on-slop]")
+        console.print("  soul audit --file <path/to/file.txt> [--fail-on-slop]")
+        return
+
+    content = ""
+    user_context = None
+    fail_on_slop = "--fail-on-slop" in args
+    is_json = "--json" in args
+
+    for i, arg in enumerate(args):
+        if arg == "--file" and i + 1 < len(args):
+            try:
+                with open(args[i + 1], "r", encoding="utf-8") as f:
+                    content = f.read()
+            except Exception as e:
+                console.print(f"[red]Failed to read file: {e}[/red]")
+                sys.exit(1)
+        elif arg == "--context" and i + 1 < len(args):
+            user_context = args[i + 1]
+
+    if not content:
+        # Collect non-flag arguments
+        non_flags = [a for a in args[1:] if not a.startswith("--") and a != user_context]
+        if non_flags:
+            content = " ".join(non_flags)
+
+    if not content:
+        console.print("[red]Error: Please provide text or a file to audit.[/red]")
+        return
+
+    report = audit_human_feel(content, user_context=user_context)
+
+    if is_json:
+        print(report.model_dump_json(indent=2))
+        if fail_on_slop and report.status != "AUTHENTIC_HUMAN_CRAFT":
+            sys.exit(1)
+        return
+
+    # Rich Terminal Output
+    console.print()
+    border_color = "green" if report.status == "AUTHENTIC_HUMAN_CRAFT" else ("yellow" if report.status == "STERILE_ROBOTIC" else "red")
+    console.print(Panel(
+        f"[bold italic]\"{content[:300]}{'...' if len(content) > 300 else ''}\"[/bold italic]",
+        title=f"[bold {border_color}]Human Sensation & Anti-Slop Audit[/bold {border_color}] ({len(content)} chars)",
+        border_style=border_color
+    ))
+
+    audit_table = Table(title="[bold]Human Experience Scorecard[/bold]", box=box.ROUNDED, expand=True)
+    audit_table.add_column("Pillar", style="bold white", width=25)
+    audit_table.add_column("Score / Reading", style="bold")
+    audit_table.add_column("Verdict / Details", style="dim")
+
+    # Score row
+    status_style = "bold green" if report.status == "AUTHENTIC_HUMAN_CRAFT" else ("bold yellow" if report.status == "STERILE_ROBOTIC" else "bold red")
+    audit_table.add_row(
+        "Overall Human Presence",
+        f"[{status_style}]{report.overall_human_score} / 100[/{status_style}]",
+        f"[{status_style}]{report.status}[/{status_style}]"
+    )
+
+    # Slop details
+    slop = report.slop_audit
+    emoji_desc = f"[red]{slop.emoji_icon_count} emoji(s)[/red] ({', '.join(slop.emojis_found)})" if slop.emoji_icon_count else "[green]Zero emoji crutches[/green]"
+    audit_table.add_row("Emoji-as-Icon Usage", emoji_desc, "Substituted for real UI icons")
+
+    dash_desc = f"[red]{slop.em_dash_count} em-dashes[/red]" if slop.em_dash_count >= 2 else f"[green]{slop.em_dash_count} em-dashes[/green]"
+    audit_table.add_row("Em-Dash Saturation", dash_desc, "AI clause-stitching crutch")
+
+    cliche_desc = f"[red]{', '.join(slop.ai_cliches_found)}[/red]" if slop.ai_cliches_found else "[green]None detected[/green]"
+    audit_table.add_row("AI Buzzwords & Clichés", cliche_desc, "ChatGPT hallmark lexicon ('delve', 'testament')")
+
+    audit_table.add_row(
+        "Cognitive Breathing Room",
+        f"{report.sensory_breathing_room.split('(')[0].strip()}",
+        f"Friction: {report.cognitive_friction_score:.2f} | Warmth: {report.empathy_warmth_score:.2f}"
+    )
+
+    # Aesthetic details (if any)
+    if report.aesthetic_audit and report.aesthetic_audit.detected_ai_colors:
+        audit_table.add_row(
+            "AI Palette Trope",
+            f"[red]{', '.join(report.aesthetic_audit.detected_ai_colors[:2])}[/red]",
+            "Generic AI Purple / Radioactive Neon"
+        )
+
+    console.print(audit_table)
+
+    if report.key_criticisms:
+        crit_text = "\n".join(f"[bold red]•[/bold red] {c}" for c in report.key_criticisms)
+        console.print(Panel(crit_text, title="[bold red]Human Disconnect Criticisms[/bold red]", border_style="red"))
+
+    if report.actionable_prescriptions:
+        presc_text = "\n".join(f"[bold green]✓[/bold green] {p}" for p in report.actionable_prescriptions)
+        console.print(Panel(presc_text, title="[bold green]Actionable Human Prescriptions[/bold green]", border_style="green"))
+
+    if report.humanized_alternative and report.humanized_alternative != content:
+        console.print(Panel(
+            f"[bold white]{report.humanized_alternative}[/bold white]",
+            title="[bold cyan]✨ Harmonized Human Version (Slop Eradicated)[/bold cyan]",
+            border_style="cyan"
+        ))
+    console.print()
+
+    if fail_on_slop and report.status != "AUTHENTIC_HUMAN_CRAFT":
+        console.print("[bold red]Failed CI Check: Content did not meet authentic human standards.[/bold red]")
+        sys.exit(1)
+
+
+def handle_sanitize_command(args: list[str]):
+    """Handles 'soul sanitize' command to instantly humanize text."""
+    from soul import sanitize_slop
+
+    if len(args) < 2 or args[1] in ("--help", "-h"):
+        console.print("[bold yellow]Usage:[/bold yellow]")
+        console.print("  soul sanitize \"<text with AI slop>\"")
+        return
+
+    text = " ".join(args[1:])
+    sanitized = sanitize_slop(text)
+
+    console.print()
+    console.print(Panel(
+        f"[dim]{text}[/dim]",
+        title="[bold red]Original AI Output[/bold red]",
+        border_style="red"
+    ))
+    console.print(Panel(
+        f"[bold green]{sanitized}[/bold green]",
+        title="[bold green]Humanized (Slop Eradicated)[/bold green]",
+        border_style="green"
+    ))
+    console.print()
+
+
 def handle_key_command(args: list[str]):
     """Handles 'soul key generate' and 'soul key info' commands."""
     from soul.engine.api_key_manager import APIKeyManager
@@ -203,21 +343,84 @@ def handle_key_command(args: list[str]):
         console.print(f"[red]Unknown key command: {subcmd}[/red]")
 
 
+def handle_ide_command(args: list[str]):
+    """Launches the standalone Soul IDE workbench in the browser."""
+    import uvicorn
+    import webbrowser
+    import threading
+
+    port = 8000
+    host = "127.0.0.1"
+    no_browser = "--no-browser" in args
+
+    for i, arg in enumerate(args):
+        if arg == "--port" and i + 1 < len(args):
+            try:
+                port = int(args[i + 1])
+            except ValueError:
+                pass
+        elif arg == "--host" and i + 1 < len(args):
+            host = args[i + 1]
+
+    url = f"http://{host}:{port}/ide"
+
+    console.print()
+    console.print(Panel(
+        f"[bold green]Starting Standalone Soul IDE Workbench...[/bold green]\n\n"
+        f"[bold cyan]Local Workspace:[/bold cyan]    [bold white on blue] {url} [/bold white on blue]\n"
+        f"[bold cyan]Universal Gateway:[/bold cyan]  http://{host}:{port}/v1/chat/completions\n"
+        f"[bold cyan]Swagger API Docs:[/bold cyan]   http://{host}:{port}/docs\n\n"
+        f"[dim]Press Ctrl+C to stop the Soul IDE server.[/dim]",
+        title="[bold green]💻 Soul IDE — Human-POV Integrated Development Environment[/bold green]",
+        border_style="green"
+    ))
+    console.print()
+
+    if not no_browser:
+        def open_browser():
+            import time
+            time.sleep(1.2)
+            try:
+                webbrowser.open(url)
+            except Exception:
+                pass
+        threading.Thread(target=open_browser, daemon=True).start()
+
+    uvicorn.run("soul.server:app", host=host, port=port, log_level="info")
+
+
 def main():
     """Main CLI entry point."""
     if len(sys.argv) < 2 or sys.argv[1] in ("--help", "-h"):
         console.print("[bold yellow]Usage:[/bold yellow]")
+        console.print("  soul ide [--port 8000] [--no-browser]")
+        console.print("  soul audit \"<text or UI copy>\" [--context \"<user prompt>\"] [--fail-on-slop]")
+        console.print("  soul sanitize \"<text with AI slop>\"")
         console.print("  soul \"<sentence to appraise>\" [--json | --demonstrate-fix]")
         console.print("  soul key generate --name \"My Project\" [--email dev@example.com]")
         console.print("  soul key info soul_live_<token>")
         console.print("\nExamples:")
-        console.print("  soul \"I lost my job yesterday and can't afford rent.\"")
-        console.print("  soul \"I failed my exam and feel like giving up.\" --demonstrate-fix")
-        console.print("  soul key generate --name \"My AI Agent\"")
+        console.print("  soul ide                                                                    # Launch Standalone IDE in browser")
+        console.print("  soul audit \"In today's fast-paced world—efficiency is crucial. 🚀 Delve!\"  # Audit copy for AI slop")
+        console.print("  soul sanitize \"In today's fast-paced world—efficiency is crucial. 🚀\"      # Instantly humanize")
         sys.exit(0)
 
-    if sys.argv[1] == "key":
+    cmd = sys.argv[1]
+
+    if cmd in ("ide", "studio", "ui"):
+        handle_ide_command(sys.argv[1:])
+        return
+
+    if cmd == "key":
         handle_key_command(sys.argv[1:])
+        return
+
+    if cmd == "audit":
+        handle_audit_command(sys.argv[1:])
+        return
+
+    if cmd == "sanitize":
+        handle_sanitize_command(sys.argv[1:])
         return
 
     text = sys.argv[1]
@@ -238,4 +441,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
