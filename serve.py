@@ -25,9 +25,10 @@ def main():
     args = parser.parse_args()
 
     print(f"\n================================================================================")
-    print(f"🚀 Starting Soul Engine REST API Server on http://{args.host}:{args.port}")
-    print(f"📖 Interactive Swagger Docs: http://localhost:{args.port}/docs")
-    print(f"🤖 OpenAI Proxy Endpoint:    http://localhost:{args.port}/v1/chat/completions")
+    print(f"🚀 Soul Engine Production REST API Server on http://{args.host}:{args.port}")
+    print(f"🖥️  Web Dashboard:             http://localhost:{args.port}/dashboard")
+    print(f"📖 Interactive Swagger Docs:  http://localhost:{args.port}/docs")
+    print(f"⚡ Universal Chat Gateway:     http://localhost:{args.port}/v1/chat/completions")
     print(f"================================================================================\n")
 
     uvicorn.run(

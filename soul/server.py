@@ -1,12 +1,12 @@
-"""FastAPI Production REST API & OpenAI-Compatible Gateway for Soul Engine.
+"""FastAPI Production REST API & Universal Emotional Intelligence Gateway for Soul Engine.
 
 Provides ultra-fast sub-millisecond endpoints for:
 - POST /v1/appraise: Fast System 1 cognitive stress, VAD affect, and feelings appraisal.
 - POST /v1/harmonize: Anti-bluntness response inspection and empathetic transformation.
 - POST /v1/respond: End-to-end emotionally attuned generation.
-- POST /v1/chat/completions: OpenAI-compatible drop-in proxy endpoint.
+- POST /v1/chat/completions: Universal chat completions endpoint compatible with standard client tools.
 - GET /health: Liveness and status check.
-- GET /v1/models: OpenAI-compatible models list.
+- GET /v1/models: Available models directory.
 """
 
 import time
@@ -38,7 +38,7 @@ from soul.schemas.appraisal import SubjectAppraisalResult
 # Initialize FastAPI App
 app = FastAPI(
     title="Soul Engine API",
-    description="Fast System 1 Cognitive Appraisal, Anti-Bluntness SaaS & OpenAI Proxy Gateway",
+    description="Fast System 1 Cognitive Appraisal, Anti-Bluntness SaaS & Universal Emotional Gateway",
     version=soul.__version__,
     docs_url="/docs",
     redoc_url="/redoc",
@@ -231,7 +231,7 @@ def root(accept: Optional[str] = Header(None)):
             "appraise": "POST /v1/appraise",
             "harmonize": "POST /v1/harmonize",
             "respond": "POST /v1/respond",
-            "openai_proxy": "POST /v1/chat/completions",
+            "chat_completions": "POST /v1/chat/completions",
             "docs": "/docs",
         },
     }
@@ -380,9 +380,9 @@ def health():
     }
 
 
-@app.get("/v1/models", tags=["OpenAI Compatible"])
+@app.get("/v1/models", tags=["Universal Chat Gateway"])
 def list_models():
-    """Returns OpenAI-compatible model list compatible with all 3rd-party apps and CLI tools."""
+    """Returns model directory compatible with standard chat clients and CLI tools."""
     return {
         "object": "list",
         "data": [
@@ -492,12 +492,12 @@ def respond_endpoint(req: RespondRequest, client: Optional[dict] = Depends(get_c
     )
 
 
-@app.post("/v1/chat/completions", tags=["OpenAI Compatible"])
-def openai_chat_completions(req: OpenAIChatRequest, client: Optional[dict] = Depends(get_current_client)):
-    """OpenAI-compatible drop-in proxy endpoint.
+@app.post("/v1/chat/completions", tags=["Universal Chat Gateway"])
+def universal_chat_completions(req: OpenAIChatRequest, client: Optional[dict] = Depends(get_current_client)):
+    """Universal chat completions gateway endpoint.
     
-    Any client using standard OpenAI SDK can point base_url to this server
-    and receive emotionally attuned, non-blunt responses automatically.
+    Any standard chat client, terminal CLI, or SDK can point base_url to this server
+    using a Soul API Key (`soul_live_...`) to receive emotionally attuned, non-blunt responses.
     """
     if not req.messages:
         raise HTTPException(status_code=400, detail="Messages array cannot be empty.")

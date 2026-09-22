@@ -9,7 +9,7 @@ Welcome to the **Soul Engine User Guide**. This handbook covers everything you n
 2. [Quickstart (60 Seconds)](#2-quickstart-60-seconds)
 3. [Interactive Web Dashboard (No-Code)](#3-interactive-web-dashboard-no-code)
 4. [Python SDK Usage](#4-python-sdk-usage)
-5. [OpenAI SDK Drop-in Replacement](#5-openai-sdk-drop-in-replacement)
+5. [Universal Client & App Integration (Soul API Key)](#5-universal-client--app-integration-soul-api-key)
 6. [Production REST API & Endpoints](#6-production-rest-api--endpoints)
 7. [Self-Service API Key Management](#7-self-service-api-key-management)
 8. [Command-Line Interface (CLI)](#8-command-line-interface-cli)
@@ -114,20 +114,21 @@ print(harmonized_text)
 
 ---
 
-## 5. OpenAI SDK Drop-in Replacement
+## 5. Universal Client & App Integration (Soul API Key)
 
-You can point your existing OpenAI client directly to Soul with **zero code changes** to your application logic:
+Soul Engine provides standard `/v1/chat/completions` compatibility, which allows developers to connect **any terminal tool, AI IDE (Cursor, Continue), client library, or pipeline** directly to Soul Engine using your proprietary **Soul API Key (`soul_live_...`)** with zero code modifications:
 
+### Python (Universal Client)
 ```python
-from openai import OpenAI
+from openai import OpenAI  # Or any standard AI client library
 
-# Connect to your running Soul server
+# Connect to your Soul Engine server using your proprietary Soul API Key
 client = OpenAI(
-    base_url="http://localhost:8000/v1",
-    api_key="soul_live_eb27f2e6ff2c4156d75df99be50bc41abbe260a9"
+    base_url="https://soul.navigotechsolutions.com/v1",  # Or http://localhost:8000/v1
+    api_key="soul_live_eb27f2e6ff2c4156d75df99be50bc41abbe260a9"  # Issued by Soul Engine
 )
 
-# Standard chat completion call
+# Standard chat completion call - automatically routed through Soul's System 1 appraisal & anti-bluntness filter
 response = client.chat.completions.create(
     model="soul-attuned",
     messages=[
@@ -136,6 +137,17 @@ response = client.chat.completions.create(
 )
 
 print(response.choices[0].message.content)
+```
+
+### Terminal CLI / Shell Tools
+You can route terminal utilities (such as `aichat`, `tgpt`, `mods`, or custom CLI scripts) through Soul Engine simply by setting standard environment variables:
+
+```bash
+# Terminal setup:
+export OPENAI_BASE_URL="https://soul.navigotechsolutions.com/v1"
+export OPENAI_API_KEY="soul_live_your_soul_key_here"
+
+# Terminal tools will now automatically use Soul Engine for cognitive appraisal and attuned responses!
 ```
 
 ---

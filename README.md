@@ -64,7 +64,7 @@ Soul solves this through two synchronized capabilities:
 
 ## 🚀 Quickstart
 
-> 📖 **Looking for the complete manual?** Check out the full [**User Guide (`USER_GUIDE.md`)**](USER_GUIDE.md) for detailed Python, OpenAI, REST API, Web UI, and Docker tutorials.
+> 📖 **Looking for the complete manual?** Check out the full [**User Guide (`USER_GUIDE.md`)**](USER_GUIDE.md) for detailed Python, REST API, Universal SDKs, Web UI, and Docker tutorials.
 
 ### Installation
 
@@ -199,9 +199,9 @@ python -m soul.cli "My mother passed away last night." --json
 
 ---
 
-## 🌐 Production REST API & OpenAI-Compatible Gateway
-
-`Soul` includes a production FastAPI microservice (`soul.server` / [`serve.py`](serve.py)) with sub-millisecond response times, CORS support, and an **OpenAI-compatible drop-in proxy**.
+## 🌐 Production REST API & Universal Chat Gateway
+ 
+`Soul` includes a production FastAPI microservice (`soul.server` / [`serve.py`](serve.py)) with sub-millisecond response times, CORS support, and a **universal chat gateway** for any standard AI client.
 
 ### 1. Launching the API Server
 
@@ -256,11 +256,11 @@ curl -X GET "http://localhost:8000/v1/auth/keys/info" \
 
 ---
 
-### 3. Use as an OpenAI Drop-In Replacement
+### 3. Connect Any Client, Terminal CLI, or SDK (Using Soul API Keys)
 
-Any application, LangChain pipeline, or client using the standard `openai` SDK can seamlessly connect to Soul by redirecting `base_url`:
+Any application, terminal tool (like `aichat` or `tgpt`), LangChain pipeline, or client using standard chat completions can seamlessly connect to Soul Engine using your proprietary **Soul API Key (`soul_live_...`)**:
 
-#### Python (OpenAI SDK)
+#### Python (Universal Client)
 ```python
 from openai import OpenAI
 

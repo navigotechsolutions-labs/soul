@@ -59,7 +59,7 @@
       <nav class="hidden md:flex items-center space-x-1">
         <button onclick="switchTab('playground')" id="nav-playground" class="nav-tab active px-3.5 py-2 rounded-lg text-sm font-medium transition text-white bg-dark-800 border border-dark-700">⚡ Live Playground</button>
         <button onclick="switchTab('keys')" id="nav-keys" class="nav-tab px-3.5 py-2 rounded-lg text-sm font-medium transition text-slate-400 hover:text-white hover:bg-dark-800/60">🔑 API Keys & Usage</button>
-        <button onclick="switchTab('snippets')" id="nav-snippets" class="nav-tab px-3.5 py-2 rounded-lg text-sm font-medium transition text-slate-400 hover:text-white hover:bg-dark-800/60">💻 Code & OpenAI SDK</button>
+        <button onclick="switchTab('snippets')" id="nav-snippets" class="nav-tab px-3.5 py-2 rounded-lg text-sm font-medium transition text-slate-400 hover:text-white hover:bg-dark-800/60">💻 Code & SDK</button>
         <a href="/docs" target="_blank" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-dark-800/60 flex items-center gap-1.5">
           <span>📖 Swagger Docs</span>
           <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
@@ -277,8 +277,8 @@
     <section id="tab-keys" class="space-y-6 hidden">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-dark-700 pb-5">
         <div>
-          <h2 class="text-2xl font-bold">API Key & Quota Management</h2>
-          <p class="text-sm text-slate-400">Generate personal API keys for your applications, bots, or OpenAI client proxies.</p>
+          <h2 class="text-2xl font-bold">Soul API Key & Quota Management</h2>
+          <p class="text-sm text-slate-400">Generate personal Soul API keys (<code class="text-emerald-400">soul_live_...</code>) for your apps, bots, servers, or CLI tools.</p>
         </div>
         <button onclick="openCreateKeyModal()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-dark-900 font-bold text-sm shadow-md shadow-emerald-500/20 flex items-center gap-2 transition">
           <span>+ Create New Key</span>
@@ -329,41 +329,18 @@
     <!-- ==================== TAB 3: CODE SNIPPETS ==================== -->
     <section id="tab-snippets" class="space-y-6 hidden">
       <div class="border-b border-dark-700 pb-4">
-        <h2 class="text-2xl font-bold">Integration Code & SDK Drop-In</h2>
-        <p class="text-sm text-slate-400">Seamless drop-in for OpenAI SDK, Python requests, TypeScript, and cURL.</p>
+        <h2 class="text-2xl font-bold">Soul Engine API & SDK Integration</h2>
+        <p class="text-sm text-slate-400">Integrate using your private <strong class="text-emerald-400">Soul API Key</strong> (<code>soul_live_...</code>) via Direct REST API, Terminal cURL, TypeScript, or Universal Client SDKs.</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- OpenAI Drop-in -->
+        <!-- Python Requests (Native Soul Engine) -->
         <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">OpenAI Python SDK (Drop-In)</span>
-            <span class="text-xs text-slate-500 font-mono">1-Line Replacement</span>
-          </div>
-          <p class="text-xs text-slate-400">Point standard OpenAI client directly to Soul Engine proxy:</p>
-          <pre class="bg-dark-900 p-4 rounded-xl border border-dark-700 text-xs font-mono text-slate-200 overflow-x-auto"><code>from openai import OpenAI
-
-client = OpenAI(
-    base_url="https://soul.navigotechsolutions.com/v1",
-    api_key="soul_live_your_key_here"
-)
-
-response = client.chat.completions.create(
-    model="soul-attuned",
-    messages=[
-        {"role": "user", "content": "I feel hopeless today."}
-    ]
-)
-print(response.choices[0].message.content)</code></pre>
-        </div>
-
-        <!-- Python Requests -->
-        <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Python (Direct REST API)</span>
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Python (Native Soul API)</span>
             <span class="text-xs text-slate-500 font-mono">&lt;1ms Latency</span>
           </div>
-          <p class="text-xs text-slate-400">Fast cognitive appraisal call:</p>
+          <p class="text-xs text-slate-400">System 1 cognitive appraisal using your Soul API Key:</p>
           <pre class="bg-dark-900 p-4 rounded-xl border border-dark-700 text-xs font-mono text-slate-200 overflow-x-auto"><code>import requests
 
 res = requests.post(
@@ -376,14 +353,15 @@ print("Domain:", appraisal["adversity"]["primary_domain"])
 print("Recommended Tone:", appraisal["agent_guidance"]["recommended_tone"])</code></pre>
         </div>
 
-        <!-- cURL -->
+        <!-- Terminal cURL -->
         <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Terminal cURL</span>
-            <span class="text-xs text-slate-500 font-mono">HTTP POST</span>
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Terminal cURL (Soul Key)</span>
+            <span class="text-xs text-slate-500 font-mono">CLI / Shell</span>
           </div>
+          <p class="text-xs text-slate-400">Authenticate with <code>Authorization: Bearer</code> or <code>X-Soul-Key</code>:</p>
           <pre class="bg-dark-900 p-4 rounded-xl border border-dark-700 text-xs font-mono text-slate-200 overflow-x-auto"><code>curl -X POST "https://soul.navigotechsolutions.com/v1/appraise" \
-  -H "Authorization: Bearer soul_live_..." \
+  -H "Authorization: Bearer soul_live_your_key_here" \
   -H "Content-Type: application/json" \
   -d '{"text": "The landlord slipped an eviction notice."}'</code></pre>
         </div>
@@ -394,16 +372,39 @@ print("Recommended Tone:", appraisal["agent_guidance"]["recommended_tone"])</cod
             <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">TypeScript / Node.js</span>
             <span class="text-xs text-slate-500 font-mono">fetch()</span>
           </div>
+          <p class="text-xs text-slate-400">Native asynchronous fetch with Soul Engine:</p>
           <pre class="bg-dark-900 p-4 rounded-xl border border-dark-700 text-xs font-mono text-slate-200 overflow-x-auto"><code>const res = await fetch("https://soul.navigotechsolutions.com/v1/appraise", {
   method: "POST",
   headers: {
-    "Authorization": "Bearer soul_live_...",
+    "Authorization": "Bearer soul_live_your_key_here",
     "Content-Type": "application/json"
   },
   body: JSON.stringify({ text: "I feel hopeless today." })
 });
 const data = await res.json();
 console.log(data);</code></pre>
+        </div>
+
+        <!-- Universal Client SDK (Chat Protocol) -->
+        <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Universal Chat Gateway (Any AI Client)</span>
+            <span class="text-xs text-slate-500 font-mono">Soul API Key</span>
+          </div>
+          <p class="text-xs text-slate-400">Connect any standard chat library to Soul Engine:</p>
+          <pre class="bg-dark-900 p-4 rounded-xl border border-dark-700 text-xs font-mono text-slate-200 overflow-x-auto"><code># Works with any standard AI client or terminal tool!
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://soul.navigotechsolutions.com/v1",
+    api_key="soul_live_your_soul_key_here"
+)
+
+response = client.chat.completions.create(
+    model="soul-attuned",
+    messages=[{"role": "user", "content": "I feel completely overwhelmed."}]
+)
+print(response.choices[0].message.content)</code></pre>
         </div>
       </div>
     </section>

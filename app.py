@@ -155,7 +155,7 @@ if user_input:
 
         active_token = st.session_state.get("generated_key", {}).get("api_key", "soul_live_your_key_here")
 
-        snip_py, snip_openai, snip_curl, snip_ts = st.tabs(["Python (requests)", "OpenAI SDK Drop-in", "cURL", "TypeScript / Node"])
+        snip_py, snip_universal, snip_curl, snip_ts = st.tabs(["Python (Direct Soul API)", "Universal Client Drop-in", "cURL", "TypeScript / Node"])
 
         with snip_py:
             st.code(f"""import requests
@@ -183,13 +183,13 @@ response = requests.post(
 print("Harmonized:", response.json()["harmonized_content"])
 """, language="python")
 
-        with snip_openai:
+        with snip_universal:
             st.code(f"""from openai import OpenAI
 
-# Drop-in replacement: point OpenAI client to Soul Engine!
+# Connect any standard AI client to Soul Engine using your Soul API key!
 client = OpenAI(
     base_url="http://localhost:8000/v1",
-    api_key="{active_token}"  # Your personal Soul API key
+    api_key="{active_token}"  # Your proprietary Soul API key
 )
 
 completion = client.chat.completions.create(
