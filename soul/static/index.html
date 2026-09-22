@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Soul Engine — System 1 Cognitive Appraisal & Anti-Bluntness SaaS</title>
+  <title>Soul Engine — System 1 Affective Perception & Anti-Bluntness AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -17,15 +17,17 @@
           colors: {
             brand: {
               50: '#f0fdf4',
+              400: '#34d399',
               500: '#10b981',
               600: '#059669',
             },
             dark: {
-              900: '#0a0d12',
-              850: '#0f141c',
-              800: '#151b26',
-              700: '#1e2638',
-              600: '#2d3748',
+              950: '#06090e',
+              900: '#090d14',
+              850: '#0f1523',
+              800: '#151c2e',
+              700: '#1f2942',
+              600: '#2d3a58',
             }
           },
           fontFamily: {
@@ -38,30 +40,66 @@
   </script>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
-<body class="bg-dark-900 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+<body class="bg-dark-900 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-dark-900">
 
-  <!-- TOP NAVIGATION BAR -->
-  <header class="border-b border-dark-700/60 bg-dark-900/80 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+  <!-- ==================== TOP NAVIGATION BAR ==================== -->
+  <header class="border-b border-dark-700/70 bg-dark-900/80 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between py-2">
       
-      <!-- LOGO -->
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('playground')">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-          <span class="text-xl">🧠</span>
+      <!-- BESPOKE BRAND LOGO & IDENTITY -->
+      <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchTab('playground')">
+        <div class="relative flex items-center justify-center">
+          <!-- Animated ambient glow -->
+          <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl blur-sm opacity-40 group-hover:opacity-75 transition duration-500"></div>
+          
+          <!-- Vector Glyph: The Resonant Psi (Ψ) Core -->
+          <svg class="w-10 h-10 relative" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="navLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#10B981"/>
+                <stop offset="50%" stop-color="#14B8A6"/>
+                <stop offset="100%" stop-color="#06B6D4"/>
+              </linearGradient>
+              <linearGradient id="navCoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#34D399"/>
+                <stop offset="100%" stop-color="#10B981"/>
+              </linearGradient>
+            </defs>
+            <rect width="48" height="48" rx="12" fill="#0B101D" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+            <!-- Psi Stem -->
+            <path d="M24 9V39" stroke="url(#navLogoGrad)" stroke-width="3" stroke-linecap="round"/>
+            <!-- Psi Harmonic Arcs -->
+            <path d="M12 17C12 28.5 20 32 24 32C28 32 36 28.5 36 17" stroke="url(#navLogoGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Central Cognitive Node -->
+            <circle cx="24" cy="24" r="4" fill="url(#navCoreGrad)"/>
+            <circle cx="24" cy="24" r="1.8" fill="#FFFFFF"/>
+          </svg>
         </div>
         <div>
-          <span class="text-lg font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">Soul Engine</span>
-          <span class="text-xs font-mono ml-1 px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">v0.3.0</span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">Soul Engine</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">v0.3.0</span>
+          </div>
+          <p class="text-[11px] text-slate-400 font-medium tracking-wide">by <span class="text-slate-300 font-semibold">Navigo Tech Solutions</span></p>
         </div>
       </div>
 
-      <!-- TABS -->
-      <nav class="hidden md:flex items-center space-x-1">
-        <button onclick="switchTab('playground')" id="nav-playground" class="nav-tab active px-3.5 py-2 rounded-lg text-sm font-medium transition text-white bg-dark-800 border border-dark-700">⚡ Live Playground</button>
-        <button onclick="switchTab('keys')" id="nav-keys" class="nav-tab px-3.5 py-2 rounded-lg text-sm font-medium transition text-slate-400 hover:text-white hover:bg-dark-800/60">🔑 API Keys & Usage</button>
-        <button onclick="switchTab('snippets')" id="nav-snippets" class="nav-tab px-3.5 py-2 rounded-lg text-sm font-medium transition text-slate-400 hover:text-white hover:bg-dark-800/60">💻 Code & SDK</button>
-        <a href="/docs" target="_blank" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-dark-800/60 flex items-center gap-1.5">
-          <span>📖 Swagger Docs</span>
+      <!-- NAVIGATION TABS -->
+      <nav class="hidden lg:flex items-center space-x-1">
+        <button onclick="switchTab('playground')" id="nav-playground" class="nav-tab active px-3.5 py-2 rounded-xl text-sm font-medium transition text-white bg-dark-800 border border-dark-700 shadow-sm flex items-center gap-2">
+          <span>⚡ Live Playground</span>
+        </button>
+        <button onclick="switchTab('keys')" id="nav-keys" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white hover:bg-dark-800/60 flex items-center gap-2">
+          <span>🔑 Soul API Keys</span>
+        </button>
+        <button onclick="switchTab('snippets')" id="nav-snippets" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white hover:bg-dark-800/60 flex items-center gap-2">
+          <span>💻 Code & SDKs</span>
+        </button>
+        <button onclick="switchTab('brand')" id="nav-brand" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white hover:bg-dark-800/60 flex items-center gap-2">
+          <span>🧬 Brand & Meaning</span>
+        </button>
+        <a href="/docs" target="_blank" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-dark-800/60 flex items-center gap-1.5 transition">
+          <span>📖 Swagger</span>
           <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
         </a>
       </nav>
@@ -69,231 +107,298 @@
       <!-- AUTH USER / LOGIN BUTTON -->
       <div class="flex items-center space-x-3" id="auth-header-container">
         <div id="unauthenticated-block" class="flex items-center space-x-2">
-          <button onclick="openAuthModal('login')" class="text-sm font-semibold px-4 py-2 rounded-lg text-slate-300 hover:text-white transition">Sign In</button>
-          <button onclick="openAuthModal('signup')" class="text-sm font-semibold px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-dark-900 shadow-md shadow-emerald-500/20 transition">Create Account</button>
+          <button onclick="openAuthModal('login')" class="text-sm font-semibold px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-dark-800 transition">Sign In</button>
+          <button onclick="openAuthModal('signup')" class="text-sm font-semibold px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-dark-950 shadow-md shadow-emerald-500/20 font-bold transition">Get API Key</button>
         </div>
         <div id="authenticated-block" class="hidden flex items-center space-x-3">
-          <div class="flex items-center space-x-2.5 bg-dark-800 px-3 py-1.5 rounded-lg border border-dark-700">
+          <div class="flex items-center space-x-2.5 bg-dark-800 px-3 py-1.5 rounded-xl border border-dark-700">
             <div id="user-avatar" class="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs border border-emerald-500/30">U</div>
             <span id="user-name" class="text-sm font-medium text-slate-200">User</span>
           </div>
-          <button onclick="logout()" class="text-xs font-semibold px-2.5 py-1.5 rounded-md text-red-400 hover:bg-red-500/10 border border-red-500/20 transition">Logout</button>
+          <button onclick="logout()" class="text-xs font-semibold px-2.5 py-1.5 rounded-lg text-rose-400 hover:bg-rose-500/10 border border-rose-500/20 transition">Logout</button>
         </div>
       </div>
 
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
+  <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
   <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
 
-    <!-- ==================== TAB 1: PLAYGROUND ==================== -->
+    <!-- ==================== TAB 1: SYSTEM 1 PLAYGROUND ==================== -->
     <section id="tab-playground" class="space-y-6">
       
       <!-- HERO BANNER -->
-      <div class="text-center max-w-3xl mx-auto space-y-3 pt-2 pb-6">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-          Sub-Millisecond System 1 Cognitive Appraisal (<1ms)
+      <div class="text-center max-w-4xl mx-auto space-y-4 pt-4 pb-4">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 shadow-inner">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>System 1 Non-Autoregressive Cognitive Perception (&lt;1.0ms)</span>
         </div>
-        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
-          Understand True Feelings.<br/>
-          <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">Eliminate Blunt AI Responses.</span>
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+          Give Your AI a <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">Psyche & Emotional Reflex</span>.<br/>
+          Eliminate Blunt, Tone-Deaf Responses.
         </h1>
-        <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
-          Senses human psychological stakes, continuous Russell 3D affect, and Lazarus cognitive stress in <strong>0.98ms</strong>. Automatically prevents tone-deaf and cold AI replies.
+        <p class="text-slate-400 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+          Standard LLMs jump straight into dry logical steps, ignoring human emotional shock. Soul Engine perceives psychological stakes and continuous 3D affect in <strong>&lt;1ms</strong>, automatically harmonizing responses with empathy.
         </p>
+
+        <!-- LIVE METRIC BADGES -->
+        <div class="flex flex-wrap items-center justify-center gap-4 pt-2 text-xs font-mono text-slate-400">
+          <div class="flex items-center gap-1.5 bg-dark-850 px-3 py-1.5 rounded-lg border border-dark-700">
+            <span class="text-emerald-400 font-bold">⚡ 0.98ms</span> Target Latency
+          </div>
+          <div class="flex items-center gap-1.5 bg-dark-850 px-3 py-1.5 rounded-lg border border-dark-700">
+            <span class="text-cyan-400 font-bold">🎯 6</span> Lazarus Dimensions
+          </div>
+          <div class="flex items-center gap-1.5 bg-dark-850 px-3 py-1.5 rounded-lg border border-dark-700">
+            <span class="text-purple-400 font-bold">🧠 27</span> GoEmotions Spectrum
+          </div>
+          <div class="flex items-center gap-1.5 bg-dark-850 px-3 py-1.5 rounded-lg border border-dark-700">
+            <span class="text-emerald-400 font-bold">🛡️ 100%</span> Anti-Bluntness Shield
+          </div>
+        </div>
       </div>
 
-      <!-- INPUT BOX & PRESETS -->
-      <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 sm:p-6 shadow-xl space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <label class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-            <span>Subject Input or Sensitive Situation:</span>
-          </label>
-          <div class="flex items-center space-x-2">
-            <span class="text-xs text-slate-500">Presets:</span>
-            <select id="preset-selector" onchange="loadPreset(this.value)" class="bg-dark-800 text-slate-300 text-xs rounded-lg px-3 py-1.5 border border-dark-700 focus:outline-none focus:border-emerald-500">
-              <option value="layoff">Workplace Layoff & Shock</option>
-              <option value="exam_fail">Burnout & Impostor Syndrome</option>
-              <option value="bereavement">Grief & Bereavement</option>
-              <option value="pharmacy_distress">Urgent Customer In Distress</option>
-              <option value="relationship_hurt">Interpersonal Vulnerability</option>
-            </select>
+      <!-- INPUT BOX & ONE-CLICK PRESET PILLS -->
+      <div class="bg-dark-850 rounded-2xl border border-dark-700 p-6 shadow-2xl space-y-4 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="space-y-2">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+              <span>Test Sensitive Human Situations:</span>
+            </span>
+            <span class="text-[11px] text-slate-500">Click any preset to load instantly:</span>
+          </div>
+
+          <!-- Quick Preset Buttons -->
+          <div class="flex flex-wrap gap-2 pt-1">
+            <button onclick="loadPreset('layoff')" class="preset-pill px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-700 text-slate-300 hover:text-emerald-300 border border-dark-700 text-xs font-medium flex items-center gap-1.5">
+              <span>💼 Sudden Layoff</span>
+            </button>
+            <button onclick="loadPreset('exam_fail')" class="preset-pill px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-700 text-slate-300 hover:text-emerald-300 border border-dark-700 text-xs font-medium flex items-center gap-1.5">
+              <span>🔥 Burnout & Impostor</span>
+            </button>
+            <button onclick="loadPreset('bereavement')" class="preset-pill px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-700 text-slate-300 hover:text-emerald-300 border border-dark-700 text-xs font-medium flex items-center gap-1.5">
+              <span>💔 Grief & Bereavement</span>
+            </button>
+            <button onclick="loadPreset('pharmacy_distress')" class="preset-pill px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-700 text-slate-300 hover:text-emerald-300 border border-dark-700 text-xs font-medium flex items-center gap-1.5">
+              <span>🚨 Financial / Medical Distress</span>
+            </button>
+            <button onclick="loadPreset('relationship_hurt')" class="preset-pill px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-700 text-slate-300 hover:text-emerald-300 border border-dark-700 text-xs font-medium flex items-center gap-1.5">
+              <span>⚡ Interpersonal Conflict</span>
+            </button>
           </div>
         </div>
 
-        <textarea id="playground-input" rows="3" class="w-full bg-dark-800 text-slate-100 rounded-xl p-4 border border-dark-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 font-sans text-sm sm:text-base placeholder-slate-500" placeholder="Type or paste any sensitive statement here..."></textarea>
+        <!-- Input Textarea -->
+        <div class="relative">
+          <textarea id="playground-input" rows="3" class="w-full bg-dark-900 text-slate-100 rounded-xl p-4 border border-dark-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 font-sans text-sm sm:text-base placeholder-slate-500 transition shadow-inner" placeholder="Type or paste any distressed, vulnerable, or complex statement here..."></textarea>
+        </div>
 
         <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
-          <div class="text-xs text-slate-500 font-mono flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span>Non-autoregressive • Russell 3D VAD • 27 GoEmotions</span>
+          <div class="text-xs text-slate-500 font-mono flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Russell 3D VAD Space • Lazarus Appraisal • Stoltz CORE Quotient</span>
           </div>
-          <button onclick="runAppraisal()" id="btn-appraise" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-dark-900 font-bold text-sm shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 transition">
-            <span>⚡ Run Appraisal in &lt;1ms</span>
+          <button onclick="runAppraisal()" id="btn-appraise" class="w-full sm:w-auto px-7 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-dark-950 font-bold text-sm shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2.5 transition transform active:scale-95">
+            <span>⚡ Run System 1 Appraisal (&lt;1ms)</span>
           </button>
         </div>
       </div>
 
-      <!-- RESULTS SECTION -->
+      <!-- ==================== RESULTS SECTION ==================== -->
       <div id="results-container" class="space-y-6 hidden">
         
-        <!-- KPI CARDS -->
+        <!-- KPI METRIC CARDS -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1">
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Latency</span>
-            <div id="kpi-latency" class="text-2xl font-mono font-bold text-emerald-400">0.98 ms</div>
-            <span class="text-[11px] text-emerald-500/80">System 1 Reflex</span>
+          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1 shadow">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Perception Latency</span>
+            <div id="kpi-latency" class="text-2xl font-mono font-extrabold text-emerald-400">0.98 ms</div>
+            <span class="text-[10px] text-emerald-500/80 font-medium">Sub-millisecond reflex</span>
           </div>
-          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1">
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Adversity Score</span>
-            <div id="kpi-adversity" class="text-2xl font-mono font-bold text-rose-400">0.72</div>
-            <span id="kpi-stance" class="text-[11px] text-slate-400">THREAT STANCE</span>
+          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1 shadow">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Adversity Score</span>
+            <div id="kpi-adversity" class="text-2xl font-mono font-extrabold text-rose-400">0.72</div>
+            <span id="kpi-stance" class="text-[10px] text-slate-400 font-medium uppercase">THREAT STANCE</span>
           </div>
-          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1">
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Primary Domain</span>
+          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1 shadow">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Primary Context</span>
             <div id="kpi-domain" class="text-lg font-bold text-amber-300 truncate">WORKPLACE</div>
-            <span class="text-[11px] text-slate-400">Context classification</span>
+            <span class="text-[10px] text-slate-400 font-medium">Domain classified</span>
           </div>
-          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1">
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Valence (Affect)</span>
-            <div id="kpi-valence" class="text-2xl font-mono font-bold text-rose-400">-0.75</div>
-            <span id="kpi-polarity" class="text-[11px] text-slate-400">VERY NEGATIVE</span>
+          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1 shadow">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Affect Valence</span>
+            <div id="kpi-valence" class="text-2xl font-mono font-extrabold text-rose-400">-0.75</div>
+            <span id="kpi-polarity" class="text-[10px] text-slate-400 font-medium uppercase">VERY NEGATIVE</span>
           </div>
-          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1 col-span-2 sm:col-span-1">
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Empathy Demand</span>
-            <div id="kpi-empathy" class="text-2xl font-mono font-bold text-purple-400">0.83 / 1.0</div>
-            <span class="text-[11px] text-purple-400/80">High Intervention</span>
+          <div class="bg-dark-850 p-4 rounded-xl border border-dark-700 space-y-1 col-span-2 sm:col-span-1 shadow">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Empathy Demand</span>
+            <div id="kpi-empathy" class="text-2xl font-mono font-extrabold text-purple-400">0.83 / 1.0</div>
+            <span class="text-[10px] text-purple-400 font-medium">High Attunement</span>
           </div>
         </div>
 
-        <!-- SIDE BY SIDE COMPARISON -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- SIDE BY SIDE: BLUNT AI VS SOUL HARMONIZED -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <!-- Cold Standard AI -->
-          <div class="bg-dark-850 rounded-2xl border border-red-500/30 p-5 space-y-3">
+          <div class="bg-dark-850 rounded-2xl border border-red-500/30 p-6 space-y-3 shadow-lg relative">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-red-400 tracking-wider uppercase flex items-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                Standard AI (Blunt & Cold)
+                <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                Standard AI (Raw, Blunt & Cold)
               </span>
-              <span class="text-xs px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">Warmth: 0.05</span>
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 font-mono">Warmth: 0.05</span>
             </div>
             <div id="cold-output" class="p-4 rounded-xl bg-dark-900 border border-dark-700 text-sm text-slate-300 font-sans leading-relaxed whitespace-pre-line min-h-[140px]">
             </div>
-            <p class="text-[11px] text-slate-500">Notice how default LLMs skip emotional validation and dive straight into sterile steps.</p>
+            <p class="text-xs text-slate-500">❌ Typical mistake: Skips human validation entirely and issues sterile directives to an anxious user.</p>
           </div>
 
           <!-- Soul Attuned AI -->
-          <div class="bg-dark-850 rounded-2xl border border-emerald-500/40 p-5 space-y-3 relative overflow-hidden">
-            <div class="absolute -right-8 -top-8 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+          <div class="bg-dark-850 rounded-2xl border border-emerald-500/40 p-6 space-y-3 relative overflow-hidden shadow-xl">
+            <div class="absolute -right-8 -top-8 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase flex items-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                 Soul Attuned AI (Harmonized)
               </span>
-              <span id="badge-harmonized" class="text-xs px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">HARMONIZED WITH EMPATHY</span>
+              <span id="badge-harmonized" class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold">HARMONIZED WITH EMPATHY</span>
             </div>
-            <div id="attuned-output" class="p-4 rounded-xl bg-dark-900 border border-dark-700 text-sm text-slate-100 font-sans leading-relaxed whitespace-pre-line min-h-[140px]">
+            <div id="attuned-output" class="p-4 rounded-xl bg-dark-900 border border-dark-700 text-sm text-slate-100 font-sans leading-relaxed whitespace-pre-line min-h-[140px] shadow-inner">
             </div>
-            <p class="text-[11px] text-emerald-400/80">Validated with empathetic framing first, stabilizing anxiety before delivering task solutions.</p>
+            <p class="text-xs text-emerald-400/90 font-medium">✅ Validates emotional shock first to down-regulate acute anxiety, then delivers clear, grounded next steps.</p>
           </div>
         </div>
 
-        <!-- DEEP DIMENSION GAUGES -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- VISUAL RADAR & PSYCHOLOGICAL DIMENSION GAUGES -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          
+          <!-- RUSSELL 2D/3D AFFECT RADAR MATRIX -->
+          <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Affect Coordinates (Russell VAD)</span>
+              <span class="text-[10px] text-slate-500 font-mono">2D Mapping</span>
+            </div>
+            <p class="text-xs text-slate-400">Valence (Pleasure) vs Arousal (Energy):</p>
+            
+            <div class="relative w-full h-48 bg-dark-900 rounded-xl border border-dark-750 radar-grid flex items-center justify-center overflow-hidden">
+              <!-- Center Axes -->
+              <div class="absolute w-full h-px bg-dark-700"></div>
+              <div class="absolute h-full w-px bg-dark-700"></div>
+              
+              <!-- Quadrant Labels -->
+              <span class="absolute top-2 left-2 text-[10px] font-mono text-slate-500">Distress / Anxiety</span>
+              <span class="absolute top-2 right-2 text-[10px] font-mono text-slate-500">Excitement / Joy</span>
+              <span class="absolute bottom-2 left-2 text-[10px] font-mono text-slate-500">Depression / Sadness</span>
+              <span class="absolute bottom-2 right-2 text-[10px] font-mono text-slate-500">Serenity / Calm</span>
+              
+              <!-- Target Point Target (Pulsing Dot) -->
+              <div id="radar-dot" class="radar-target-dot absolute w-4 h-4 rounded-full bg-emerald-400 border-2 border-white shadow-lg shadow-emerald-500/50" style="left: calc(50% - 8px); top: calc(50% - 8px);"></div>
+            </div>
+
+            <div class="flex justify-between text-xs font-mono text-slate-400 pt-1">
+              <span>Valence: <strong id="coord-val" class="text-rose-400">-0.75</strong></span>
+              <span>Arousal: <strong id="coord-aro" class="text-amber-400">+0.85</strong></span>
+              <span>Dominance: <strong id="coord-dom" class="text-cyan-400">0.20</strong></span>
+            </div>
+          </div>
+
+          <!-- RUSSELL VAD GAUGES -->
           <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 space-y-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Affect & Feeling States (Russell 3D VAD)</h3>
-            <div class="space-y-3 text-xs">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Continuous Affect Dimensions</span>
+            <div class="space-y-3.5 text-xs">
               <div>
-                <div class="flex justify-between text-slate-400 mb-1">
-                  <span>Valence (Displeasure to Pleasure)</span>
+                <div class="flex justify-between text-slate-400 mb-1.5">
+                  <span>Valence (Pain to Pleasure)</span>
                   <span id="bar-val-text" class="font-mono text-slate-200">-0.75</span>
                 </div>
                 <div class="w-full bg-dark-800 h-2.5 rounded-full overflow-hidden">
-                  <div id="bar-val" class="bg-rose-500 h-full rounded-full" style="width: 25%"></div>
+                  <div id="bar-val" class="bg-rose-500 h-full rounded-full transition-all duration-500" style="width: 25%"></div>
                 </div>
               </div>
               <div>
-                <div class="flex justify-between text-slate-400 mb-1">
-                  <span>Arousal (Calm to Agitated)</span>
+                <div class="flex justify-between text-slate-400 mb-1.5">
+                  <span>Arousal (Calm to Agitation)</span>
                   <span id="bar-aro-text" class="font-mono text-slate-200">0.85</span>
                 </div>
                 <div class="w-full bg-dark-800 h-2.5 rounded-full overflow-hidden">
-                  <div id="bar-aro" class="bg-amber-400 h-full rounded-full" style="width: 85%"></div>
+                  <div id="bar-aro" class="bg-amber-400 h-full rounded-full transition-all duration-500" style="width: 85%"></div>
                 </div>
               </div>
               <div>
-                <div class="flex justify-between text-slate-400 mb-1">
+                <div class="flex justify-between text-slate-400 mb-1.5">
                   <span>Dominance (Helpless to In Control)</span>
                   <span id="bar-dom-text" class="font-mono text-slate-200">0.20</span>
                 </div>
                 <div class="w-full bg-dark-800 h-2.5 rounded-full overflow-hidden">
-                  <div id="bar-dom" class="bg-cyan-400 h-full rounded-full" style="width: 20%"></div>
+                  <div id="bar-dom" class="bg-cyan-400 h-full rounded-full transition-all duration-500" style="width: 20%"></div>
                 </div>
               </div>
             </div>
           </div>
 
+          <!-- STOLTZ CORE ADVERSITY QUOTIENT -->
           <div class="bg-dark-850 rounded-2xl border border-dark-700 p-5 space-y-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Stoltz CORE Adversity Quotient</h3>
-            <div class="space-y-3 text-xs">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Stoltz CORE Adversity Quotient</span>
+            <div class="space-y-3.5 text-xs">
               <div>
-                <div class="flex justify-between text-slate-400 mb-1">
+                <div class="flex justify-between text-slate-400 mb-1.5">
                   <span>Control (Perceived Agency)</span>
                   <span id="bar-core-c" class="font-mono text-slate-200">0.36</span>
                 </div>
                 <div class="w-full bg-dark-800 h-2.5 rounded-full overflow-hidden">
-                  <div id="bar-core-c-fill" class="bg-blue-400 h-full rounded-full" style="width: 36%"></div>
+                  <div id="bar-core-c-fill" class="bg-blue-400 h-full rounded-full transition-all duration-500" style="width: 36%"></div>
                 </div>
               </div>
               <div>
-                <div class="flex justify-between text-slate-400 mb-1">
-                  <span>Reach (Catastrophizing vs Compartmentalized)</span>
+                <div class="flex justify-between text-slate-400 mb-1.5">
+                  <span>Reach (Catastrophizing Scope)</span>
                   <span id="bar-core-r" class="font-mono text-slate-200">0.48</span>
                 </div>
                 <div class="w-full bg-dark-800 h-2.5 rounded-full overflow-hidden">
-                  <div id="bar-core-r-fill" class="bg-indigo-400 h-full rounded-full" style="width: 48%"></div>
+                  <div id="bar-core-r-fill" class="bg-indigo-400 h-full rounded-full transition-all duration-500" style="width: 48%"></div>
                 </div>
               </div>
               <div>
-                <div class="flex justify-between text-slate-400 mb-1">
+                <div class="flex justify-between text-slate-400 mb-1.5">
                   <span>Endurance (Perceived Permanence)</span>
                   <span id="bar-core-e" class="font-mono text-slate-200">0.52</span>
                 </div>
                 <div class="w-full bg-dark-800 h-2.5 rounded-full overflow-hidden">
-                  <div id="bar-core-e-fill" class="bg-purple-400 h-full rounded-full" style="width: 52%"></div>
+                  <div id="bar-core-e-fill" class="bg-purple-400 h-full rounded-full transition-all duration-500" style="width: 52%"></div>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
 
       </div>
 
     </section>
 
-    <!-- ==================== TAB 2: API KEYS & USAGE ==================== -->
+    <!-- ==================== TAB 2: API KEYS & QUOTA MANAGEMENT ==================== -->
     <section id="tab-keys" class="space-y-6 hidden">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-dark-700 pb-5">
         <div>
           <h2 class="text-2xl font-bold">Soul API Key & Quota Management</h2>
           <p class="text-sm text-slate-400">Generate personal Soul API keys (<code class="text-emerald-400">soul_live_...</code>) for your apps, bots, servers, or CLI tools.</p>
         </div>
-        <button onclick="openCreateKeyModal()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-dark-900 font-bold text-sm shadow-md shadow-emerald-500/20 flex items-center gap-2 transition">
+        <button onclick="openCreateKeyModal()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-dark-950 font-bold text-sm shadow-md shadow-emerald-500/20 flex items-center gap-2 transition">
           <span>+ Create New Key</span>
         </button>
       </div>
 
       <!-- NEWLY CREATED KEY BANNER (shown only upon generation) -->
-      <div id="key-revealed-banner" class="hidden p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-2">
+      <div id="key-revealed-banner" class="hidden p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-3">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">🎉 Secret Key Created Successfully</span>
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">🎉 Secret Soul API Key Created Successfully</span>
           <button onclick="dismissKeyBanner()" class="text-xs text-slate-400 hover:text-white">Dismiss</button>
         </div>
         <div class="flex items-center gap-2">
-          <input type="text" id="revealed-key-value" readonly class="flex-1 bg-dark-900 border border-dark-700 rounded-lg px-3 py-2 text-sm font-mono text-emerald-300 select-all" />
-          <button onclick="copyRevealedKey()" id="btn-copy-revealed" class="px-3 py-2 rounded-lg bg-emerald-500 text-dark-900 text-xs font-bold hover:bg-emerald-400 transition">Copy</button>
+          <input type="text" id="revealed-key-value" readonly class="flex-1 bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm font-mono text-emerald-300 select-all" />
+          <button onclick="copyRevealedKey()" id="btn-copy-revealed" class="px-4 py-2.5 rounded-xl bg-emerald-500 text-dark-950 text-xs font-bold hover:bg-emerald-400 transition">Copy</button>
         </div>
         <p class="text-xs text-slate-400">Keep this key secret. For your security, you will not be able to view the raw secret key again.</p>
       </div>
@@ -302,7 +407,7 @@
       <div class="bg-dark-850 rounded-2xl border border-dark-700 overflow-hidden shadow-xl">
         <div class="p-4 border-b border-dark-700 flex items-center justify-between">
           <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Your Active Keys</span>
-          <span id="keys-count-badge" class="text-xs px-2 py-0.5 rounded bg-dark-800 text-slate-400 border border-dark-700">0 Keys</span>
+          <span id="keys-count-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-dark-800 text-slate-400 border border-dark-700">0 Keys</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-sm">
@@ -326,7 +431,7 @@
       </div>
     </section>
 
-    <!-- ==================== TAB 3: CODE SNIPPETS ==================== -->
+    <!-- ==================== TAB 3: CODE SNIPPETS & INTEGRATION ==================== -->
     <section id="tab-snippets" class="space-y-6 hidden">
       <div class="border-b border-dark-700 pb-4">
         <h2 class="text-2xl font-bold">Soul Engine API & SDK Integration</h2>
@@ -409,16 +514,112 @@ print(response.choices[0].message.content)</code></pre>
       </div>
     </section>
 
+    <!-- ==================== TAB 4: BRAND IDENTITY & PHILOSOPHY ==================== -->
+    <section id="tab-brand" class="space-y-8 hidden">
+      <div class="border-b border-dark-700 pb-5 max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 mb-2">
+          <span>Brand Architecture & Strategic Meaning</span>
+        </div>
+        <h2 class="text-3xl font-extrabold tracking-tight">The Soul Engine Identity</h2>
+        <p class="text-sm text-slate-400 mt-1 leading-relaxed">
+          Engineered by <strong>Navigo Tech Solutions</strong>. Bridging the abyss between raw mathematical token prediction and biological human affective consciousness.
+        </p>
+      </div>
+
+      <!-- LOGO DECONSTRUCTION CARD -->
+      <div class="bg-dark-850 rounded-2xl border border-dark-700 p-6 sm:p-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-center shadow-xl">
+        <div class="flex flex-col items-center justify-center p-6 bg-dark-900 rounded-2xl border border-dark-700 relative">
+          <!-- Large Vector Glyph -->
+          <svg class="w-32 h-32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="brandFullGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#10B981"/>
+                <stop offset="50%" stop-color="#14B8A6"/>
+                <stop offset="100%" stop-color="#06B6D4"/>
+              </linearGradient>
+              <linearGradient id="coreFullGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#34D399"/>
+                <stop offset="100%" stop-color="#10B981"/>
+              </linearGradient>
+            </defs>
+            <rect width="48" height="48" rx="14" fill="#0E1422" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+            <path d="M24 8V40" stroke="url(#brandFullGrad)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M12 16C12 28.5 20 32 24 32C28 32 36 28.5 36 16" stroke="url(#brandFullGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="24" cy="24" r="5" fill="url(#coreFullGrad)"/>
+            <circle cx="24" cy="24" r="2.2" fill="#FFFFFF"/>
+          </svg>
+          <span class="mt-4 text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">The Resonant Psi (Ψ) Core</span>
+        </div>
+
+        <div class="md:col-span-2 space-y-4 text-sm leading-relaxed text-slate-300">
+          <h3 class="text-xl font-bold text-white">Symbolism & Metaphor</h3>
+          <p>
+            The Soul Engine mark synthesizes the ancient Greek letter <strong>Ψ (Psi)</strong> — the classical symbol of the <em>psyche</em>, the human mind, and the soul — with modern wave mechanics:
+          </p>
+          <ul class="space-y-2 text-xs sm:text-sm">
+            <li class="flex items-start gap-2.5">
+              <span class="text-emerald-400 font-bold">1. The Harmonic Psi Wings (Ψ):</span>
+              <span class="text-slate-400">Represent emotional resonance. Unlike sterile static algorithms, affective human communication operates in oscillatory waves (Valence, Arousal, Dominance).</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-cyan-400 font-bold">2. The Vertical Alignment Axis:</span>
+              <span class="text-slate-400">The grounding needle of clarity, objectivity, and actionable solutions.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-white font-bold">3. The Radiant Neural Apex:</span>
+              <span class="text-slate-400">The &lt;1.0ms System 1 perceptual focal point. The instant spark of intuitive understanding before deliberate response generation occurs.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- THE 4 COGNITIVE PILLARS -->
+      <div class="space-y-4">
+        <h3 class="text-xl font-bold">The Four Architectural Pillars</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-dark-850 p-5 rounded-xl border border-dark-700 space-y-2">
+            <span class="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">Pillar I</span>
+            <h4 class="font-bold text-white text-base">System 1 Reflex</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Biological humans appraise danger, grief, and stakes in milliseconds through involuntary limbic pathways. Soul replicates this with non-autoregressive sub-millisecond evaluation.
+            </p>
+          </div>
+          <div class="bg-dark-850 p-5 rounded-xl border border-dark-700 space-y-2">
+            <span class="text-xs font-mono text-cyan-400 font-bold uppercase tracking-wider">Pillar II</span>
+            <h4 class="font-bold text-white text-base">Lazarus Appraisal</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Grounds understanding in psychological science: Primary Appraisal (Threat vs Challenge) and Secondary Appraisal (Coping Potential & Agency).
+            </p>
+          </div>
+          <div class="bg-dark-850 p-5 rounded-xl border border-dark-700 space-y-2">
+            <span class="text-xs font-mono text-indigo-400 font-bold uppercase tracking-wider">Pillar III</span>
+            <h4 class="font-bold text-white text-base">Russell 3D Space</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Moves beyond discrete sentiment labels into continuous Valence, Arousal, and Dominance coordinate vectors, capturing nuanced vulnerability.
+            </p>
+          </div>
+          <div class="bg-dark-850 p-5 rounded-xl border border-dark-700 space-y-2">
+            <span class="text-xs font-mono text-purple-400 font-bold uppercase tracking-wider">Pillar IV</span>
+            <h4 class="font-bold text-white text-base">Anti-Bluntness Shield</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Audits outbound draft responses. If an AI reply lacks warmth during acute human distress, it automatically harmonizes the tone before delivery.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
   </main>
 
   <!-- ==================== AUTH MODAL (LOGIN / SIGNUP / GOOGLE) ==================== -->
-  <div id="auth-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+  <div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-dark-850 border border-dark-700 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl relative">
       <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
 
-      <div class="text-center space-y-1">
-        <h3 id="modal-title" class="text-xl font-bold">Welcome to Soul Engine</h3>
-        <p class="text-xs text-slate-400">Sign in to manage API keys, track usage, and deploy emotional attunement.</p>
+      <div class="text-center space-y-1.5">
+        <h3 id="modal-title" class="text-xl font-extrabold">Welcome to Soul Engine</h3>
+        <p class="text-xs text-slate-400">Sign in to generate Soul API keys, track quotas, and deploy emotional attunement.</p>
       </div>
 
       <!-- GOOGLE OAUTH BUTTON -->
@@ -450,20 +651,20 @@ print(response.choices[0].message.content)</code></pre>
       <form id="auth-form" onsubmit="submitAuthForm(event)" class="space-y-3">
         <div id="field-fullname" class="space-y-1 hidden">
           <label class="text-xs text-slate-400">Full Name</label>
-          <input type="text" id="input-fullname" class="w-full bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="John Doe" />
+          <input type="text" id="input-fullname" class="w-full bg-dark-800 border border-dark-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="John Doe" />
         </div>
         <div class="space-y-1">
           <label class="text-xs text-slate-400">Email Address</label>
-          <input type="email" id="input-email" required class="w-full bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="dev@example.com" />
+          <input type="email" id="input-email" required class="w-full bg-dark-800 border border-dark-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="dev@example.com" />
         </div>
         <div class="space-y-1">
           <label class="text-xs text-slate-400">Password</label>
-          <input type="password" id="input-password" required minlength="6" class="w-full bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="••••••••" />
+          <input type="password" id="input-password" required minlength="6" class="w-full bg-dark-800 border border-dark-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="••••••••" />
         </div>
 
-        <div id="auth-error-msg" class="text-xs text-red-400 hidden"></div>
+        <div id="auth-error-msg" class="text-xs text-rose-400 hidden"></div>
 
-        <button type="submit" id="btn-auth-submit" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-dark-900 font-bold text-sm shadow transition mt-2">
+        <button type="submit" id="btn-auth-submit" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-dark-950 font-bold text-sm shadow transition mt-2">
           Sign In
         </button>
       </form>
@@ -471,32 +672,42 @@ print(response.choices[0].message.content)</code></pre>
   </div>
 
   <!-- CREATE KEY MODAL -->
-  <div id="create-key-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+  <div id="create-key-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-dark-850 border border-dark-700 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl relative">
       <button onclick="closeCreateKeyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
-      <h3 class="text-lg font-bold">Create Personal API Key</h3>
+      <h3 class="text-lg font-bold">Create Personal Soul API Key</h3>
       <div class="space-y-2">
-        <label class="text-xs text-slate-400">Key Name</label>
-        <input type="text" id="new-key-name" class="w-full bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="e.g. Mobile App, Discord Bot" />
+        <label class="text-xs text-slate-400">Key Name / Project Identifier</label>
+        <input type="text" id="new-key-name" class="w-full bg-dark-800 border border-dark-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="e.g. Production App, Chatbot" />
       </div>
-      <button onclick="submitCreateKey()" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-dark-900 font-bold text-sm shadow transition">
-        Generate Key
+      <button onclick="submitCreateKey()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-dark-950 font-bold text-sm shadow transition">
+        Generate Soul Key
       </button>
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-dark-700/60 py-6 text-center text-xs text-slate-500">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-      <div>
-        <strong>Soul Engine v0.3.0</strong> — Grounded in Lazarus Stress & Stoltz CORE Adversity Quotient.
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="border-t border-dark-700/70 py-8 text-xs text-slate-500 bg-dark-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <svg class="w-6 h-6 text-emerald-400" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="10" fill="#0E1422" stroke="rgba(255,255,255,0.1)"/>
+          <path d="M24 10V38" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
+          <path d="M14 18C14 27 20 30 24 30C28 30 34 27 34 18" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="24" cy="24" r="3" fill="#34D399"/>
+        </svg>
+        <div>
+          <span class="font-bold text-slate-300">Soul Engine</span> — Affective cognitive architecture by <strong class="text-slate-200">Navigo Tech Solutions</strong>.
+        </div>
       </div>
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-5">
         <a href="https://github.com/navigotechsolutions-labs/soul" target="_blank" class="hover:text-emerald-400 transition">GitHub</a>
         <span>•</span>
         <a href="/docs" target="_blank" class="hover:text-emerald-400 transition">API Documentation</a>
         <span>•</span>
-        <span>Navigo Tech Solutions</span>
+        <a href="/dashboard" class="hover:text-emerald-400 transition">Web Portal</a>
+        <span>•</span>
+        <span class="text-emerald-400/80 font-mono">Status: Online</span>
       </div>
     </div>
   </footer>

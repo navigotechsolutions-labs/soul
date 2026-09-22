@@ -26,18 +26,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- Tab Navigation ---
 function switchTab(tabName) {
-  ["playground", "keys", "snippets"].forEach(t => {
+  ["playground", "keys", "snippets", "brand"].forEach(t => {
     const sec = document.getElementById(`tab-${t}`);
     const nav = document.getElementById(`nav-${t}`);
     if (t === tabName) {
-      sec.classList.remove("hidden");
+      if (sec) sec.classList.remove("hidden");
       if (nav) {
-        nav.className = "nav-tab active px-3.5 py-2 rounded-lg text-sm font-medium transition text-white bg-dark-800 border border-dark-700";
+        nav.className = "nav-tab active px-3.5 py-2 rounded-xl text-sm font-medium transition text-white bg-dark-800 border border-dark-700 shadow-sm flex items-center gap-2";
       }
     } else {
-      sec.classList.add("hidden");
+      if (sec) sec.classList.add("hidden");
       if (nav) {
-        nav.className = "nav-tab px-3.5 py-2 rounded-lg text-sm font-medium transition text-slate-400 hover:text-white hover:bg-dark-800/60";
+        nav.className = "nav-tab px-3.5 py-2 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white hover:bg-dark-800/60 flex items-center gap-2";
       }
     }
   });
@@ -129,6 +129,21 @@ function displayResults(appraisal, harmonized, networkLatency) {
   document.getElementById("bar-aro-text").innerText = vad.arousal.toFixed(2);
   document.getElementById("bar-dom").style.width = `${domPct}%`;
   document.getElementById("bar-dom-text").innerText = vad.dominance.toFixed(2);
+
+  // Dynamic 2D Radar Matrix Positioning
+  const radarDot = document.getElementById("radar-dot");
+  if (radarDot) {
+    const radarX = Math.max(5, Math.min(95, (vad.valence + 1.0) * 50));
+    const radarY = Math.max(5, Math.min(95, (1.0 - vad.arousal) * 100));
+    radarDot.style.left = `calc(${radarX}% - 8px)`;
+    radarDot.style.top = `calc(${radarY}% - 8px)`;
+  }
+  const coordVal = document.getElementById("coord-val");
+  if (coordVal) coordVal.innerText = (vad.valence >= 0 ? "+" : "") + vad.valence.toFixed(2);
+  const coordAro = document.getElementById("coord-aro");
+  if (coordAro) coordAro.innerText = (vad.arousal >= 0 ? "+" : "") + vad.arousal.toFixed(2);
+  const coordDom = document.getElementById("coord-dom");
+  if (coordDom) coordDom.innerText = vad.dominance.toFixed(2);
 
   // CORE Gauges
   const core = appraisal.adversity.core;
