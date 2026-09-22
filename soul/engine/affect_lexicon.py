@@ -93,6 +93,10 @@ VAD_LEXICON: dict[str, tuple[float, float, float]] = {
     "fragile": (-0.50, 0.48, 0.18),
     "paralyzed": (-0.75, 0.60, 0.08),
     "insecure": (-0.62, 0.52, 0.22),
+    "declined": (-0.70, 0.75, 0.25),
+    "debited": (-0.45, 0.60, 0.35),
+    "tears": (-0.80, 0.65, 0.15),
+    "mistake": (-0.55, 0.60, 0.30),
 
     # Anger / Hostility / Frustration
     "angry": (-0.68, 0.85, 0.65),
@@ -211,30 +215,33 @@ ADVERSITY_DOMAINS: dict[str, list[str]] = {
         "money", "debt", "bankrupt", "broke", "rent", "afford", "bills", "loan",
         "eviction", "foreclosure", "poverty", "savings", "unpaid", "inflation",
         "mortgage", "jobless", "unemployed", "collections", "collector", "default",
-        "billed", "refund", "theft", "fraud"
+        "billed", "refund", "theft", "fraud", "debited", "checking account", "card declined",
+        "declined", "charge", "charged", "account", "overdraft"
     ],
     "interpersonal": [
         "divorce", "breakup", "break up", "cheating", "cheated", "betrayed", "betrayal", "abandoned",
         "lonely", "isolated", "bullied", "argument", "fight", "toxic relationship",
-        "rejected", "ghosted", "shunned", "alienated", "abusive partner", "partner", "humiliated"
+        "rejected", "ghosted", "shunned", "alienated", "abusive partner", "partner", "humiliated",
+        "working late", "missed dinner", "matter to you", "late every night", "our life together"
     ],
     "health_physical": [
         "sick", "illness", "pain", "hospital", "cancer", "chronic", "surgery",
         "disabled", "injury", "infection", "medication", "doctor", "diagnosis",
         "disease", "paralyzed", "migraine", "exhaustion", "organ failure", "biopsy",
-        "abnormal", "pounding", "heart rate"
+        "abnormal", "pounding", "heart rate", "medicine", "pharmacy", "asthma", "prescription"
     ],
     "workplace_academic": [
         "fired", "laid off", "layoff", "laid-off", "boss", "workload", "overworked", "deadline",
         "demoted", "failed", "exam", "failing", "school", "burnout", "unemployed",
         "interview rejection", "toxic workplace", "fraud", "impostor", "job", "career",
-        "feed", "family to feed"
+        "feed", "family to feed", "presentation", "errors", "calculation", "furious", "talk tomorrow",
+        "director"
     ],
     "existential_grief": [
         "died", "death", "passed away", "funeral", "lost someone", "mourning",
         "grief", "meaningless", "empty void", "why live", "no purpose", "regret life",
-        "grieving", "bereaved", "grandfather", "grandmother", "father", "mother",
-        "devastated"
+        "grieving", "bereaved", "grandfather", "grandmother", "father", "mother", "mom",
+        "devastated", "scent", "perfume", "tears", "cry", "crying", "hear her voice"
     ],
     "resource_constraint": [
         "hungry", "no food", "starving", "homeless", "no shelter", "stranded",
