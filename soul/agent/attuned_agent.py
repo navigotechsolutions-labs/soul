@@ -44,7 +44,8 @@ class AttunedAgent:
         self,
         user_message: str,
         base_system_prompt: str = "You are a helpful and knowledgeable AI assistant.",
-        subject_id: str | None = None
+        subject_id: str | None = None,
+        model_name: str | None = None,
     ) -> AttunedAgentResponse:
         """Processes user message, understands feelings, generates and harmonizes response."""
         # Step 1: System 1 Affective & Adversity Appraisal (<1ms)
@@ -58,7 +59,8 @@ class AttunedAgent:
         raw_draft = self._generate_draft(
             system_prompt=augmented_system_prompt,
             user_message=user_message,
-            appraisal=appraisal
+            appraisal=appraisal,
+            model_name=model_name,
         )
 
         # Step 4: Post-Generation Anti-Bluntness Audit & Harmonization
@@ -77,28 +79,35 @@ class AttunedAgent:
         self,
         system_prompt: str,
         user_message: str,
-        appraisal: SubjectAppraisalResult
+        appraisal: SubjectAppraisalResult,
+        model_name: str | None = None,
     ) -> str:
-        """Generates draft using custom callable, OpenAI, or smart local fallback."""
+        """Generates draft using custom callable, upstream LLM proxy (OpenAI, DeepSeek), or smart local fallback."""
         if self.custom_llm:
             try:
                 return self.custom_llm(system_prompt, user_message)
             except Exception:
                 pass
 
-        # Try OpenAI API if key is present
-        openai_key = os.getenv("OPENAI_API_KEY")
-        if openai_key:
+        target_model = model_name or self.model_name
+
+        # 1. Try DeepSeek if key is present and requested or default
+        deepseek_key = os.getenv("DEEPSEEK_API_KEY")
+        if deepseek_key and ("deepseek" in (target_model or "").lower() or not os.getenv("OPENAI_API_KEY")):
             try:
                 from openai import OpenAI
-                client = OpenAI(api_key=openai_key)
-                completion = client.chat.completions.create(
-                    model=self.model_name,
+                ds_client = OpenAI(
+                    api_key=deepseek_key,
+                    base_url=os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
+                )
+                ds_model = "deepseek-chat" if "deepseek" in (target_model or "").lower() else "deepseek-chat"
+                completion = ds_client.chat.completions.create(
+                    model=ds_model,
                     messages=[
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_message}
                     ],
-                    max_tokens=600,
+                    max_tokens=800,
                     temperature=0.7,
                 )
                 choice = completion.choices[0].message.content
@@ -107,8 +116,31 @@ class AttunedAgent:
             except Exception:
                 pass
 
-        # Smart Local Fallback when offline
+        # 2. Try OpenAI API if key is present
+        openai_key = os.getenv("OPENAI_API_KEY")
+        if openai_key:
+            try:
+                from openai import OpenAI
+                client = OpenAI(api_key=openai_key)
+                llm_model = target_model if target_model not in ("soul-attuned", None) else self.model_name
+                completion = client.chat.completions.create(
+                    model=llm_model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_message}
+                    ],
+                    max_tokens=800,
+                    temperature=0.7,
+                )
+                choice = completion.choices[0].message.content
+                if choice:
+                    return choice.strip()
+            except Exception:
+                pass
+
+        # 3. Smart Local Fallback when offline
         return self._local_fallback_generator(user_message, appraisal)
+
 
     def _local_fallback_generator(self, user_message: str, appraisal: SubjectAppraisalResult) -> str:
         """Generates a structured, helpful solution when running offline."""

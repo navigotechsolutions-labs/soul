@@ -4,8 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "soul-engine"
-version = "0.3.0"
-description = "A Jev-style System 1 cognitive adversity and affective sentiment appraisal algorithm."
+version = "0.4.0"
+description = "Sub-millisecond System 1 cognitive appraisal, emotional reflex guardrails, and transparent OpenAI-compatible reverse proxy."
+
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [

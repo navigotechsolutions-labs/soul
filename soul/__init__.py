@@ -37,7 +37,8 @@ from soul.schemas.sentiment import (
     VADVector,
 )
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
+
 
 _DEFAULT_APPRAISER = SoulAppraiser()
 _DEFAULT_AGENT = AttunedAgent(appraiser=_DEFAULT_APPRAISER)

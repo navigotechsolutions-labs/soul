@@ -12,14 +12,16 @@ Provides ultra-fast sub-millisecond endpoints for:
 import time
 import uuid
 import os
+import json
 from pathlib import Path
 from typing import Any, Optional
 
 from fastapi import FastAPI, HTTPException, Depends, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, Field
+
 
 import soul
 from soul import appraise, respond
@@ -74,10 +76,13 @@ if STATIC_DIR.exists():
                 "/v1/respond",
                 "/v1/chat/completions",
                 "/v1/audit/human-pov",
+                "/v1/sanitize/anti-slop",
+                "/v1/anti-slop",
                 "/ide",
             ],
             "ide_url": "/ide",
         }
+
 
     @app.get("/ide", include_in_schema=False)
     @app.get("/dashboard", include_in_schema=False)
@@ -156,9 +161,10 @@ class AppraiseRequest(BaseModel):
 
 
 class HarmonizeRequest(BaseModel):
-    user_message: Optional[str] = Field(None, description="Original user message providing emotional context")
+    user_message: Optional[str] = Field(None, description="Optional user message providing emotional context. If omitted, standalone draft context is analyzed.")
     draft_response: str = Field(..., min_length=1, description="Candidate AI response to audit and harmonize")
     appraisal: Optional[SubjectAppraisalResult] = Field(None, description="Pre-computed appraisal if already available")
+
 
 
 class HarmonizeResponse(BaseModel):
@@ -487,13 +493,11 @@ def harmonize_endpoint(req: HarmonizeRequest, client: Optional[dict] = Depends(g
     # Determine appraisal
     if req.appraisal:
         appraisal = req.appraisal
-    elif req.user_message:
+    elif req.user_message and req.user_message.strip():
         appraisal = _appraiser.appraise(req.user_message)
     else:
-        raise HTTPException(
-            status_code=400,
-            detail="Either 'user_message' or 'appraisal' must be provided for contextual audit."
-        )
+        # Default user_message to standalone draft context internally instead of failing with 400
+        appraisal = _appraiser.appraise(req.draft_response)
 
     audit_result = _auditor.audit(req.draft_response, appraisal)
     harmonized_text, was_altered = _harmonizer.harmonize(req.draft_response, appraisal)
@@ -536,6 +540,7 @@ def universal_chat_completions(req: OpenAIChatRequest, client: Optional[dict] = 
     
     Any standard chat client, terminal CLI, or SDK can point base_url to this server
     using a Soul API Key (`soul_live_...`) to receive emotionally attuned, non-blunt responses.
+    Supports native Server-Sent Events (SSE) streaming when stream=true.
     """
     if not req.messages:
         raise HTTPException(status_code=400, detail="Messages array cannot be empty.")
@@ -553,16 +558,84 @@ def universal_chat_completions(req: OpenAIChatRequest, client: Optional[dict] = 
     if not user_message:
         user_message = req.messages[-1].content
 
-    # Run attuned response
+    # Run attuned response with dynamic model routing
     t0 = time.perf_counter()
     resp = _agent.respond(
         user_message=user_message,
         base_system_prompt=system_prompt,
+        model_name=req.model,
     )
     elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
     chat_id = f"chatcmpl-soul-{uuid.uuid4().hex[:12]}"
     now_ts = int(time.time())
+
+    # Native Server-Sent Events (SSE) Streaming Support
+    if req.stream:
+        def event_stream():
+            # Initial chunk (assistant role)
+            initial_chunk = {
+                "id": chat_id,
+                "object": "chat.completion.chunk",
+                "created": now_ts,
+                "model": req.model or "soul-attuned",
+                "choices": [
+                    {
+                        "index": 0,
+                        "delta": {"role": "assistant"},
+                        "finish_reason": None,
+                    }
+                ],
+            }
+            yield f"data: {json.dumps(initial_chunk)}\n\n"
+
+            # Stream words / tokens progressively
+            words = resp.content.split(" ")
+            for i, word in enumerate(words):
+                prefix = "" if i == 0 else " "
+                token = prefix + word
+                chunk = {
+                    "id": chat_id,
+                    "object": "chat.completion.chunk",
+                    "created": now_ts,
+                    "model": req.model or "soul-attuned",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "delta": {"content": token},
+                            "finish_reason": None,
+                        }
+                    ],
+                }
+                yield f"data: {json.dumps(chunk)}\n\n"
+
+            # Final stop chunk
+            stop_chunk = {
+                "id": chat_id,
+                "object": "chat.completion.chunk",
+                "created": now_ts,
+                "model": req.model or "soul-attuned",
+                "choices": [
+                    {
+                        "index": 0,
+                        "delta": {},
+                        "finish_reason": "stop",
+                    }
+                ],
+            }
+            yield f"data: {json.dumps(stop_chunk)}\n\n"
+            yield "data: [DONE]\n\n"
+
+        return StreamingResponse(
+            event_stream(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no",
+            },
+        )
+
 
     return {
         "id": chat_id,
@@ -603,7 +676,9 @@ class HumanFeelAuditRequest(BaseModel):
 
 
 class SanitizeSlopRequest(BaseModel):
-    text: str = Field(..., min_length=1, description="Text containing AI tropes to sanitize and humanize")
+    text: Optional[str] = Field(None, description="Text containing AI tropes to sanitize and humanize")
+    content: Optional[str] = Field(None, description="Alternative field for text content")
+    draft_response: Optional[str] = Field(None, description="Alternative field for draft response")
 
 
 @app.post("/v1/audit/human-pov", tags=["Human Experience"])
@@ -622,12 +697,17 @@ def audit_human_pov_endpoint(req: HumanFeelAuditRequest, client: Optional[dict] 
 
 
 @app.post("/v1/sanitize/anti-slop", tags=["Human Experience"])
+@app.post("/v1/anti-slop", tags=["Human Experience"])
 def sanitize_slop_endpoint(req: SanitizeSlopRequest, client: Optional[dict] = Depends(get_current_client)):
     """Eradicates AI buzzwords, replaces em-dashes, and strips emoji crutches for human cadence."""
     from soul import sanitize_slop
+    raw_text = req.text or req.content or req.draft_response
+    if not raw_text:
+        raise HTTPException(status_code=400, detail="Must provide 'text', 'content', or 'draft_response'.")
     try:
-        sanitized = sanitize_slop(req.text)
-        return {"original": req.text, "sanitized": sanitized}
+        sanitized = sanitize_slop(raw_text)
+        return {"original": raw_text, "sanitized": sanitized}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Sanitization error: {str(e)}")
+
 

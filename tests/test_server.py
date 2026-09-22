@@ -89,3 +89,50 @@ def test_openai_chat_completions_proxy():
     assert "soul_meta" in data
     assert data["soul_meta"]["adversity_domain"] == "workplace_academic"
     assert data["soul_meta"]["was_harmonized"] is True
+
+
+def test_harmonize_endpoint_without_user_message():
+    """Verify user_message is optional in v0.4.0 and defaults to draft analysis."""
+    payload = {
+        "draft_response": "Here are practical steps to move forward with this task:\n1. Error audit\n2. Pomodoro",
+    }
+    response = client.post("/v1/harmonize", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "harmonized_content" in data
+    assert "warmth_score" in data
+
+
+def test_openai_chat_completions_streaming():
+    """Verify stream=True returns Server-Sent Events (SSE)."""
+    payload = {
+        "model": "soul-attuned",
+        "stream": True,
+        "messages": [
+            {"role": "user", "content": "I am feeling stressed and need advice."}
+        ]
+    }
+    response = client.post("/v1/chat/completions", json=payload)
+    assert response.status_code == 200
+    assert "text/event-stream" in response.headers.get("content-type", "")
+    content = response.text
+    assert "data: {" in content
+    assert "data: [DONE]" in content
+
+
+def test_anti_slop_endpoints():
+    """Verify /v1/sanitize/anti-slop and /v1/anti-slop dedicated endpoints."""
+    raw = "In today's fast-paced world—efficiency is crucial. 🚀 Delve into our tool!"
+    
+    # 1. /v1/sanitize/anti-slop with text field
+    r1 = client.post("/v1/sanitize/anti-slop", json={"text": raw})
+    assert r1.status_code == 200
+    assert "sanitized" in r1.json()
+    assert "delve" not in r1.json()["sanitized"].lower()
+
+    # 2. /v1/anti-slop alias with content field
+    r2 = client.post("/v1/anti-slop", json={"content": raw})
+    assert r2.status_code == 200
+    assert "sanitized" in r2.json()
+    assert "delve" not in r2.json()["sanitized"].lower()
+
