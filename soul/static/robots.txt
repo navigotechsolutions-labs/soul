@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /dashboard
+Allow: /ide
+Allow: /docs
+Allow: /static/
+Disallow: /v1/auth/
+Disallow: /auth/
+
+Sitemap: https://soul.navigotechsolutions.com/sitemap.xml

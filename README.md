@@ -1,15 +1,16 @@
 # Soul Engine & Soul IDE (`soul-engine`)
 
-[![PyPI Version](https://img.shields.io/badge/pypi-v0.3.0-blue.svg)](https://pypi.org/project/soul-engine/)
+[![PyPI Version](https://img.shields.io/badge/pypi-v0.4.0-blue.svg)](https://pypi.org/project/soul-engine/)
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/tests-59%20passed%20%7C%20100%25-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-61%20passed%20%7C%20100%25-brightgreen.svg)](tests/)
 [![Latency](https://img.shields.io/badge/latency-%3C1.0ms%20(P50)-orange.svg)]()
-[![Soul IDE](https://img.shields.io/badge/Soul%20IDE-standalone%20workbench-purple.svg)]()
+[![Live Production Demo](https://img.shields.io/badge/live%20demo-soul.navigotechsolutions.com-emerald.svg)](https://soul.navigotechsolutions.com/dashboard)
+[![Soul IDE](https://img.shields.io/badge/Soul%20IDE-standalone%20workbench-purple.svg)](https://soul.navigotechsolutions.com/ide)
 [![Anti-Slop Linter](https://img.shields.io/badge/Anti--Slop%20Linter-live%20audit-success.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-> **"Understand the true feeling and context of any human situation — and act fast, in sub-milliseconds."**  
-> `Soul` is a non-autoregressive "System 1" cognitive appraisal engine, anti-bluntness harmonizer, and standalone Human-POV developer environment (**Soul IDE**). It decodes human psychological stakes, eradicates synthetic AI slop (emoji-as-icons, em-dash saturation, ChatGPT buzzwords), and calibrates digital interfaces for authentic human sensation.
+> **"Sub-Millisecond System 1 Reflex Layer, Anti-AI-Slop Linter, and 1-Line Drop-In Reverse Proxy for LLMs."**  
+> `Soul` is an ultra-fast (<1ms) non-autoregressive cognitive appraisal engine, anti-bluntness harmonizer, and standalone Human-POV developer environment (**Soul IDE**). It decodes human psychological stakes, eradicates synthetic AI slop (emoji-as-icons, em-dash saturation, ChatGPT buzzwords), and calibrates LLM completions for authentic human sensation.
 
 ---
 
@@ -329,35 +330,52 @@ curl -X GET "http://localhost:8000/v1/auth/keys/info" \
 
 ### 3. Connect Any Client, Terminal CLI, or SDK (Using Soul API Keys)
 
-Any application, terminal tool (like `aichat` or `tgpt`), LangChain pipeline, or client using standard chat completions can seamlessly connect to Soul Engine using your proprietary **Soul API Key (`soul_live_...`)**:
+Any application, terminal tool (like `aichat` or `tgpt`), LangChain pipeline, or client using standard chat completions can seamlessly connect to Soul Engine using your proprietary **Soul API Key (`soul_live_...`)**.
 
-#### Python (Universal Client)
+#### ⚡ 1-Line Drop-In Reverse Proxy (OpenAI SDK with Progressive SSE Streaming)
+Change **only two lines** in your existing OpenAI codebase to route through Soul's sub-millisecond cognitive appraisal layer:
+
 ```python
 from openai import OpenAI
 
-# Point to your Soul API server using your personal API key
+# 1. Point to Soul Engine (Cloud Production or Local Server):
 client = OpenAI(
-    base_url="http://localhost:8000/v1",
-    api_key="soul_live_e20c65fee42d4b94dc818b1f8963bc9db9107f66"
+    base_url="https://soul.navigotechsolutions.com/v1",  # or "http://localhost:8000/v1"
+    api_key="soul_live_c348f7d008b8644292c18bad1cf3d4ce68480daf"
 )
 
-response = client.chat.completions.create(
-    model="soul-attuned",
+# 2. Behind the scenes, Soul proxies to the LLM, harmonizes in <1ms, and streams:
+stream = client.chat.completions.create(
+    model="soul-attuned",  # or deepseek-chat, gpt-4o, claude-3-5-sonnet
     messages=[
         {"role": "user", "content": "I lost my job with zero notice today and can't feed my family. Help!"}
-    ]
+    ],
+    stream=True
 )
 
-# Output is automatically audited and emotionally harmonized!
-print(response.choices[0].message.content)
+for chunk in stream:
+    content = chunk.choices[0].delta.content or ""
+    print(content, end="", flush=True)
 ```
 
-#### JavaScript / TypeScript (Fetch)
+#### 🪄 Anti-Slop Sanitizer (Eradicate Emojis-as-Icons, Em-Dashes & ChatGPT Clichés)
+```bash
+# REST API (Instant in-process sanitization in <1ms):
+curl -X POST https://soul.navigotechsolutions.com/v1/sanitize/anti-slop \
+  -H "Authorization: Bearer soul_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{"text": "In today'\''s fast-paced world—efficiency is crucial. 🚀 Delve into our tool!"}'
+
+# Output:
+# {"original": "...", "sanitized": "Today, efficiency is essential. Explore our tool!"}
+```
+
+#### JavaScript / TypeScript (Native Fetch)
 ```javascript
-const res = await fetch("http://localhost:8000/v1/chat/completions", {
+const res = await fetch("https://soul.navigotechsolutions.com/v1/chat/completions", {
   method: "POST",
   headers: {
-    "Authorization": "Bearer soul_live_e20c65fee42d4b94dc818b1f8963bc9db9107f66",
+    "Authorization": "Bearer soul_live_your_key_here",
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
@@ -369,23 +387,28 @@ const data = await res.json();
 console.log(data.choices[0].message.content);
 ```
 
-#### cURL
+#### Direct cURL Endpoints
 ```bash
 # 1. System 1 Cognitive Appraisal (<1ms)
-curl -X POST http://localhost:8000/v1/appraise \
-  -H "Authorization: Bearer soul_live_e20c..." \
+curl -X POST https://soul.navigotechsolutions.com/v1/appraise \
+  -H "Authorization: Bearer soul_live_your_key_here" \
   -H "Content-Type: application/json" \
   -d '{"text": "The landlord slipped an eviction notice under my door."}'
 
-# 2. Anti-Bluntness Harmonization
-curl -X POST http://localhost:8000/v1/harmonize \
-  -H "Authorization: Bearer soul_live_e20c..." \
+# 2. Anti-Bluntness Harmonization (user_message optional in v0.4.0)
+curl -X POST https://soul.navigotechsolutions.com/v1/harmonize \
+  -H "Authorization: Bearer soul_live_your_key_here" \
   -H "Content-Type: application/json" \
   -d '{
-    "user_message": "Mama tummy hurty waaa boo-boo!",
-    "draft_response": "Here are practical steps to move forward with this task."
+    "draft_response": "Here are practical steps to move forward with this task: 1. Error audit. 2. Pomodoro."
   }'
 ```
+
+---
+
+## 🏷️ GitHub Topics & Keywords
+
+`anti-ai-slop` • `openai-proxy` • `cognitive-appraisal` • `affective-computing` • `emotional-intelligence` • `system-1-thinking` • `anti-bluntness` • `llm-middleware` • `chatgpt-linter` • `sentiment-analysis` • `russell-vad` • `fastapi` • `python` • `developer-tools`
 
 ---
 

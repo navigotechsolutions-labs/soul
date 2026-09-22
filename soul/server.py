@@ -90,6 +90,16 @@ if STATIC_DIR.exists():
         """Serves the standalone Soul IDE developer application."""
         return FileResponse(str(STATIC_DIR / "index.html"))
 
+    @app.get("/robots.txt", include_in_schema=False)
+    def robots_txt():
+        """Serves robots.txt for search engines and crawlers."""
+        return FileResponse(str(STATIC_DIR / "robots.txt"), media_type="text/plain")
+
+    @app.get("/sitemap.xml", include_in_schema=False)
+    def sitemap_xml():
+        """Serves sitemap.xml for search engines and crawlers."""
+        return FileResponse(str(STATIC_DIR / "sitemap.xml"), media_type="application/xml")
+
 
 
 # Singletons

@@ -136,3 +136,16 @@ def test_anti_slop_endpoints():
     assert "sanitized" in r2.json()
     assert "delve" not in r2.json()["sanitized"].lower()
 
+
+def test_seo_routes():
+    """Verify /robots.txt and /sitemap.xml are served for search engines."""
+    r_robots = client.get("/robots.txt")
+    assert r_robots.status_code == 200
+    assert "User-agent" in r_robots.text
+    assert "sitemap.xml" in r_robots.text
+
+    r_sitemap = client.get("/sitemap.xml")
+    assert r_sitemap.status_code == 200
+    assert "<urlset" in r_sitemap.text
+    assert "https://soul.navigotechsolutions.com/" in r_sitemap.text
+
