@@ -382,7 +382,7 @@ def health():
 
 @app.get("/v1/models", tags=["OpenAI Compatible"])
 def list_models():
-    """Returns OpenAI-compatible model list."""
+    """Returns OpenAI-compatible model list compatible with all 3rd-party apps and CLI tools."""
     return {
         "object": "list",
         "data": [
@@ -392,6 +392,34 @@ def list_models():
                 "created": 1700000000,
                 "owned_by": "soul-engine",
                 "description": "System 1 Emotionally Attuned AI model with anti-bluntness protection",
+            },
+            {
+                "id": "gpt-4o",
+                "object": "model",
+                "created": 1700000000,
+                "owned_by": "soul-engine",
+                "description": "Soul Attuned Proxy routing for gpt-4o",
+            },
+            {
+                "id": "gpt-4",
+                "object": "model",
+                "created": 1700000000,
+                "owned_by": "soul-engine",
+                "description": "Soul Attuned Proxy routing for gpt-4",
+            },
+            {
+                "id": "gpt-3.5-turbo",
+                "object": "model",
+                "created": 1700000000,
+                "owned_by": "soul-engine",
+                "description": "Soul Attuned Proxy routing for gpt-3.5-turbo",
+            },
+            {
+                "id": "claude-3-5-sonnet",
+                "object": "model",
+                "created": 1700000000,
+                "owned_by": "soul-engine",
+                "description": "Soul Attuned Proxy routing for Claude",
             },
             {
                 "id": "soul-appraiser",
