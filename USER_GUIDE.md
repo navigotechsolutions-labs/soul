@@ -1,5 +1,7 @@
 # 📘 Soul Engine: Complete User Guide
 
+> **Important:** Soul currently uses lexical and phrase-matching heuristics. Its scores and crisis phrase flags can be wrong and are not validated psychological, clinical, or safety assessments. Do not use them as the sole basis for emergency routing or high-impact decisions. Optional LLM responses require a provider key; without one, the app uses fixed local fallback responses.
+
 Welcome to the **Soul Engine User Guide**. This handbook covers everything you need to know to use Soul—from no-code web usage to integrating with AI agents, Python pipelines, and production REST APIs.
 
 ---
@@ -22,7 +24,7 @@ Welcome to the **Soul Engine User Guide**. This handbook covers everything you n
 
 ## 1. Overview
 
-**Soul** is a fast (<1ms) "System 1" cognitive appraisal engine and anti-bluntness harmonizer. It solves the core flaw of modern AI: **answering literal words while ignoring human emotional distress.**
+**Soul** is a lightweight heuristic text appraisal and response harmonization toolkit. It estimates signals from lexical rules; it does not reliably infer a person's true emotional state.
 
 ```
 [Distressed User Message]
@@ -44,6 +46,11 @@ From the repository root:
 git clone https://github.com/navigotechsolutions-labs/soul.git
 cd soul
 pip install -e .
+```
+
+For the API and Streamlit demo, install the optional runtime dependencies too:
+```bash
+pip install -e ".[server,demo]"
 ```
 
 Or install directly from GitHub into any project:
@@ -71,7 +78,7 @@ streamlit run app.py
 
 ## 4. Python SDK Usage
 
-### A. Real-Time Cognitive Appraisal (<1ms)
+### A. Local Heuristic Text Appraisal
 ```python
 import soul
 
@@ -332,4 +339,3 @@ The public production instance of Soul Engine is deployed and monitored at:
 ## 🤝 Need Help?
 - **GitHub Issues:** [https://github.com/navigotechsolutions-labs/soul/issues](https://github.com/navigotechsolutions-labs/soul/issues)
 - **Repository:** [https://github.com/navigotechsolutions-labs/soul](https://github.com/navigotechsolutions-labs/soul)
-

@@ -117,7 +117,8 @@ class SoulAppraiser:
         if adversity.acute_crisis_flag:
             urgency = ActionUrgency.CRITICAL_EMERGENCY
             action_triggers.append("emergency_hotline_intervention")
-            action_triggers.append("pause_automated_agent_triage")
+            action_triggers.append("possible_crisis_language_human_review")
+            action_triggers.append("do_not_treat_keyword_flag_as_safety_assessment")
         elif adversity.adversity_score > 0.75:
             urgency = ActionUrgency.HIGH
             action_triggers.append("prioritize_empathetic_validation")

@@ -17,6 +17,8 @@ dependencies = [
 
 [project.optional-dependencies]
 typesafe = ["typesafe-sdk>=0.7.0"]
+server = ["fastapi>=0.100.0", "uvicorn>=0.20.0"]
+demo = ["streamlit>=1.30.0"]
 dev = [
     "pytest>=7.0.0",
     "pytest-asyncio",
@@ -24,3 +26,6 @@ dev = [
 
 [project.scripts]
 soul = "soul.cli:main"
+
+[tool.setuptools.package-data]
+soul = ["static/*"]

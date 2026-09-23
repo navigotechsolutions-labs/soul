@@ -1,4 +1,4 @@
-"""Interactive Web App for Soul: Jev-Style System 1 Appraisal Engine."""
+"""Interactive demo for Soul's heuristic appraisal and response tools."""
 
 import streamlit as st
 import json
@@ -7,17 +7,16 @@ from soul import appraise
 from soul.adapters.agent_middleware import AgentEmpathyMiddleware
 
 st.set_page_config(
-    page_title="Soul v0.3.0 - Human-POV Sensation & System 1 Appraisal",
+    page_title="Soul - Heuristic Text Appraisal Demo",
     page_icon="🫀",
     layout="wide",
 )
 
-st.title("🫀 Soul v0.3.0: Human Sensation, Anti-Slop & System 1 Appraisal Engine")
+st.title("🫀 Soul: Heuristic Text Appraisal Demo")
 st.markdown(
     """
-    **Soul** bridges the gap between synthetic AI logic and human sensory perception. It evaluates 
-    **human felt experience**, eradicates **AI slop clichés (emojis-as-icons, em-dash addiction, AI buzzwords, generic purple/neon palettes)**, 
-    and provides sub-millisecond cognitive stress & 3D affect appraisal grounded in empirical psychology.
+    **Soul** uses lexicons and phrase rules to estimate affect and adversity, flag selected phrases, and audit writing patterns.
+    Outputs are heuristic, can be wrong, and are not clinical assessments or validated safety decisions.
     """
 )
 
@@ -91,18 +90,19 @@ if user_input:
     # Crisis alert if triggered
     if adv.acute_crisis_flag:
         st.error(
-            "🚨 **CRITICAL CRISIS DETECTED**: Immediate safety intervention protocol active. "
-            f"Indicators: {', '.join(adv.crisis_indicators)}."
+            "⚠️ **Possible crisis language detected.** This is a keyword-based flag and may be wrong; "
+            "it does not assess immediate safety or contact emergency services. "
+            f"Matched phrases: {', '.join(adv.crisis_indicators)}."
         )
 
-    st.markdown("### Scientific Appraisal Breakdown")
+    st.markdown("### Heuristic Appraisal Breakdown")
     tab_feel, tab_compare, tab_keys, tab_core, tab_vad, tab_ge, tab_agent, tab_json = st.tabs([
         "🫀 Human Experience & Anti-Slop Audit",
         "⚡ Blunt AI vs Attuned AI",
         "🔑 Self-Service API Keys",
         "⚡ Stoltz CORE & Scherer CPM",
         "🌊 Continuous Affect (VAD)",
-        "🎭 Google 27 GoEmotions",
+        "🎭 Rule-Based Emotion Labels",
         "🤖 AI Agent System 1 Directives",
         "📋 Calibrated JSON Schema"
     ])
@@ -297,7 +297,7 @@ console.log(appraisal);
             st.slider("Valence (Displeasure to Pleasure)", -1.0, 1.0, float(vad.valence), disabled=True)
             st.slider("Arousal (Calm to Agitated)", 0.0, 1.0, float(vad.arousal), disabled=True)
             st.slider("Dominance (Powerless to In-Control)", 0.0, 1.0, float(vad.dominance), disabled=True)
-            st.caption(f"90% Conformal Valence Interval: **[{sent.conformal_valence_interval[0]:.2f}, {sent.conformal_valence_interval[1]:.2f}]**")
+            st.caption(f"Estimated valence range (not statistically calibrated): **[{sent.conformal_valence_interval[0]:.2f}, {sent.conformal_valence_interval[1]:.2f}]**")
 
         with col_v2:
             st.subheader("Nuanced Psychological Feeling States")
@@ -308,7 +308,7 @@ console.log(appraisal);
                 st.info("Baseline affective state; no extreme nuanced feeling peaks.")
 
     with tab_ge:
-        st.subheader("Google Research GoEmotions (27 Fine-Grained Classes)")
+        st.subheader("Rule-Based Emotion Label Estimates")
         ge_data = sent.go_emotions.model_dump()
         active_emotions = {k: v for k, v in ge_data.items() if v > 0.03}
         if active_emotions:

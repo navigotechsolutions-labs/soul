@@ -182,7 +182,7 @@ class UserManager:
 
         user = self.get_user_by_id(user_id)
         tier = user["tier"] if user else "free"
-        rate_limit = "120 req/min" if tier == "free" else "1200 req/min"
+        rate_limit = "120 req/min"
 
         with self._get_connection() as conn:
             cursor = conn.cursor()

@@ -123,12 +123,11 @@ class ResponseHarmonizer:
         domain = adv.primary_domain
         feelings = [f.feeling for f in sent.top_feelings]
 
-        # Case 1: Acute Crisis
+        # Case 1: Possible crisis language keyword match. Avoid assuming intent.
         if adv.acute_crisis_flag:
             return (
-                "I hear how much pain you're in right now, and I want you to know that you don't have to carry this alone. "
-                "Please consider reaching out to people who can support you right this second—like dialing or texting 988 "
-                "(the Suicide & Crisis Lifeline). Your life matters deeply. Let's take things one moment at a time."
+                "I want to check that I understand: are you in immediate danger, or thinking about harming yourself? "
+                "If so, please contact local emergency services or a crisis support service now, and reach out to someone you trust who can stay with you."
             )
 
         # Case 2: De-escalation (Anger / Hostile customer / Breach)

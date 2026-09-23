@@ -2,15 +2,13 @@
 
 [![PyPI Version](https://img.shields.io/badge/pypi-v0.4.0-blue.svg)](https://pypi.org/project/soul-engine/)
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/tests-61%20passed%20%7C%20100%25-brightgreen.svg)](tests/)
-[![Latency](https://img.shields.io/badge/latency-%3C1.0ms%20(P50)-orange.svg)]()
 [![Live Production Demo](https://img.shields.io/badge/live%20demo-soul.navigotechsolutions.com-emerald.svg)](https://soul.navigotechsolutions.com/dashboard)
 [![Soul IDE](https://img.shields.io/badge/Soul%20IDE-standalone%20workbench-purple.svg)](https://soul.navigotechsolutions.com/ide)
 [![Anti-Slop Linter](https://img.shields.io/badge/Anti--Slop%20Linter-live%20audit-success.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-> **"Sub-Millisecond System 1 Reflex Layer, Anti-AI-Slop Linter, and 1-Line Drop-In Reverse Proxy for LLMs."**  
-> `Soul` is an ultra-fast (<1ms) non-autoregressive cognitive appraisal engine, anti-bluntness harmonizer, and standalone Human-POV developer environment (**Soul IDE**). It decodes human psychological stakes, eradicates synthetic AI slop (emoji-as-icons, em-dash saturation, ChatGPT buzzwords), and calibrates LLM completions for authentic human sensation.
+> **"A lightweight text appraisal and response harmonization toolkit."**
+> `Soul` uses lexicons and phrase-matching rules to estimate emotional signals, flag selected crisis-related phrases, inspect writing style, and provide response guidance. These estimates are heuristic and are not clinical assessments or validated safety decisions. Optional LLM-backed responses require a configured provider key.
 
 ---
 
@@ -31,12 +29,12 @@ I have a family to feed and I'm in total shock. How do I update my LinkedIn?"
 3. Micro-habits: limit study blocks to 25-minute Pomodoro intervals."
 ```
 
-### The Solution: Fast System 1 Appraisal + Attuned Harmonization
+### The Approach: Fast Heuristic Appraisal + Response Harmonization
 
-`Soul` acts as the **emotional limbic system** for downstream AI:
-1. **System 1 Cognitive Perception (<1ms)**: Appraises the subject's adversity domain, cognitive stress stance (*Threat*, *Harm/Loss*, *Challenge*), 3D continuous affect coordinates $(V, A, D)$, and granular feelings (vulnerability, grief, remorse, panic).
-2. **Pre-Generation Prompt Attunement**: Injects calibrated psychological directives into the LLM system prompt before inference.
-3. **Anti-Bluntness Auditor & Harmonizer**: Audits candidate responses for cold openers or empathy deficits, prepending tailored empathetic bridges when high emotional stakes are detected.
+`Soul` provides optional text signals and response transformations for downstream AI:
+1. **Rule-based appraisal**: Estimates adversity domain, stress stance, affect coordinates $(V, A, D)$, and selected feelings from text matches.
+2. **Prompt guidance**: Adds heuristic tone and empathy suggestions to an LLM system prompt before inference.
+3. **Response harmonization**: Audits a candidate response and may prepend a rule-selected bridge when text matches indicate distress.
 
 ```text
 [SOUL ATTUNED OUTPUT — EMPATHETIC & TASK-EFFECTIVE]
@@ -57,17 +55,17 @@ Most AI systems stumble because they **read only literal tokens** and completely
 
 Soul solves this through two synchronized capabilities:
 
-| Superpower | What Soul Does | Why It Matters |
+| Capability | What Soul Does | Intended Use |
 |---|---|---|
-| **1. Uncovering True Feelings & Context** | Decodes the psychological bedrock using Russell's 3D VAD affect, 27 GoEmotions, Lazarus Cognitive Stance (*Threat* vs *Challenge* vs *Loss*), and Stoltz CORE adversity profile. | Pierces through surface text to recognize vulnerability, grief, burnout, or panic before formulating a word. |
-| **2. Prescribing Fast, Targeted Action** | Instantly generates concrete action directives: `urgency` (*immediate/high/moderate*), `recommended_tone` (*reassuring, gentle, soothing*), de-escalation flags, and safety triage triggers. | Replaces passive observation with actionable interventions and empathetic attunement. |
-| **3. Sub-Millisecond Speed (<1ms)** | Non-autoregressive System 1 appraisal operates at `0.98ms P50 latency` without heavy LLM roundtrips. | Allows AI agents, chatbots, and frontline teams to comprehend emotional context and act **instantly** without lagging user conversations. |
+| **1. Heuristic text signals** | Estimates sentiment, domain, and selected emotion labels using lexical rules. | A low-cost hint for downstream systems; validate before using in decisions. |
+| **2. Response guidance** | Produces suggested tone and urgency fields, including a possible crisis phrase-match flag. | Treat as advisory metadata; crisis matches require human review and are not safety triage. |
+| **3. Local processing speed** | The local rule-based appraisal avoids an LLM call; timing depends on input size and hardware. | Useful where a fast preliminary signal is helpful. |
 
 ---
 
 ## 🎯 Enterprise Use Cases & Practical Applications
 
-Soul Engine functions as an **Emotional Intelligence Middleware & Cognitive Safety Proxy**. It sits between the user and any Large Language Model (OpenAI, Anthropic, Gemini, or local models), analyzing emotional valence, threat state, and psychological arousal in **under 5 milliseconds**.
+The API can be integrated into applications that use language models. The examples below are possible integration areas, not validated outcomes or safety assurances. The engine does not provide clinical, legal, financial, or emergency decisions.
 
 ### 1. High-Stakes Customer Support & Churn Prevention
 * **The Problem**: Standard AI agents respond to furious or panicking customers with rigid, robotic template answers (*"I understand your frustration. Please refer to section 4.2 of our FAQ"*), driving viral social outrage, ticket escalations, and customer churn.
@@ -92,7 +90,7 @@ Soul Engine functions as an **Emotional Intelligence Middleware & Cognitive Safe
 
 ### 6. Dynamic Gaming NPCs & Virtual Companions
 * **The Problem**: Game NPCs feel scripted, predictable, and emotionally deaf to player sarcasm, anger, or loyalty.
-* **Soul Engine Solution**: Sub-millisecond continuous affect appraisal allows Unity/Unreal game engines to alter NPC facial expressions, voice pitch, and dialogue stances dynamically based on the player's true emotional tone.
+* **Possible integration**: A game could use heuristic text signals as one input to dialogue or animation selection, after testing against its own content and players.
 
 ### Industry Value Matrix
 
@@ -101,7 +99,7 @@ Soul Engine functions as an **Emotional Intelligence Middleware & Cognitive Safe
 | **Enterprise SaaS** | Customer churn & viral social outrage | Auto-de-escalates angry support tickets | Drop-in OpenAI Proxy |
 | **FinTech & Crypto** | Brand panic during downtime/fraud | Calms anxious users during asset disputes | Direct `/v1/appraise` API |
 | **DevOps & Cloud** | SRE cognitive overload during outages | Strips AI fluff, delivers concise commands | Terminal CLI / Slack Bot |
-| **Healthcare** | Patient distress & clinical detachment | Grounds anxious patients with empathy | HIPAA-compliant Gateway |
+| **Healthcare** | Patient distress & clinical detachment | Optional tone guidance, subject to independent clinical, privacy, and regulatory review | API integration |
 | **Gaming & Metaverse** | Flat, immersion-breaking NPCs | NPCs react dynamically to player emotions | High-speed REST API / C++ |
 | **E-Commerce & Sales** | High drop-off at checkout & buyer friction | Senses hesitation and builds authentic trust | Webhook / API Middleware |
 
@@ -128,6 +126,14 @@ Or install the pre-built wheel directly:
 ```bash
 pip install dist/soul_engine-0.3.0-py3-none-any.whl
 ```
+
+For the HTTP API and browser demo, install the optional runtime dependencies:
+
+```bash
+pip install -e ".[server,demo]"
+```
+
+The API requires an API key by default (`SOUL_REQUIRE_AUTH=1`). Create an account at `/` and issue a key, or set `SOUL_REQUIRE_AUTH=0` only for a trusted local development instance. API mutations are limited to 120 requests per minute per bearer identity (or client IP when unauthenticated); auth endpoints allow 20/minute and public key generation 10/minute per identity. Limits use the configured SQLite database and apply per server database. Set a random `SOUL_JWT_SECRET` of at least 32 bytes before starting the service so sessions remain valid across restarts. Set `SOUL_CORS_ORIGINS` to a comma-separated list of trusted browser origins when hosting the UI separately.
 
 ---
 
@@ -163,7 +169,7 @@ soul audit --file ./copy.txt --fail-on-slop
 ```python
 import soul
 
-# 1. Ultra-fast System 1 Appraisal (<1ms)
+# 1. Local heuristic appraisal
 appraisal = soul.appraise("My mother passed away last night. I need to draft an announcement.")
 
 print("Adversity Score:", appraisal.adversity.adversity_score) # 0.83 [0.75, 0.92]
@@ -179,21 +185,21 @@ print(response.content)
 
 ---
 
-## 🏛️ Grounded in Academic Cognitive Science
+## 🏛️ Inspired by Cognitive Science Frameworks
 
-`Soul` implements validated empirical frameworks:
+`Soul` borrows concepts from the following frameworks. The implementation is heuristic and has not been validated as a psychological instrument:
 
 | Literature & Foundation | Scientific Source | How Soul Implements It |
 |---|---|---|
-| **Component Process Model (CPM)** | Klaus Scherer (*2009, 2013*) | Stimulus Evaluation Checks (SECs): Goal Conduciveness, Coping Potential, Action Urgency. |
-| **Transactional Stress Theory** | Lazarus & Folkman (*1984*) | Primary & secondary stress appraisal: Categorizing `THREAT`, `HARM_LOSS`, `CHALLENGE`, and `BENIGN`. |
-| **Adversity Quotient (CORE)** | Dr. Paul Stoltz (*1997, 2000*) | Measures Control, Ownership, Reach (catastrophizing), and Endurance (permanence). |
-| **Continuous Affect Space** | James Russell (*1980, 2003*) | 3D continuous Valence-Arousal-Dominance (VAD) coordinate projections. |
-| **Fine-Grained Emotion Taxonomy** | Google Research GoEmotions (*Demszky et al., ACL 2020*) | Full probability distributions across 27 nuanced emotional categories. |
-| **Conformal Prediction Intervals** | Angelopoulos & Bates (*2021*) | Distribution-free, 90% confidence uncertainty bounds $[y_{\min}, y_{\max}]$ rather than deceptive point estimates. |
-| **Temperature-Scaled Calibration** | Guo et al. (*ICML 2017*) | Platt & temperature scaling with epistemic uncertainty penalization. |
+| **Component Process Model (CPM)** | Klaus Scherer (*2009, 2013*) | Rule-based fields use selected appraisal concepts; they do not implement or validate the full model. |
+| **Transactional Stress Theory** | Lazarus & Folkman (*1984*) | Phrase rules map selected text to stress stances; this is not a validated psychological measure. |
+| **Adversity Quotient (CORE)** | Dr. Paul Stoltz (*1997, 2000*) | Heuristic fields use CORE labels; they are not validated measurements. |
+| **Continuous Affect Space** | James Russell (*1980, 2003*) | Lexicon-derived VAD estimates; context and sarcasm can produce errors. |
+| **Fine-Grained Emotion Taxonomy** | Google Research GoEmotions (*Demszky et al., ACL 2020*) | Rule-based estimates mapped to selected labels; not the GoEmotions trained classifier. |
+| **Uncertainty intervals** | — | Intervals are implementation estimates and should not be interpreted as calibrated coverage without independent evaluation. |
+| **Temperature scaling** | Guo et al. (*ICML 2017*) | A related calibration technique; implementation outputs require empirical validation before calibration claims. |
 
-*Full literature survey available in [`RESEARCH.md`](RESEARCH.md).*
+*These are conceptual inspirations, not evidence that this implementation reproduces or validates the cited models. See [`RESEARCH.md`](RESEARCH.md) for background.*
 
 ---
 
@@ -231,11 +237,7 @@ python autonomous_stress_test.py --iterations 500
 python autonomous_stress_test.py --iterations 100 --continuous
 ```
 
-**Results (500 runs)**:
-- **0 Crashes** across all randomized permutations.
-- **P50 Latency**: `0.98 ms` | **P99 Latency**: `1.54 ms`.
-- **Conformal Coverage**: `100.0%` (exceeds $\ge 90.0\%$ target).
-- **Anti-Bluntness Success Rate**: `100.0%`.
+The harness checks implementation behavior against synthetic scenarios. Its self-generated cases are not an independent accuracy, calibration, safety, or performance evaluation; passing them does not establish real-world coverage.
 
 ---
 
@@ -248,9 +250,9 @@ streamlit run app.py
 ```
 
 Features:
-- **Live Affect & Adversity Radar**: Real-time VAD gauge meters and CORE adversity quotient radar.
-- **GoEmotions 27-Class Histogram**: Visualizing fine-grained emotional activation.
-- **⚡ Blunt AI vs. Attuned AI Side-by-Side**: Direct real-time comparison showing how Soul intercepts and harmonizes cold AI responses.
+- Heuristic affect and adversity estimates from lexicon matches.
+- Rule-based emotion label summaries.
+- A demonstration of draft-response harmonization; outputs may be inaccurate.
 
 ---
 
@@ -273,7 +275,7 @@ python -m soul.cli "My mother passed away last night." --json
 
 ## 🌐 Production REST API & Universal Chat Gateway
  
-`Soul` includes a production FastAPI microservice (`soul.server` / [`serve.py`](serve.py)) with sub-millisecond response times, CORS support, and a **universal chat gateway** for any standard AI client.
+`Soul` includes a FastAPI service (`soul.server` / [`serve.py`](serve.py)) with configurable CORS and an OpenAI-compatible chat endpoint. Appraisal is local; response generation uses a configured provider or a local fallback.
 
 ### 1. Launching the API Server
 
@@ -332,8 +334,8 @@ curl -X GET "http://localhost:8000/v1/auth/keys/info" \
 
 Any application, terminal tool (like `aichat` or `tgpt`), LangChain pipeline, or client using standard chat completions can seamlessly connect to Soul Engine using your proprietary **Soul API Key (`soul_live_...`)**.
 
-#### ⚡ 1-Line Drop-In Reverse Proxy (OpenAI SDK with Progressive SSE Streaming)
-Change **only two lines** in your existing OpenAI codebase to route through Soul's sub-millisecond cognitive appraisal layer:
+#### OpenAI-Compatible Chat Endpoint
+Use the OpenAI SDK with a Soul API key. Set `OPENAI_API_KEY` or `DEEPSEEK_API_KEY` on the Soul server for provider-backed generation. Stream mode returns the completed response in SSE format; it does not stream live provider tokens.
 
 ```python
 from openai import OpenAI
@@ -341,10 +343,10 @@ from openai import OpenAI
 # 1. Point to Soul Engine (Cloud Production or Local Server):
 client = OpenAI(
     base_url="https://soul.navigotechsolutions.com/v1",  # or "http://localhost:8000/v1"
-    api_key="soul_live_c348f7d008b8644292c18bad1cf3d4ce68480daf"
+    api_key="soul_live_<your_key>"
 )
 
-# 2. Behind the scenes, Soul proxies to the LLM, harmonizes in <1ms, and streams:
+# Soul appraises locally, requests a provider completion, then harmonizes the result:
 stream = client.chat.completions.create(
     model="soul-attuned",  # or deepseek-chat, gpt-4o, claude-3-5-sonnet
     messages=[
@@ -360,7 +362,7 @@ for chunk in stream:
 
 #### 🪄 Anti-Slop Sanitizer (Eradicate Emojis-as-Icons, Em-Dashes & ChatGPT Clichés)
 ```bash
-# REST API (Instant in-process sanitization in <1ms):
+# REST API (in-process rule-based sanitization):
 curl -X POST https://soul.navigotechsolutions.com/v1/sanitize/anti-slop \
   -H "Authorization: Bearer soul_live_..." \
   -H "Content-Type: application/json" \
@@ -389,7 +391,7 @@ console.log(data.choices[0].message.content);
 
 #### Direct cURL Endpoints
 ```bash
-# 1. System 1 Cognitive Appraisal (<1ms)
+# 1. Heuristic text appraisal
 curl -X POST https://soul.navigotechsolutions.com/v1/appraise \
   -H "Authorization: Bearer soul_live_your_key_here" \
   -H "Content-Type: application/json" \

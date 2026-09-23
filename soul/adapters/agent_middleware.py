@@ -41,10 +41,11 @@ class AgentEmpathyMiddleware:
 
         if adv.acute_crisis_flag:
             return (
-                "\n[CRITICAL SAFETY INTERVENTION REQUIRED]\n"
-                "The user is in acute emotional crisis / distress triggers detected.\n"
-                "- Do NOT argue, lecture, or ignore this.\n"
-                "- Provide immediate compassion, grounding, and direct them to crisis resources (988 in the US/Canada or local equivalents).\n"
+                "\n[POSSIBLE CRISIS LANGUAGE MATCH]\n"
+                "A phrase matched a simple keyword screen; this is not a safety assessment and may be a false positive.\n"
+                "- Respond calmly and compassionately without assuming the person is suicidal or in immediate danger.\n"
+                "- If the message is ambiguous, ask plainly whether they are in immediate danger or thinking about harming themselves.\n"
+                "- If they indicate immediate danger, encourage contacting local emergency services or a crisis service and a trusted person nearby.\n"
             )
 
         feelings_str = ", ".join(f"{f.feeling} ({f.intensity:.2f})" for f in sent.top_feelings[:3]) or "neutral"

@@ -9,7 +9,13 @@ import secrets
 import time
 from typing import Any, Optional
 
-DEFAULT_JWT_SECRET = os.getenv("SOUL_JWT_SECRET", "soul_super_secret_jwt_signing_key_2026_production")
+_configured_secret = os.getenv("SOUL_JWT_SECRET")
+if _configured_secret and len(_configured_secret.encode("utf-8")) < 32:
+    raise ValueError("SOUL_JWT_SECRET must contain at least 32 bytes")
+# A random per-process key keeps local development usable without shipping a
+# forgeable credential. Deployments must set SOUL_JWT_SECRET to keep sessions
+# valid across restarts and workers.
+DEFAULT_JWT_SECRET = _configured_secret or secrets.token_urlsafe(48)
 JWT_ALGORITHM = "HS256"
 DEFAULT_ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 

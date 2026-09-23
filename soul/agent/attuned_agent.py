@@ -46,6 +46,9 @@ class AttunedAgent:
         base_system_prompt: str = "You are a helpful and knowledgeable AI assistant.",
         subject_id: str | None = None,
         model_name: str | None = None,
+        conversation: list[dict[str, str]] | None = None,
+        temperature: float = 0.7,
+        max_tokens: int = 800,
     ) -> AttunedAgentResponse:
         """Processes user message, understands feelings, generates and harmonizes response."""
         # Step 1: System 1 Affective & Adversity Appraisal (<1ms)
@@ -61,6 +64,9 @@ class AttunedAgent:
             user_message=user_message,
             appraisal=appraisal,
             model_name=model_name,
+            conversation=conversation,
+            temperature=temperature,
+            max_tokens=max_tokens,
         )
 
         # Step 4: Post-Generation Anti-Bluntness Audit & Harmonization
@@ -81,6 +87,9 @@ class AttunedAgent:
         user_message: str,
         appraisal: SubjectAppraisalResult,
         model_name: str | None = None,
+        conversation: list[dict[str, str]] | None = None,
+        temperature: float = 0.7,
+        max_tokens: int = 800,
     ) -> str:
         """Generates draft using custom callable, upstream LLM proxy (OpenAI, DeepSeek), or smart local fallback."""
         if self.custom_llm:
@@ -90,6 +99,11 @@ class AttunedAgent:
                 pass
 
         target_model = model_name or self.model_name
+        llm_messages = [{"role": "system", "content": system_prompt}]
+        if conversation:
+            llm_messages.extend(conversation)
+        else:
+            llm_messages.append({"role": "user", "content": user_message})
 
         # 1. Try DeepSeek if key is present and requested or default
         deepseek_key = os.getenv("DEEPSEEK_API_KEY")
@@ -103,12 +117,9 @@ class AttunedAgent:
                 ds_model = "deepseek-chat" if "deepseek" in (target_model or "").lower() else "deepseek-chat"
                 completion = ds_client.chat.completions.create(
                     model=ds_model,
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_message}
-                    ],
-                    max_tokens=800,
-                    temperature=0.7,
+                    messages=llm_messages,
+                    max_tokens=max_tokens,
+                    temperature=temperature,
                 )
                 choice = completion.choices[0].message.content
                 if choice:
@@ -125,12 +136,9 @@ class AttunedAgent:
                 llm_model = target_model if target_model not in ("soul-attuned", None) else self.model_name
                 completion = client.chat.completions.create(
                     model=llm_model,
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_message}
-                    ],
-                    max_tokens=800,
-                    temperature=0.7,
+                    messages=llm_messages,
+                    max_tokens=max_tokens,
+                    temperature=temperature,
                 )
                 choice = completion.choices[0].message.content
                 if choice:

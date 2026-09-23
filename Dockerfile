@@ -12,15 +12,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY pyproject.toml README.md ./
 
 # Install Soul Engine and API dependencies
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir "fastapi>=0.100.0" "uvicorn>=0.20.0"
+RUN pip install --no-cache-dir --upgrade pip
 
 # Copy application source code
 COPY soul/ ./soul/
 COPY serve.py app.py ./
 
 # Install package in editable mode
-RUN pip install --no-cache-dir -e .
+RUN pip install --no-cache-dir -e ".[server,demo]"
 
 # Expose API port
 EXPOSE 8000

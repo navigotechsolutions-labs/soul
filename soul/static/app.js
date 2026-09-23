@@ -7,9 +7,17 @@ const API_BASE = window.location.origin;
 
 // State
 let currentUser = null;
-let currentToken = localStorage.getItem("soul_access_token") || null;
+let currentToken = sessionStorage.getItem("soul_access_token") || null;
+// Remove tokens left behind by older versions that persisted them across sessions.
+localStorage.removeItem("soul_access_token");
 let authMode = "login"; // "login" | "signup"
 let lastAuditData = null;
+
+function apiHeaders() {
+  const headers = { "Content-Type": "application/json" };
+  if (currentToken) headers.Authorization = `Bearer ${currentToken}`;
+  return headers;
+}
 
 // --- Sleek Toast Notification System ---
 function showToast(message, type = "success", duration = 2800) {
@@ -392,7 +400,7 @@ async function submitAuthForm(e) {
 
     const res = await fetch(`${API_BASE}${endpoint}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: apiHeaders(),
       body: JSON.stringify(payload)
     });
 
@@ -402,7 +410,7 @@ async function submitAuthForm(e) {
     }
 
     // Save token & user
-    localStorage.setItem("soul_access_token", data.access_token);
+    sessionStorage.setItem("soul_access_token", data.access_token);
     currentToken = data.access_token;
     currentUser = data.user;
 
@@ -423,7 +431,7 @@ async function handleGoogleSignIn() {
   try {
     const res = await fetch(`${API_BASE}/v1/auth/google`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: apiHeaders(),
       body: JSON.stringify({ token: "demo_google_token" })
     });
 
@@ -432,7 +440,7 @@ async function handleGoogleSignIn() {
       throw new Error(data.detail || "Google authentication failed.");
     }
 
-    localStorage.setItem("soul_access_token", data.access_token);
+    sessionStorage.setItem("soul_access_token", data.access_token);
     currentToken = data.access_token;
     currentUser = data.user;
 
@@ -457,7 +465,7 @@ async function loginDemoAccount() {
     });
     const data = await res.json();
     if (res.ok && data.access_token) {
-      localStorage.setItem("soul_access_token", data.access_token);
+      sessionStorage.setItem("soul_access_token", data.access_token);
       currentToken = data.access_token;
       currentUser = data.user;
       renderAuthState();
@@ -496,7 +504,7 @@ async function checkCurrentUser() {
 }
 
 function logout() {
-  localStorage.removeItem("soul_access_token");
+  sessionStorage.removeItem("soul_access_token");
   currentToken = null;
   currentUser = null;
   renderAuthState();
@@ -713,7 +721,7 @@ async function runIdeAudit() {
   try {
     const res = await fetch(`${API_BASE}/v1/audit/human-pov`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: apiHeaders(),
       body: JSON.stringify({ content, include_aesthetics: true })
     });
 
@@ -789,7 +797,7 @@ function renderIdeScorecard(data) {
   const slop = data.slop_audit;
   if (emojiEl) {
     if (slop.emoji_icon_count > 0) {
-      emojiEl.innerHTML = `<span class="text-rose-500 font-bold">${slop.emoji_icon_count} detected</span> <span class="text-xs text-slate-500">(${slop.emojis_found.join(" ")})</span>`;
+      emojiEl.innerHTML = `<span class="text-rose-500 font-bold">${Number(slop.emoji_icon_count) || 0} detected</span> <span class="text-xs text-slate-500">(${(slop.emojis_found || []).map(escapeHtml).join(" ")})</span>`;
     } else {
       emojiEl.innerHTML = `<span class="text-emerald-500 font-bold">0</span> <span class="text-xs text-slate-500">(Clean)</span>`;
     }
@@ -809,7 +817,7 @@ function renderIdeScorecard(data) {
   const clichesEl = document.getElementById("ide-cliches-val");
   if (clichesEl) {
     if (slop.ai_cliches_found && slop.ai_cliches_found.length > 0) {
-      clichesEl.innerHTML = slop.ai_cliches_found.map(c => `<span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-mono slop-tag">${c}</span>`).join(" ");
+      clichesEl.innerHTML = slop.ai_cliches_found.map(c => `<span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-mono slop-tag">${escapeHtml(c)}</span>`).join(" ");
     } else {
       clichesEl.innerHTML = `<span class="text-xs text-emerald-500 font-medium">None detected (Human voice)</span>`;
     }
@@ -819,7 +827,7 @@ function renderIdeScorecard(data) {
   const breathEl = document.getElementById("ide-breathing-val");
   if (breathEl) {
     const isSuffocating = data.cognitive_friction_score > 0.5;
-    breathEl.innerHTML = `<span class="${isSuffocating ? 'text-rose-500' : 'text-emerald-500'} font-bold">${data.sensory_breathing_room.split('(')[0]}</span> <span class="text-xs text-slate-500">(Friction: ${data.cognitive_friction_score})</span>`;
+    breathEl.innerHTML = `<span class="${isSuffocating ? 'text-rose-500' : 'text-emerald-500'} font-bold">${escapeHtml((data.sensory_breathing_room || '').split('(')[0])}</span> <span class="text-xs text-slate-500">(Friction: ${Number(data.cognitive_friction_score) || 0})</span>`;
   }
 
   // Criticisms & Prescriptions
@@ -881,7 +889,7 @@ async function sanitizeInIde() {
   try {
     const res = await fetch(`${API_BASE}/v1/sanitize/anti-slop`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: apiHeaders(),
       body: JSON.stringify({ text })
     });
     if (res.ok) {

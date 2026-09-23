@@ -113,9 +113,9 @@ class AdversityAssessment(BaseModel):
     )
     acute_crisis_flag: bool = Field(
         default=False,
-        description="Emergency flag for acute crisis (suicidal ideation, severe panic, imminent self-harm, trauma)."
+        description="Legacy field: true when a simple phrase matcher finds a listed crisis-related phrase. This is not an emergency or safety assessment."
     )
     crisis_indicators: list[str] = Field(
         default_factory=list,
-        description="Specific triggers or phrases that contributed to crisis flags."
+        description="Matched phrases from the heuristic crisis screen; context and negation may not be understood."
     )

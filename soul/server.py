@@ -9,18 +9,22 @@ Provides ultra-fast sub-millisecond endpoints for:
 - GET /v1/models: Available models directory.
 """
 
+import asyncio
+import hashlib
+import sqlite3
 import time
 import uuid
 import os
 import json
+import re
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 from fastapi import FastAPI, HTTPException, Depends, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, StreamingResponse
-from pydantic import BaseModel, Field
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from pydantic import BaseModel, Field, model_validator
 
 
 import soul
@@ -47,10 +51,13 @@ app = FastAPI(
 )
 
 # Enable CORS so any frontend, mobile app, or client can access the API
+_cors_origins = [origin.strip() for origin in os.getenv(
+    "SOUL_CORS_ORIGINS", "http://localhost:8000,http://127.0.0.1:8000"
+).split(",") if origin.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=_cors_origins,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -109,6 +116,67 @@ _harmonizer = ResponseHarmonizer(auditor=_auditor)
 _agent = AttunedAgent(appraiser=_appraiser)
 _key_manager = APIKeyManager()
 _user_manager = UserManager()
+with sqlite3.connect(_key_manager.db_path) as _rate_limit_db:
+    _rate_limit_db.execute(
+        "CREATE TABLE IF NOT EXISTS rate_limit_events (bucket TEXT NOT NULL, requested_at REAL NOT NULL)"
+    )
+    _rate_limit_db.execute(
+        "CREATE INDEX IF NOT EXISTS idx_rate_limit_events_bucket_time ON rate_limit_events(bucket, requested_at)"
+    )
+
+
+def _consume_rate_limit(bucket: str, limit: int, now: float) -> bool:
+    """Atomically enforce a rolling per-identity window in the shared SQLite DB."""
+    with sqlite3.connect(_key_manager.db_path, timeout=10) as conn:
+        conn.execute("PRAGMA busy_timeout = 10000")
+        conn.execute("BEGIN IMMEDIATE")
+        conn.execute("DELETE FROM rate_limit_events WHERE requested_at <= ?", (now - 60.0,))
+        count = conn.execute(
+            "SELECT COUNT(*) FROM rate_limit_events WHERE bucket = ? AND requested_at > ?",
+            (bucket, now - 60.0),
+        ).fetchone()[0]
+        if count >= limit:
+            conn.rollback()
+            return False
+        conn.execute("INSERT INTO rate_limit_events(bucket, requested_at) VALUES (?, ?)", (bucket, now))
+        conn.commit()
+        return True
+
+
+@app.middleware("http")
+async def enforce_api_rate_limits(request: Request, call_next):
+    if request.url.path.startswith("/v1/") and request.method in {"POST", "PUT", "PATCH", "DELETE"}:
+        auth_header = request.headers.get("authorization", "")
+        if auth_header.lower().startswith("bearer "):
+            identity = auth_header[7:].strip()
+        else:
+            identity = request.headers.get("x-api-key", "")
+        client_ip = request.client.host if request.client else "unknown"
+        ip_fingerprint = hashlib.sha256(client_ip.encode("utf-8")).hexdigest()
+
+        path = request.url.path
+        if path in {"/v1/auth/signup", "/v1/auth/login", "/v1/auth/google"}:
+            checks = [(f"auth:{ip_fingerprint}", 20)]
+        elif path == "/v1/auth/keys/generate":
+            checks = [(f"keygen:{ip_fingerprint}", 10)]
+        else:
+            checks = [(f"api-ip:{ip_fingerprint}", 600)]
+            if identity:
+                identity_fingerprint = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+                checks.append((f"api-key:{identity_fingerprint}", 120))
+            else:
+                checks[0] = (f"api-ip:{ip_fingerprint}", 120)
+
+        now = time.time()
+        for bucket, limit in checks:
+            allowed = await asyncio.to_thread(_consume_rate_limit, bucket, limit, now)
+            if not allowed:
+                return JSONResponse(
+                    status_code=429,
+                    content={"detail": "Rate limit exceeded. Try again in one minute."},
+                    headers={"Retry-After": "60"},
+                )
+    return await call_next(request)
 
 
 def get_current_user(authorization: Optional[str] = Header(None)) -> dict[str, Any]:
@@ -140,9 +208,15 @@ def get_current_client(
     elif x_api_key:
         token = x_api_key.strip()
 
-    require_auth = os.getenv("SOUL_REQUIRE_AUTH", "0") in ("1", "true", "True")
+    require_auth = os.getenv("SOUL_REQUIRE_AUTH", "1").lower() in ("1", "true", "yes")
 
     if token:
+        # Browser sessions use JWTs; SDK clients use revocable API keys.
+        session = decode_access_token(token)
+        if session and session.get("sub"):
+            user = _user_manager.get_user_by_id(session["sub"])
+            if user and user.get("is_active"):
+                return user
         # Check user database first (User-created API keys)
         user_key_info = _user_manager.validate_api_key(token)
         if user_key_info:
@@ -166,14 +240,27 @@ def get_current_client(
 # --- Request & Response Schemas ---
 
 class AppraiseRequest(BaseModel):
-    text: str = Field(..., min_length=1, description="The user message or conversation state to appraise")
+    text: str = Field(..., min_length=1, max_length=20000, description="Text to appraise (maximum 20,000 characters)")
     subject_id: Optional[str] = Field(None, description="Optional subject identifier for session tracking")
 
 
 class HarmonizeRequest(BaseModel):
-    user_message: Optional[str] = Field(None, description="Optional user message providing emotional context. If omitted, standalone draft context is analyzed.")
-    draft_response: str = Field(..., min_length=1, description="Candidate AI response to audit and harmonize")
+    user_message: Optional[str] = Field(None, max_length=20000, description="Optional user message providing emotional context")
+    draft_response: Optional[str] = Field(None, max_length=20000, description="Candidate response to audit and harmonize")
+    text: Optional[str] = Field(None, max_length=20000, description="Alias for draft_response")
+    content: Optional[str] = Field(None, max_length=20000, description="Alias for draft_response")
     appraisal: Optional[SubjectAppraisalResult] = Field(None, description="Pre-computed appraisal if already available")
+
+    @model_validator(mode="after")
+    def resolve_draft_content(self) -> "HarmonizeRequest":
+        # Resolve whichever content field was supplied
+        effective_draft = self.draft_response or self.text or self.content
+        if not effective_draft or not effective_draft.strip():
+            raise ValueError(
+                "Either 'draft_response', 'text', or 'content' must be provided with at least 1 character."
+            )
+        self.draft_response = effective_draft.strip()
+        return self
 
 
 
@@ -187,7 +274,7 @@ class HarmonizeResponse(BaseModel):
 
 
 class RespondRequest(BaseModel):
-    message: str = Field(..., min_length=1, description="Incoming user message")
+    message: str = Field(..., min_length=1, max_length=20000, description="Incoming user message (maximum 20,000 characters)")
     base_system_prompt: Optional[str] = Field(
         "You are a helpful and knowledgeable AI assistant.",
         description="Base instructions for the AI"
@@ -205,15 +292,15 @@ class RespondResponse(BaseModel):
 
 
 class ChatMessage(BaseModel):
-    role: str
-    content: str
+    role: Literal["system", "user", "assistant"]
+    content: str = Field(..., max_length=20000)
 
 
 class OpenAIChatRequest(BaseModel):
     model: Optional[str] = "soul-attuned"
-    messages: list[ChatMessage] = Field(..., min_length=1)
-    temperature: Optional[float] = 0.7
-    max_tokens: Optional[int] = 800
+    messages: list[ChatMessage] = Field(..., min_length=1, max_length=50)
+    temperature: Optional[float] = Field(0.7, ge=0.0, le=2.0)
+    max_tokens: Optional[int] = Field(800, ge=1, le=32000)
     stream: Optional[bool] = False
 
 
@@ -347,16 +434,7 @@ def google_auth(req: GoogleLoginRequest):
     """Authenticates via Google OAuth token, auto-provisioning the user if needed."""
     profile = verify_google_token(req.token)
     if not profile:
-        # For testing / demo purposes if an invalid or demo token is passed:
-        if req.token in ("demo_google_token", "test_google_token"):
-            profile = {
-                "email": "demo.google.user@navigotechsolutions.com",
-                "name": "Navigo Google User",
-                "picture": "",
-                "sub": "demo-google-sub-12345",
-            }
-        else:
-            raise HTTPException(status_code=401, detail="Invalid or expired Google OAuth token.")
+        raise HTTPException(status_code=401, detail="Invalid or expired Google OAuth token.")
 
     user = _user_manager.find_or_create_google_user(
         email=profile["email"],
@@ -555,18 +633,21 @@ def universal_chat_completions(req: OpenAIChatRequest, client: Optional[dict] = 
     if not req.messages:
         raise HTTPException(status_code=400, detail="Messages array cannot be empty.")
 
-    # Extract user message and optional system message
+    # Preserve the full conversation as context. The last user message remains
+    # the direct request; earlier turns are included in the system context.
     system_prompt = "You are a helpful and knowledgeable AI assistant."
-    user_message = ""
-
-    for msg in req.messages:
-        if msg.role == "system":
-            system_prompt = msg.content
-        elif msg.role == "user":
-            user_message = msg.content
-
-    if not user_message:
-        user_message = req.messages[-1].content
+    user_messages = [msg for msg in req.messages if msg.role == "user"]
+    if not user_messages:
+        raise HTTPException(status_code=400, detail="At least one user message is required.")
+    system_messages = [msg.content for msg in req.messages if msg.role == "system"]
+    if system_messages:
+        system_prompt = "\n\n".join(system_messages)
+    user_message = user_messages[-1].content
+    conversation = [
+        {"role": msg.role, "content": msg.content}
+        for msg in req.messages
+        if msg.role in ("user", "assistant")
+    ]
 
     # Run attuned response with dynamic model routing
     t0 = time.perf_counter()
@@ -574,6 +655,9 @@ def universal_chat_completions(req: OpenAIChatRequest, client: Optional[dict] = 
         user_message=user_message,
         base_system_prompt=system_prompt,
         model_name=req.model,
+        conversation=conversation,
+        temperature=req.temperature if req.temperature is not None else 0.7,
+        max_tokens=req.max_tokens if req.max_tokens is not None else 800,
     )
     elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
@@ -582,7 +666,7 @@ def universal_chat_completions(req: OpenAIChatRequest, client: Optional[dict] = 
 
     # Native Server-Sent Events (SSE) Streaming Support
     if req.stream:
-        def event_stream():
+        async def event_stream():
             # Initial chunk (assistant role)
             initial_chunk = {
                 "id": chat_id,
@@ -599,11 +683,12 @@ def universal_chat_completions(req: OpenAIChatRequest, client: Optional[dict] = 
             }
             yield f"data: {json.dumps(initial_chunk)}\n\n"
 
-            # Stream words / tokens progressively
-            words = resp.content.split(" ")
-            for i, word in enumerate(words):
-                prefix = "" if i == 0 else " "
-                token = prefix + word
+            # Stream words/tokens incrementally with natural pacing for interactive UIs
+            # Splits preserving whitespace so reconstruction is verbatim
+            content = resp.content
+            tokens = re.findall(r"\S+\s*|\s+", content) if content else [""]
+            
+            for token in tokens:
                 chunk = {
                     "id": chat_id,
                     "object": "chat.completion.chunk",
@@ -618,8 +703,10 @@ def universal_chat_completions(req: OpenAIChatRequest, client: Optional[dict] = 
                     ],
                 }
                 yield f"data: {json.dumps(chunk)}\n\n"
+                # Natural typing cadence (sub-millisecond to 10ms pacing)
+                await asyncio.sleep(0.008)
 
-            # Final stop chunk
+            # Final stop chunk with soul metadata attached
             stop_chunk = {
                 "id": chat_id,
                 "object": "chat.completion.chunk",
@@ -632,6 +719,14 @@ def universal_chat_completions(req: OpenAIChatRequest, client: Optional[dict] = 
                         "finish_reason": "stop",
                     }
                 ],
+                "soul_meta": {
+                    "adversity_domain": resp.appraisal.adversity.primary_domain.value,
+                    "appraisal_stance": resp.appraisal.adversity.appraisal_stance.value,
+                    "was_harmonized": resp.was_harmonized,
+                    "warmth_score": resp.warmth_score,
+                    "empathy_demand": resp.appraisal.agent_guidance.empathy_demand,
+                    "latency_ms": round(elapsed_ms, 2),
+                }
             }
             yield f"data: {json.dumps(stop_chunk)}\n\n"
             yield "data: [DONE]\n\n"
@@ -680,18 +775,19 @@ def universal_chat_completions(req: OpenAIChatRequest, client: Optional[dict] = 
 
 
 class HumanFeelAuditRequest(BaseModel):
-    content: str = Field(..., min_length=1, description="AI-generated output, UI copy, or website text to audit")
-    user_context: Optional[str] = Field(None, description="Optional user prompt providing emotional context")
+    content: str = Field(..., min_length=1, max_length=20000, description="Text to audit (maximum 20,000 characters)")
+    user_context: Optional[str] = Field(None, max_length=20000, description="Optional user prompt providing emotional context")
     include_aesthetics: Optional[bool] = Field(True, description="Whether to check CSS/colors for AI tropes")
 
 
 class SanitizeSlopRequest(BaseModel):
-    text: Optional[str] = Field(None, description="Text containing AI tropes to sanitize and humanize")
-    content: Optional[str] = Field(None, description="Alternative field for text content")
-    draft_response: Optional[str] = Field(None, description="Alternative field for draft response")
+    text: Optional[str] = Field(None, max_length=20000, description="Text containing patterns to sanitize")
+    content: Optional[str] = Field(None, max_length=20000, description="Alternative field for text content")
+    draft_response: Optional[str] = Field(None, max_length=20000, description="Alternative field for draft response")
 
 
 @app.post("/v1/audit/human-pov", tags=["Human Experience"])
+@app.post("/v1/audit/human-feel", tags=["Human Experience"])
 def audit_human_pov_endpoint(req: HumanFeelAuditRequest, client: Optional[dict] = Depends(get_current_client)):
     """Audits AI responses, UI copy, or code for AI slop, emojis-as-icons, em-dashes, and palettes."""
     from soul import audit_human_feel
@@ -719,5 +815,3 @@ def sanitize_slop_endpoint(req: SanitizeSlopRequest, client: Optional[dict] = De
         return {"original": raw_text, "sanitized": sanitized}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Sanitization error: {str(e)}")
-
-

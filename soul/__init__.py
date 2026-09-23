@@ -7,6 +7,7 @@ coupled with an Anti-Bluntness Context Harmonizer for AI agents.
 
 from soul.adapters.agent_middleware import AgentEmpathyMiddleware
 from soul.agent.attuned_agent import AttunedAgent, AttunedAgentResponse
+from soul.client import SoulClient, SoulAPIError
 from soul.engine.adversity_analyzer import AdversityAnalyzer
 from soul.engine.appraiser import SoulAppraiser
 from soul.engine.calibrator import Calibrator
@@ -97,6 +98,8 @@ __all__ = [
     "audit_slop",
     "sanitize_slop",
     "audit_aesthetics",
+    "SoulClient",
+    "SoulAPIError",
     "SoulAppraiser",
     "AttunedAgent",
     "AttunedAgentResponse",

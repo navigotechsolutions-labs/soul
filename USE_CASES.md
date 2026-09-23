@@ -143,3 +143,6 @@ curl -X POST "https://soul.navigotechsolutions.com/v1/harmonize" \
     "draft_response": "Here is a guide to calculating runway and debt financing."
   }'
 ```
+# Use Cases (Exploratory)
+
+The scenarios below are potential integration ideas, not demonstrated outcomes. The current engine uses lexical heuristics and is not validated for clinical, safety, financial, legal, or other high-impact decisions. Evaluate it independently for the intended population and context before deployment.

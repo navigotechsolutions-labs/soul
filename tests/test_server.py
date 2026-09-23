@@ -1,7 +1,9 @@
-"""Unit tests for the Soul Engine FastAPI REST API & OpenAI Proxy."""
-
+import os
 import pytest
 from fastapi.testclient import TestClient
+
+# Ensure test client can call endpoints without external auth setup
+os.environ["SOUL_REQUIRE_AUTH"] = "0"
 from soul.server import app
 
 client = TestClient(app)
@@ -101,6 +103,36 @@ def test_harmonize_endpoint_without_user_message():
     data = response.json()
     assert "harmonized_content" in data
     assert "warmth_score" in data
+
+
+def test_harmonize_flexible_aliases():
+    """Verify /v1/harmonize accepts 'text' and 'content' as draft_response aliases."""
+    # 1. Using 'text' alias without user_message
+    res1 = client.post("/v1/harmonize", json={"text": "Here are steps to complete the task."})
+    assert res1.status_code == 200
+    assert "harmonized_content" in res1.json()
+
+    # 2. Using 'content' alias without user_message
+    res2 = client.post("/v1/harmonize", json={"content": "Here is what you need to do immediately."})
+    assert res2.status_code == 200
+    assert "harmonized_content" in res2.json()
+
+    # 3. Missing both throws clean 422 Unprocessable Entity
+    res3 = client.post("/v1/harmonize", json={})
+    assert res3.status_code == 422
+
+
+def test_soul_client_sdk_instantiation():
+    """Verify SoulClient SDK initializes properly and exposes expected methods."""
+    from soul import SoulClient, SoulAPIError
+
+    sdk = SoulClient(api_key="soul_live_test_key", base_url="http://testserver")
+    assert sdk.api_key == "soul_live_test_key"
+    assert hasattr(sdk, "appraise")
+    assert hasattr(sdk, "harmonize")
+    assert hasattr(sdk, "audit")
+    assert hasattr(sdk, "sanitize")
+    assert hasattr(sdk, "chat")
 
 
 def test_openai_chat_completions_streaming():

@@ -8,7 +8,7 @@ from soul.schemas.sentiment import SentimentAssessment
 
 
 class ActionUrgency(str, Enum):
-    """Urgency level for automated agents or downstream workflows."""
+    """Advisory urgency label; do not use alone for safety routing."""
     LOW = "low"
     MODERATE = "moderate"
     HIGH = "high"
@@ -26,7 +26,7 @@ class AgentGuidance(BaseModel):
     )
     urgency: ActionUrgency = Field(
         default=ActionUrgency.LOW,
-        description="Triage urgency level for agent action."
+        description="Heuristic advisory urgency; not a validated triage or emergency determination."
     )
     recommended_tone: str = Field(
         ...,

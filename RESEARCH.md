@@ -1,6 +1,8 @@
 # Scientific Research & Theoretical Foundations of `Soul`
 
-`Soul` is a non-autoregressive, calibrated "System 1" cognitive and emotional appraisal engine. It combines computational linguistics, cognitive psychology, psychometrics, and calibrated machine learning to allow software agents to appraise human adversity, continuous affect, and nuanced emotional states in sub-millisecond speeds.
+> **Implementation limits:** This repository currently uses lexicons, phrase matching, and hand-written scoring rules. It does not implement or validate the full research models described below. Its output is not a psychological or clinical measurement; intervals and confidence values are not empirically calibrated without an independent labeled evaluation set.
+
+`Soul` is a lightweight, rule-based text appraisal and response harmonization toolkit. This document summarizes concepts that informed field names and rules; it should not be read as evidence that the implementation reproduces the cited methods.
 
 This document details the academic literature, theoretical frameworks, and mathematical formulations implemented in `Soul v0.3.0`.
 
