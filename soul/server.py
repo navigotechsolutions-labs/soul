@@ -815,3 +815,36 @@ def sanitize_slop_endpoint(req: SanitizeSlopRequest, client: Optional[dict] = De
         return {"original": raw_text, "sanitized": sanitized}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Sanitization error: {str(e)}")
+
+
+# --- Community Ratings & Reviews Endpoints ---
+
+class SubmitRatingRequest(BaseModel):
+    score: int = Field(..., ge=1, le=5, description="Star rating from 1 to 5")
+    author_name: Optional[str] = Field(None, max_length=100, description="Your name or company handle")
+    feedback: Optional[str] = Field(None, max_length=1000, description="Optional thoughts, review, or suggestions")
+
+
+@app.post("/v1/ratings", tags=["Community"])
+def submit_rating_endpoint(req: SubmitRatingRequest, request: Request):
+    """Submits a community rating (1-5 stars) and feedback for Soul Engine."""
+    user_id = None
+    auth_header = request.headers.get("authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        payload = decode_access_token(auth_header[7:].strip())
+        if payload:
+            user_id = payload.get("sub")
+
+    result = _user_manager.submit_rating(
+        score=req.score,
+        author_name=req.author_name,
+        feedback=req.feedback,
+        user_id=user_id,
+    )
+    return {"status": "success", "rating": result}
+
+
+@app.get("/v1/ratings", tags=["Community"])
+def get_ratings_endpoint():
+    """Fetches aggregate community rating score and recent user reviews."""
+    return _user_manager.get_ratings_summary()

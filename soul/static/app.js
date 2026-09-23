@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadIdePreset("slop_copy");
   switchTab("ide");
   checkCurrentUser();
+  loadRatings();
 
   const editor = document.getElementById("ide-editor");
   if (editor) {
@@ -80,11 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Escape") {
       closeAuthModal();
       closeCreateKeyModal();
+      closeRateModal();
     }
   });
 
   // Backdrop click dismissal
-  ["auth-modal", "create-key-modal"].forEach(id => {
+  ["auth-modal", "create-key-modal", "rate-modal"].forEach(id => {
     const modal = document.getElementById(id);
     if (modal) {
       modal.addEventListener("click", (e) => {
@@ -1287,3 +1289,227 @@ document.addEventListener("DOMContentLoaded", () => {
     initAuraOrbs();
   }, 100);
 });
+
+// ==============================================================================
+// Community Ratings & Reviews ("Rate Soul Engine")
+// ==============================================================================
+
+let selectedRatingScore = 5;
+
+const RATING_LABELS = {
+  1: "1 Star — Needs Major Improvement ⚠️",
+  2: "2 Stars — Fair / Basic Potential",
+  3: "3 Stars — Good / Promising Architecture",
+  4: "4 Stars — Very Good / High Attunement ✨",
+  5: "5 Stars — Exceptional / Game-Changer! ⭐"
+};
+
+function openRateModal() {
+  selectedRatingScore = 5;
+  setStarRating(5);
+  const authorInput = document.getElementById("rate-author-name");
+  if (authorInput && currentUser && currentUser.full_name) {
+    authorInput.value = currentUser.full_name;
+  }
+  const errBox = document.getElementById("rate-error-msg");
+  if (errBox) errBox.classList.add("hidden");
+  const modal = document.getElementById("rate-modal");
+  if (modal) modal.classList.remove("hidden");
+}
+
+function closeRateModal() {
+  const modal = document.getElementById("rate-modal");
+  if (modal) modal.classList.add("hidden");
+}
+
+function setStarRating(score) {
+  selectedRatingScore = score;
+  const container = document.getElementById("star-picker-container");
+  if (!container) return;
+  const buttons = container.querySelectorAll(".star-btn");
+  buttons.forEach((btn, index) => {
+    const starVal = index + 1;
+    btn.classList.remove("star-hover");
+    if (starVal <= score) {
+      btn.classList.add("star-active");
+    } else {
+      btn.classList.remove("star-active");
+    }
+  });
+
+  const labelEl = document.getElementById("star-rating-label");
+  if (labelEl) {
+    labelEl.innerText = RATING_LABELS[score] || `${score} Stars`;
+  }
+}
+
+function hoverStarRating(score) {
+  const container = document.getElementById("star-picker-container");
+  if (!container) return;
+  const buttons = container.querySelectorAll(".star-btn");
+  buttons.forEach((btn, index) => {
+    const starVal = index + 1;
+    if (starVal <= score) {
+      btn.classList.add("star-hover");
+    } else {
+      btn.classList.remove("star-hover");
+    }
+  });
+
+  const labelEl = document.getElementById("star-rating-label");
+  if (labelEl) {
+    labelEl.innerText = RATING_LABELS[score] || `${score} Stars`;
+  }
+}
+
+function resetStarHover() {
+  setStarRating(selectedRatingScore);
+}
+
+async function submitRatingForm(e) {
+  e.preventDefault();
+  const authorName = (document.getElementById("rate-author-name")?.value || "").trim();
+  const feedback = (document.getElementById("rate-feedback")?.value || "").trim();
+  const submitBtn = document.getElementById("btn-submit-rating");
+  const errorBox = document.getElementById("rate-error-msg");
+
+  if (errorBox) errorBox.classList.add("hidden");
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = "<span>Submitting Review...</span>";
+  }
+
+  try {
+    const headers = { "Content-Type": "application/json" };
+    if (currentToken) {
+      headers["Authorization"] = `Bearer ${currentToken}`;
+    }
+
+    const payload = {
+      score: selectedRatingScore,
+      author_name: authorName || undefined,
+      feedback: feedback || undefined,
+    };
+
+    const res = await fetch(`${API_BASE}/v1/ratings`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.detail || "Failed to submit rating.");
+    }
+
+    closeRateModal();
+    // Clear feedback input
+    const feedbackInput = document.getElementById("rate-feedback");
+    if (feedbackInput) feedbackInput.value = "";
+
+    showToast("Thank you for rating Soul Engine! ⭐", "success");
+    await loadRatings();
+  } catch (err) {
+    if (errorBox) {
+      errorBox.innerText = err.message || "Failed to submit rating.";
+      errorBox.classList.remove("hidden");
+    } else {
+      showToast(err.message, "error");
+    }
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = "<span>Submit Rating</span>";
+    }
+  }
+}
+
+function renderStarsString(score) {
+  const full = Math.round(score);
+  return "★".repeat(Math.max(1, Math.min(5, full))) + "☆".repeat(Math.max(0, 5 - full));
+}
+
+function formatRelativeTime(timestamp) {
+  if (!timestamp) return "Recently";
+  const secondsAgo = Math.floor(Date.now() / 1000 - timestamp);
+  if (secondsAgo < 60) return "Just now";
+  const minutesAgo = Math.floor(secondsAgo / 60);
+  if (minutesAgo < 60) return `${minutesAgo}m ago`;
+  const hoursAgo = Math.floor(minutesAgo / 60);
+  if (hoursAgo < 24) return `${hoursAgo}h ago`;
+  const daysAgo = Math.floor(hoursAgo / 24);
+  return `${daysAgo}d ago`;
+}
+
+async function loadRatings() {
+  try {
+    const res = await fetch(`${API_BASE}/v1/ratings`);
+    if (!res.ok) return;
+    const data = await res.json();
+
+    const total = data.total_ratings || 0;
+    const avgScore = data.average_score || 5.0;
+    const reviews = data.recent_reviews || [];
+
+    // Update nav badge
+    const navBadge = document.getElementById("nav-rating-badge");
+    if (navBadge) {
+      navBadge.innerText = `${avgScore.toFixed(1)} ★`;
+    }
+
+    // Update community summary block
+    const avgScoreEl = document.getElementById("community-avg-score");
+    if (avgScoreEl) {
+      avgScoreEl.innerText = avgScore.toFixed(1);
+    }
+    const totalEl = document.getElementById("community-total-ratings");
+    if (totalEl) {
+      totalEl.innerText = `${total} verified ${total === 1 ? "review" : "reviews"}`;
+    }
+
+    // Render review cards
+    const container = document.getElementById("recent-reviews-container");
+    if (!container) return;
+
+    if (reviews.length === 0) {
+      container.innerHTML = `
+        <div class="p-8 text-center text-slate-400 dark:text-slate-500 text-xs col-span-full border border-dashed border-slate-200 dark:border-dark-700 rounded-xl space-y-2">
+          <p>No community reviews yet.</p>
+          <button onclick="openRateModal()" class="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 font-semibold hover:bg-amber-500/20 transition">
+            Be the first to rate Soul Engine ⭐
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = reviews.map(rev => {
+      const author = escapeHtml(rev.author_name || "Anonymous Engineer");
+      const stars = renderStarsString(rev.score);
+      const text = rev.feedback ? escapeHtml(rev.feedback) : "<em>Rated Soul Engine without written review.</em>";
+      const timeStr = formatRelativeTime(rev.created_at);
+
+      return `
+        <div class="review-card p-4 rounded-xl bg-slate-50/70 dark:bg-dark-900/60 border border-slate-200/90 dark:border-dark-750 flex flex-col justify-between space-y-3">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="review-stars text-amber-500 font-mono text-sm">${stars}</span>
+              <span class="text-[10px] text-slate-400 dark:text-slate-500 font-mono">${timeStr}</span>
+            </div>
+            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-sans">${text}</p>
+          </div>
+          <div class="flex items-center gap-2 pt-2 border-t border-slate-200/60 dark:border-dark-800/80">
+            <div class="w-6 h-6 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 font-bold flex items-center justify-center text-[10px] border border-amber-500/25">
+              ${escapeHtml(author.charAt(0).toUpperCase())}
+            </div>
+            <span class="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">${author}</span>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  } catch (err) {
+    console.warn("Could not load ratings summary:", err);
+  }
+}
+

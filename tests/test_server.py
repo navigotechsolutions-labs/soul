@@ -181,3 +181,37 @@ def test_seo_routes():
     assert "<urlset" in r_sitemap.text
     assert "https://soul.navigotechsolutions.com/" in r_sitemap.text
 
+
+def test_ratings_flow():
+    """Verify community ratings submission and summary retrieval."""
+    # 1. Post a 5-star rating
+    payload = {
+        "score": 5,
+        "author_name": "Test Engineer",
+        "feedback": "Outstanding empathy harmonizer and real-time response."
+    }
+    post_res = client.post("/v1/ratings", json=payload)
+    assert post_res.status_code == 200
+    data = post_res.json()
+    assert data["status"] == "success"
+    assert data["rating"]["score"] == 5
+    assert data["rating"]["author_name"] == "Test Engineer"
+    assert data["rating"]["feedback"] == "Outstanding empathy harmonizer and real-time response."
+
+    # 2. Score clamping & validation (score must be 1 to 5)
+    bad_res = client.post("/v1/ratings", json={"score": 10})
+    assert bad_res.status_code == 422
+
+    bad_res2 = client.post("/v1/ratings", json={"score": 0})
+    assert bad_res2.status_code == 422
+
+    # 3. Retrieve ratings summary
+    summary_res = client.get("/v1/ratings")
+    assert summary_res.status_code == 200
+    summary = summary_res.json()
+    assert summary["total_ratings"] >= 1
+    assert 1.0 <= summary["average_score"] <= 5.0
+    assert len(summary["recent_reviews"]) >= 1
+    assert any(r["author_name"] == "Test Engineer" for r in summary["recent_reviews"])
+
+

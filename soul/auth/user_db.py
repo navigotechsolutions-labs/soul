@@ -62,9 +62,22 @@ class UserManager:
                 )
             """)
 
+            # Community feedback & ratings table (Rate Soul Engine)
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS ratings (
+                    id TEXT PRIMARY KEY,
+                    score INTEGER NOT NULL CHECK (score >= 1 AND score <= 5),
+                    author_name TEXT,
+                    feedback TEXT,
+                    user_id TEXT,
+                    created_at REAL NOT NULL
+                )
+            """)
+
             # Key lookup index
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_user_keys_hash ON user_api_keys(key_hash)")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_user_keys_user ON user_api_keys(user_id)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_ratings_created ON ratings(created_at)")
             conn.commit()
 
     # --- User Account Management ---
@@ -260,3 +273,63 @@ class UserManager:
             )
             conn.commit()
             return dict(row)
+
+    # --- Community Ratings & Reviews ---
+
+    def submit_rating(
+        self,
+        score: int,
+        author_name: Optional[str] = None,
+        feedback: Optional[str] = None,
+        user_id: Optional[str] = None,
+    ) -> dict[str, Any]:
+        """Saves a developer/user rating (1 to 5 stars) and optional feedback."""
+        score = max(1, min(5, int(score)))
+        rating_id = str(uuid.uuid4())
+        now = time.time()
+        name = (author_name or "Anonymous Engineer").strip()
+        comment = (feedback or "").strip()
+
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                INSERT INTO ratings (id, score, author_name, feedback, user_id, created_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (rating_id, score, name, comment, user_id, now),
+            )
+            conn.commit()
+
+        return {
+            "id": rating_id,
+            "score": score,
+            "author_name": name,
+            "feedback": comment,
+            "created_at": now,
+        }
+
+    def get_ratings_summary(self) -> dict[str, Any]:
+        """Returns average score, total rating count, and recent reviews."""
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) as total, AVG(score) as avg_score FROM ratings")
+            agg = cursor.fetchone()
+            total = agg["total"] or 0
+            avg_score = round(float(agg["avg_score"] or 5.0), 2)
+
+            cursor.execute(
+                """
+                SELECT id, score, author_name, feedback, created_at
+                FROM ratings
+                ORDER BY created_at DESC
+                LIMIT 6
+                """
+            )
+            recent = [dict(r) for r in cursor.fetchall()]
+
+        return {
+            "total_ratings": total,
+            "average_score": avg_score,
+            "recent_reviews": recent,
+        }
