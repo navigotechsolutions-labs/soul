@@ -14,6 +14,7 @@ import hashlib
 import sqlite3
 import time
 import uuid
+import secrets
 import os
 import json
 import re
@@ -35,6 +36,7 @@ from soul.auth import (
     create_access_token,
     decode_access_token,
     verify_google_token,
+    default_email_service,
 )
 from soul.engine.api_key_manager import APIKeyManager
 from soul.engine.appraiser import SoulAppraiser
@@ -334,6 +336,16 @@ class GoogleLoginRequest(BaseModel):
     token: str = Field(..., min_length=1, description="Google OAuth ID token or access token")
 
 
+class SendOtpRequest(BaseModel):
+    email: str = Field(..., min_length=3, max_length=254, description="Email address to receive the 6-digit OTP code")
+
+
+class VerifyOtpRequest(BaseModel):
+    email: str = Field(..., min_length=3, max_length=254, description="Email address being verified")
+    code: str = Field(..., min_length=4, max_length=10, description="6-digit verification code")
+    full_name: Optional[str] = Field(None, description="Optional name for first-time profile creation")
+
+
 class CreateUserKeyRequest(BaseModel):
     name: Optional[str] = Field("Production Key", min_length=1, description="Friendly name for the API key")
 
@@ -356,6 +368,8 @@ def root(accept: Optional[str] = Header(None)):
             "web_portal": "/dashboard",
             "signup": "POST /v1/auth/signup",
             "login": "POST /v1/auth/login",
+            "otp_send": "POST /v1/auth/otp/send",
+            "otp_verify": "POST /v1/auth/otp/verify",
             "google_login": "POST /v1/auth/google",
             "me": "GET /v1/auth/me",
             "list_keys": "GET /v1/keys",
@@ -364,6 +378,7 @@ def root(accept: Optional[str] = Header(None)):
             "harmonize": "POST /v1/harmonize",
             "respond": "POST /v1/respond",
             "chat_completions": "POST /v1/chat/completions",
+            "ratings": "POST /v1/ratings",
             "docs": "/docs",
         },
     }
@@ -445,6 +460,57 @@ def google_auth(req: GoogleLoginRequest):
 
     token = create_access_token({"sub": user["id"], "email": user["email"], "tier": user["tier"]})
     return {
+        "user": user,
+        "access_token": token,
+        "token_type": "bearer",
+    }
+
+
+@app.post("/v1/auth/otp/send", tags=["User Authentication"])
+def send_otp_endpoint(req: SendOtpRequest):
+    """Generates and dispatches a 6-digit verification code to the user's email."""
+    email = req.email.strip().lower()
+    if "@" not in email or "." not in email:
+        raise HTTPException(status_code=400, detail="Invalid email address format.")
+
+    # Generate 6-digit verification code
+    code = "".join(secrets.choice("0123456789") for _ in range(6))
+
+    # Store in database with 10-minute validity
+    _user_manager.store_otp(email=email, code=code, validity_seconds=600)
+
+    # Dispatch email
+    result = default_email_service.send_otp_email(to_email=email, code=code, expires_in_minutes=10)
+
+    response = {
+        "status": "success",
+        "message": f"6-digit verification code sent to {email}.",
+        "expires_in_seconds": 600,
+        "delivery_method": result.get("method"),
+    }
+    if result.get("dev_otp"):
+        response["dev_otp_hint"] = result["dev_otp"]
+
+    return response
+
+
+@app.post("/v1/auth/otp/verify", tags=["User Authentication"])
+def verify_otp_endpoint(req: VerifyOtpRequest):
+    """Verifies the 6-digit email code and returns an authenticated JWT session."""
+    email = req.email.strip().lower()
+    is_valid = _user_manager.verify_otp(email=email, code=req.code)
+
+    if not is_valid:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired verification code. Please request a new code.",
+        )
+
+    user = _user_manager.find_or_create_otp_user(email=email, full_name=req.full_name)
+    token = create_access_token({"sub": user["id"], "email": user["email"], "tier": user["tier"]})
+
+    return {
+        "status": "success",
         "user": user,
         "access_token": token,
         "token_type": "bearer",

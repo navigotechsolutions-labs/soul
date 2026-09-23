@@ -8,6 +8,7 @@ from soul.auth.security import (
 )
 from soul.auth.user_db import UserManager
 from soul.auth.oauth import verify_google_token
+from soul.auth.email_service import EmailService, default_email_service
 
 __all__ = [
     "hash_password",
@@ -16,4 +17,7 @@ __all__ = [
     "decode_access_token",
     "UserManager",
     "verify_google_token",
+    "EmailService",
+    "default_email_service",
 ]
+

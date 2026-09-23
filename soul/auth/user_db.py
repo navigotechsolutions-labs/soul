@@ -74,10 +74,24 @@ class UserManager:
                 )
             """)
 
+            # Email OTP verification table
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS email_otps (
+                    id TEXT PRIMARY KEY,
+                    email TEXT NOT NULL,
+                    code_hash TEXT NOT NULL,
+                    created_at REAL NOT NULL,
+                    expires_at REAL NOT NULL,
+                    attempts INTEGER NOT NULL DEFAULT 0,
+                    consumed INTEGER NOT NULL DEFAULT 0
+                )
+            """)
+
             # Key lookup index
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_user_keys_hash ON user_api_keys(key_hash)")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_user_keys_user ON user_api_keys(user_id)")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_ratings_created ON ratings(created_at)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_email_otps_lookup ON email_otps(email, expires_at, consumed)")
             conn.commit()
 
     # --- User Account Management ---
@@ -333,3 +347,117 @@ class UserManager:
             "average_score": avg_score,
             "recent_reviews": recent,
         }
+
+    # --- Email OTP Authentication ---
+
+    def store_otp(self, email: str, code: str, validity_seconds: int = 600) -> str:
+        """Stores a hashed 6-digit OTP code with expiration window."""
+        email = email.lower().strip()
+        code_hash = hash_password(code)
+        otp_id = str(uuid.uuid4())
+        now = time.time()
+        expires_at = now + validity_seconds
+
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            # Invalidate any prior unconsumed OTPs for this email
+            cursor.execute(
+                "UPDATE email_otps SET consumed = 1 WHERE email = ? AND consumed = 0",
+                (email,),
+            )
+            cursor.execute(
+                """
+                INSERT INTO email_otps (id, email, code_hash, created_at, expires_at, attempts, consumed)
+                VALUES (?, ?, ?, ?, ?, 0, 0)
+                """,
+                (otp_id, email, code_hash, now, expires_at),
+            )
+            conn.commit()
+
+        return otp_id
+
+    def verify_otp(self, email: str, code: str) -> bool:
+        """Verifies the latest unconsumed OTP code for an email address."""
+        email = email.lower().strip()
+        now = time.time()
+
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                SELECT id, code_hash, attempts, expires_at 
+                FROM email_otps 
+                WHERE email = ? AND consumed = 0 AND expires_at > ?
+                ORDER BY created_at DESC 
+                LIMIT 1
+                """,
+                (email, now),
+            )
+            row = cursor.fetchone()
+            if not row:
+                return False
+
+            otp_id = row["id"]
+            attempts = row["attempts"] + 1
+
+            if attempts > 5:
+                # Rate-limit: consume code after 5 failed attempts
+                cursor.execute(
+                    "UPDATE email_otps SET attempts = ?, consumed = 1 WHERE id = ?",
+                    (attempts, otp_id),
+                )
+                conn.commit()
+                return False
+
+            is_valid = verify_password(code.strip(), row["code_hash"])
+
+            if is_valid:
+                cursor.execute(
+                    "UPDATE email_otps SET attempts = ?, consumed = 1 WHERE id = ?",
+                    (attempts, otp_id),
+                )
+            else:
+                cursor.execute(
+                    "UPDATE email_otps SET attempts = ? WHERE id = ?",
+                    (attempts, otp_id),
+                )
+            conn.commit()
+
+            return is_valid
+
+    def find_or_create_otp_user(self, email: str, full_name: Optional[str] = None) -> dict[str, Any]:
+        """Finds or auto-provisions an account authenticated via verified Email OTP."""
+        email = email.lower().strip()
+        now = time.time()
+
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+            row = cursor.fetchone()
+
+            if row:
+                user_id = row["id"]
+                cursor.execute(
+                    """
+                    UPDATE users 
+                    SET last_login_at = ?,
+                        full_name = COALESCE(NULLIF(?, ''), full_name)
+                    WHERE id = ?
+                    """,
+                    (now, full_name, user_id),
+                )
+                conn.commit()
+                return self.get_user_by_id(user_id)
+            else:
+                user_id = str(uuid.uuid4())
+                name = (full_name or email.split("@")[0].replace(".", " ").title()).strip()
+                cursor.execute(
+                    """
+                    INSERT INTO users (id, email, full_name, avatar_url, auth_provider, tier, is_active, created_at, last_login_at)
+                    VALUES (?, ?, ?, '', 'email_otp', 'free', 1, ?, ?)
+                    """,
+                    (user_id, email, name, now, now),
+                )
+                conn.commit()
+                return self.get_user_by_id(user_id)
+

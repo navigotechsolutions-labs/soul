@@ -348,16 +348,194 @@ function copyAttunedOutput() {
   showToast("Copied harmonized AI response to clipboard!");
 }
 
-// --- Authentication (Email & Google) ---
-function openAuthModal(mode = "login") {
-  authMode = mode;
-  setAuthMode(mode);
-  document.getElementById("auth-error-msg").classList.add("hidden");
-  document.getElementById("auth-modal").classList.remove("hidden");
+// --- Authentication (Email OTP & Password) ---
+let currentAuthType = "otp"; // "otp" | "password"
+let otpCooldownTimer = null;
+let currentOtpEmail = "";
+
+function openAuthModal(mode = "otp") {
+  if (mode === "login" || mode === "signup") {
+    setAuthType("password");
+    setAuthMode(mode);
+  } else {
+    setAuthType("otp");
+    resetOtpStep();
+  }
+  const errBox = document.getElementById("auth-error-msg");
+  if (errBox) errBox.classList.add("hidden");
+  const modal = document.getElementById("auth-modal");
+  if (modal) modal.classList.remove("hidden");
 }
 
 function closeAuthModal() {
-  document.getElementById("auth-modal").classList.add("hidden");
+  const modal = document.getElementById("auth-modal");
+  if (modal) modal.classList.add("hidden");
+  clearInterval(otpCooldownTimer);
+}
+
+function setAuthType(type) {
+  currentAuthType = type;
+  const otpBtn = document.getElementById("auth-type-otp-btn");
+  const pwdBtn = document.getElementById("auth-type-pwd-btn");
+  const otpSection = document.getElementById("auth-section-otp");
+  const pwdSection = document.getElementById("auth-section-password");
+
+  if (type === "otp") {
+    if (otpBtn) otpBtn.className = "flex-1 py-1.5 rounded-lg text-emerald-600 dark:text-emerald-400 bg-white dark:bg-dark-700 shadow-sm flex items-center justify-center gap-1.5 transition font-semibold";
+    if (pwdBtn) pwdBtn.className = "flex-1 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition";
+    if (otpSection) otpSection.classList.remove("hidden");
+    if (pwdSection) pwdSection.classList.add("hidden");
+  } else {
+    if (pwdBtn) pwdBtn.className = "flex-1 py-1.5 rounded-lg text-emerald-600 dark:text-emerald-400 bg-white dark:bg-dark-700 shadow-sm flex items-center justify-center gap-1.5 transition font-semibold";
+    if (otpBtn) otpBtn.className = "flex-1 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition";
+    if (pwdSection) pwdSection.classList.remove("hidden");
+    if (otpSection) otpSection.classList.add("hidden");
+  }
+}
+
+function showOtpMsg(msg, isError = false) {
+  const box = document.getElementById("otp-msg-box");
+  if (!box) return;
+  box.innerText = msg;
+  box.className = `text-xs p-2.5 rounded-xl ${isError ? "bg-rose-500/10 text-rose-500 border border-rose-500/20" : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"}`;
+  box.classList.remove("hidden");
+}
+
+function resetOtpStep() {
+  const stepVerify = document.getElementById("otp-step-verify");
+  const stepEmail = document.getElementById("otp-step-email");
+  const msgBox = document.getElementById("otp-msg-box");
+  const emailInput = document.getElementById("otp-input-email");
+
+  if (stepVerify) stepVerify.classList.add("hidden");
+  if (stepEmail) stepEmail.classList.remove("hidden");
+  if (msgBox) msgBox.classList.add("hidden");
+  if (emailInput) setTimeout(() => emailInput.focus(), 50);
+}
+
+async function handleSendOtp(isResend = false) {
+  const emailInput = document.getElementById("otp-input-email");
+  const email = (isResend ? currentOtpEmail : (emailInput ? emailInput.value : "")).trim().toLowerCase();
+  const sendBtn = document.getElementById("btn-otp-send");
+  const resendBtn = document.getElementById("btn-otp-resend");
+
+  if (!email || !email.includes("@")) {
+    showOtpMsg("Please enter a valid email address.", true);
+    return;
+  }
+
+  currentOtpEmail = email;
+  if (sendBtn) sendBtn.disabled = true;
+  if (resendBtn) resendBtn.disabled = true;
+  showOtpMsg("Sending 6-digit verification code...");
+
+  try {
+    const res = await fetch(`${API_BASE}/v1/auth/otp/send`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Failed to send code.");
+
+    const stepEmail = document.getElementById("otp-step-email");
+    const stepVerify = document.getElementById("otp-step-verify");
+    const emailLabel = document.getElementById("otp-target-email-label");
+
+    if (stepEmail) stepEmail.classList.add("hidden");
+    if (stepVerify) stepVerify.classList.remove("hidden");
+    if (emailLabel) emailLabel.innerText = email;
+
+    let notice = `A 6-digit code has been sent to ${email}.`;
+    if (data.dev_otp_hint) {
+      notice += ` (Dev/Demo hint: ${data.dev_otp_hint})`;
+      const codeInput = document.getElementById("otp-input-code");
+      if (codeInput) codeInput.value = data.dev_otp_hint;
+    }
+    showOtpMsg(notice);
+
+    const codeInput = document.getElementById("otp-input-code");
+    if (codeInput && !data.dev_otp_hint) {
+      codeInput.value = "";
+      setTimeout(() => codeInput.focus(), 50);
+    }
+
+    startOtpCooldown(60);
+  } catch (err) {
+    showOtpMsg(err.message, true);
+  } finally {
+    if (sendBtn) sendBtn.disabled = false;
+  }
+}
+
+function startOtpCooldown(seconds) {
+  clearInterval(otpCooldownTimer);
+  const timerLabel = document.getElementById("otp-timer-label");
+  const resendBtn = document.getElementById("btn-otp-resend");
+  if (!timerLabel || !resendBtn) return;
+
+  let remaining = seconds;
+  resendBtn.disabled = true;
+  timerLabel.innerText = `Resend in ${remaining}s`;
+
+  otpCooldownTimer = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(otpCooldownTimer);
+      timerLabel.innerText = "";
+      resendBtn.disabled = false;
+    } else {
+      timerLabel.innerText = `Resend in ${remaining}s`;
+    }
+  }, 1000);
+}
+
+async function handleVerifyOtp() {
+  const code = (document.getElementById("otp-input-code")?.value || "").trim();
+  const name = (document.getElementById("otp-input-name")?.value || "").trim();
+  const verifyBtn = document.getElementById("btn-otp-verify");
+
+  if (!code || code.length < 4) {
+    showOtpMsg("Please enter the 6-digit verification code.", true);
+    return;
+  }
+
+  if (verifyBtn) {
+    verifyBtn.disabled = true;
+    verifyBtn.innerHTML = "<span>Verifying code...</span>";
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/v1/auth/otp/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: currentOtpEmail,
+        code,
+        full_name: name || undefined
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Invalid or expired code.");
+
+    sessionStorage.setItem("soul_access_token", data.access_token);
+    currentToken = data.access_token;
+    currentUser = data.user;
+
+    renderAuthState();
+    closeAuthModal();
+    loadUserApiKeys();
+    showToast(`Welcome ${currentUser.full_name || currentUser.email}! ⭐`);
+  } catch (err) {
+    showOtpMsg(err.message, true);
+  } finally {
+    if (verifyBtn) {
+      verifyBtn.disabled = false;
+      verifyBtn.innerHTML = "<span>Verify & Sign In</span>";
+    }
+  }
 }
 
 function setAuthMode(mode) {
@@ -366,33 +544,32 @@ function setAuthMode(mode) {
   const tabSignup = document.getElementById("tab-btn-signup");
   const nameField = document.getElementById("field-fullname");
   const submitBtn = document.getElementById("btn-auth-submit");
-  const title = document.getElementById("modal-title");
+
+  if (!tabLogin || !tabSignup || !nameField || !submitBtn) return;
 
   if (mode === "login") {
-    tabLogin.className = "flex-1 pb-2 border-b-2 border-emerald-500 text-white font-bold";
-    tabSignup.className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200";
+    tabLogin.className = "flex-1 pb-2 border-b-2 border-emerald-500 text-slate-900 dark:text-white font-bold";
+    tabSignup.className = "flex-1 pb-2 border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200";
     nameField.classList.add("hidden");
     submitBtn.innerText = "Sign In";
-    title.innerText = "Sign In to Soul Engine";
   } else {
-    tabSignup.className = "flex-1 pb-2 border-b-2 border-emerald-500 text-white font-bold";
-    tabLogin.className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200";
+    tabSignup.className = "flex-1 pb-2 border-b-2 border-emerald-500 text-slate-900 dark:text-white font-bold";
+    tabLogin.className = "flex-1 pb-2 border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200";
     nameField.classList.remove("hidden");
     submitBtn.innerText = "Create Account";
-    title.innerText = "Create Your Soul Account";
   }
 }
 
 async function submitAuthForm(e) {
   e.preventDefault();
-  const email = document.getElementById("input-email").value.trim();
-  const password = document.getElementById("input-password").value;
-  const fullName = document.getElementById("input-fullname").value.trim();
+  const email = (document.getElementById("input-email")?.value || "").trim();
+  const password = document.getElementById("input-password")?.value || "";
+  const fullName = (document.getElementById("input-fullname")?.value || "").trim();
   const errorBox = document.getElementById("auth-error-msg");
   const submitBtn = document.getElementById("btn-auth-submit");
 
-  errorBox.classList.add("hidden");
-  submitBtn.disabled = true;
+  if (errorBox) errorBox.classList.add("hidden");
+  if (submitBtn) submitBtn.disabled = true;
 
   try {
     const endpoint = authMode === "login" ? "/v1/auth/login" : "/v1/auth/signup";
@@ -411,7 +588,6 @@ async function submitAuthForm(e) {
       throw new Error(data.detail || "Authentication failed.");
     }
 
-    // Save token & user
     sessionStorage.setItem("soul_access_token", data.access_token);
     currentToken = data.access_token;
     currentUser = data.user;
@@ -421,37 +597,12 @@ async function submitAuthForm(e) {
     loadUserApiKeys();
     showToast(`Welcome ${currentUser.full_name || currentUser.email}!`);
   } catch (err) {
-    errorBox.innerText = err.message;
-    errorBox.classList.remove("hidden");
-  } finally {
-    submitBtn.disabled = false;
-  }
-}
-
-// Google OAuth Login
-async function handleGoogleSignIn() {
-  try {
-    const res = await fetch(`${API_BASE}/v1/auth/google`, {
-      method: "POST",
-      headers: apiHeaders(),
-      body: JSON.stringify({ token: "demo_google_token" })
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.detail || "Google authentication failed.");
+    if (errorBox) {
+      errorBox.innerText = err.message;
+      errorBox.classList.remove("hidden");
     }
-
-    sessionStorage.setItem("soul_access_token", data.access_token);
-    currentToken = data.access_token;
-    currentUser = data.user;
-
-    renderAuthState();
-    closeAuthModal();
-    loadUserApiKeys();
-    showToast("Signed in with Google identity!");
-  } catch (err) {
-    showToast("Google sign in: " + err.message, "error");
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
   }
 }
 

@@ -202,3 +202,58 @@ def test_api_auth_endpoints_flow():
     google_res = client.post("/v1/auth/google", json={"token": "demo_google_token"})
     assert google_res.status_code == 200
     assert "access_token" in google_res.json()
+
+
+def test_user_manager_otp_logic(temp_user_mgr):
+    """Test OTP creation, verification, consumption, and user provisioning."""
+    email = "test.otp@example.com"
+    code = "123456"
+
+    # 1. Store OTP
+    otp_id = temp_user_mgr.store_otp(email=email, code=code, validity_seconds=600)
+    assert otp_id is not None
+
+    # 2. Wrong code fails
+    assert temp_user_mgr.verify_otp(email=email, code="000000") is False
+
+    # 3. Correct code succeeds
+    assert temp_user_mgr.verify_otp(email=email, code=code) is True
+
+    # 4. Replay fails (code was consumed)
+    assert temp_user_mgr.verify_otp(email=email, code=code) is False
+
+    # 5. Provision or find user
+    user = temp_user_mgr.find_or_create_otp_user(email=email, full_name="OTP Engineer")
+    assert user["email"] == email
+    assert user["full_name"] == "OTP Engineer"
+    assert user["auth_provider"] == "email_otp"
+
+
+def test_email_otp_api_endpoints():
+    """Test REST API endpoints for OTP request and verification."""
+    from fastapi.testclient import TestClient
+    from soul.server import app
+
+    client = TestClient(app)
+    email = "api.otp.user@example.com"
+
+    # 1. Send OTP
+    send_res = client.post("/v1/auth/otp/send", json={"email": email})
+    assert send_res.status_code == 200
+    send_data = send_res.json()
+    assert send_data["status"] == "success"
+    assert "dev_otp_hint" in send_data
+    code = send_data["dev_otp_hint"]
+
+    # 2. Verify with wrong code -> 401
+    bad_res = client.post("/v1/auth/otp/verify", json={"email": email, "code": "999999"})
+    assert bad_res.status_code == 401
+
+    # 3. Verify with correct code -> 200 & JWT
+    good_res = client.post("/v1/auth/otp/verify", json={"email": email, "code": code, "full_name": "API Tester"})
+    assert good_res.status_code == 200
+    data = good_res.json()
+    assert data["status"] == "success"
+    assert "access_token" in data
+    assert data["user"]["email"] == email
+
